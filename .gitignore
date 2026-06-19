@@ -17,3 +17,11 @@ env/
 # Misc
 *.log
 temp/
+
+# Model weights & data (never commit)
+*.pth
+*.safetensors
+*.jsonl
+
+# Secrets / local settings (never commit)
+settings.json

@@ -55,3 +55,7 @@
 - 源码：MiniMind / MiniMind-3，作者 jingyaogong。
 - 数据格式与样本：引自 MiniMind-3 README；训练数据集见 [minimind_dataset](https://huggingface.co/datasets/jingyaogong/minimind_dataset)（ModelScope / HuggingFace）。
 - 本仓库是个人学习笔记的重构整理，不隶属于原项目。
+
+## 许可
+
+本仓库教学内容采用 [CC BY 4.0](LICENSE)（署名）许可；其中引用的 MiniMind 源码片段版权归原项目 [jingyaogong/minimind](https://github.com/jingyaogong/minimind) 所有，遵循其 Apache-2.0 协议。
