@@ -48,13 +48,13 @@
 | 10-experiments/01-fixed-prompt-design | §34, §35, §38 | eval_llm.py | — |
 | 10-experiments/02-server-training-records | mm3 §5.1–5.4, §5.6 | — | swanlab/*.png |
 | 10-experiments/03-eval-conclusions-sft-vs-rl | mm3 §5.5 | — | swanlab/*.png |
-| appendix/01-training-engineering | §16, 17, 18, 19, 20 | trainer/trainer_utils.py, train_pretrain.py | — |
 | appendix/02-advanced-pointers | §63.7(Agent RL) | model/model_lora.py, trainer/train_lora.py, train_distillation.py | — |
 
 ## 删除 / 不收（个人痕迹或 v2+ backlog）
 
 - 删：§1(大部分)、§3.3–3.4、§4、§6(个人 checklist)、§7、§8、§9、§33、§39、§40–49(留环境结论入 00)、§55、§56、§60、§61；各节内 `自测题/参考答案`(转章末练习)、`暂不展开`、`当前进度/下一步`、`#### YYYY-MM-DD` 日志。
 - 不收（v2+ backlog）：GRPO 变体家族、Flash Attention 升级为正式章、归一化 survey、面试八股、Part 分层。
+- 不收（工程非主线）：§16–20（trainer_utils lr 调度 / checkpoint / 分布式、SkipBatchSampler、setup_seed、from_weight、AMP/GradScaler/compile）——其中影响主线理解的最小点（from_weight 起训、梯度累积、为何用 GradScaler）已在 03-pretrain/03-training-loop 正文随主流程点到，不单开工程篇。
 
 ## 折叠去向
 

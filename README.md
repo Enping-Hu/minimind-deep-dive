@@ -15,26 +15,32 @@
 
 - 一条贯穿的训练数学链：`logits → token log-prob → 序列 loss → backward → optimizer.step`，把 Pretrain / SFT / DPO / PPO / GRPO 的更新骨架统一起来（第 8 章）。
 - MiniMind2 与 MiniMind-3 / Qwen3-style 的逐条源码对照：QK-Norm、移除 shared expert、PPO 重写、GRPO 默认 CISPO（第 9 章）。
-- 真实服务器训练曲线 + 固定 prompt 评测结论，含 RL 的 reward-hacking 现象与一个层数配置踩坑（第 10 章）。
+- 真实服务器训练曲线 + 固定 prompt 评测结论，含 RL 的 reward-hacking 现象（训练 reward 与实际能力的背离）（第 10 章）。
 
 ## 学习路径
 
-| 章 | 内容 |
-|---|---|
-| [00-overview](chapters/00-overview/) | MiniMind 是什么、四层源码地图、环境与快速开始 |
-| [01-foundations](chapters/01-foundations/) | Tokenizer、Embedding、数据格式（从源码读起） |
-| [02-model](chapters/02-model/) | Block / RMSNorm / Attention / RoPE / GQA / SwiGLU / MoE |
-| [03-pretrain](chapters/03-pretrain/) | 数据与标签、前向到 loss、Pretrain 主循环 |
-| [04-inference](chapters/04-inference/) | KV cache 与 generate、推理服务、权重格式 |
-| [05-sft](chapters/05-sft/) | SFT：为什么只监督 assistant 回复 |
-| [06-dpo](chapters/06-dpo/) | DPO：偏好优化与 −logsigmoid 目标 |
-| [07-ppo-grpo](chapters/07-ppo-grpo/) | RL 总览、PPO、GRPO、SPO、训练信号总表 |
-| [08-training-mechanics](chapters/08-training-mechanics/) | 从 logits 到参数更新的完整训练机制 |
-| [09-minimind2-vs-3](chapters/09-minimind2-vs-3/) | MiniMind2 → MiniMind-3 / Qwen3-style 逐条对照 |
-| [10-experiments](chapters/10-experiments/) | 固定 prompt 实验设计、服务器训练记录、SFT vs RL 评测结论 |
-| [appendix](chapters/appendix/) | 训练工程细节、进阶方向（Flash Attention / LoRA / 蒸馏 / Agent RL）点到为止 |
+| 章 | 内容 | 状态 |
+|---|---|---|
+| [00-overview](chapters/00-overview/) | MiniMind 是什么、四层源码地图、环境与快速开始 | ✅ v1 |
+| [01-foundations](chapters/01-foundations/) | Tokenizer、Embedding、数据格式（从源码读起） | ✅ v1 |
+| [02-model](chapters/02-model/) | Block / RMSNorm / Attention / RoPE / GQA / SwiGLU / MoE | ✅ v1 |
+| [03-pretrain](chapters/03-pretrain/) | 数据与标签、前向到 loss、Pretrain 主循环 | ✅ v1 |
+| [04-inference](chapters/04-inference/) | KV cache 与 generate、推理服务、权重格式 | ✅ v1 |
+| [05-sft](chapters/05-sft/) | SFT：为什么只监督 assistant 回复 | ✅ v1 |
+| [06-dpo](chapters/06-dpo/) | DPO：偏好优化与 −logsigmoid 目标 | ✅ v1 |
+| [07-ppo-grpo](chapters/07-ppo-grpo/) | RL 总览、PPO、GRPO、SPO、训练信号总表 | ✅ v1 |
+| [08-training-mechanics](chapters/08-training-mechanics/) | 从 logits 到参数更新的完整训练机制 | ✅ v1 |
+| [09-minimind2-vs-3](chapters/09-minimind2-vs-3/) | MiniMind2 → MiniMind-3 / Qwen3-style 逐条对照 | ✅ v1 |
+| [10-experiments](chapters/10-experiments/) | 固定 prompt 实验设计、服务器训练记录、SFT vs RL 评测结论 | ✅ v1 |
+| [appendix](chapters/appendix/) | 进阶方向（Flash Attention / LoRA / 蒸馏 / Agent RL）点到为止 | ✅ v1 |
 
 每章是一个目录，下面按 `NN-子主题.md` 编号；章内用 `##` 分小节。每章末尾有思考题，参考答案折叠在题目下方。
+
+## 版本
+
+这是 **v1**：忠于 MiniMind 主线源码做一遍完整、准确的精读，行号与默认值都对照 MiniMind2（默认 `hidden_size=512`，即 MiniMind2-Small 约 26M）核对。有源码 / 实操支撑的写深，没有的诚实标注边界、点到为止（见 appendix）。
+
+后续加厚方向（本版未收）：GRPO 变体家族（Dr.GRPO / DAPO / GSPO 等）、Flash Attention 升级为独立章、归一化技术综述、Tokenizer BPE 训练细节、面试题库，以及把基石/架构/算法分 Part 重组。
 
 ## 配图
 

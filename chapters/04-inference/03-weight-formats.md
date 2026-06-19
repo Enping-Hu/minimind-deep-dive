@@ -27,7 +27,7 @@ model = MiniMindForCausalLM(MiniMindConfig(hidden_size=args.hidden_size, num_hid
 model.load_state_dict(torch.load(ckp, map_location=args.device), strict=True)
 ```
 
-结构由当前代码的 `MiniMindConfig` 现搭，`.pth` 只提供参数。于是 `.pth` 路线最怕**参数和结构对不上**：512 权重却传 `--hidden_size 768`、dense 权重却加 `--use_moe 1`、MoE 权重忘了 `_moe` 后缀、层数不符——都会让 `load_state_dict(strict=True)` 报 missing/unexpected key。这就是运行原生权重时必须把 `--hidden_size / --num_hidden_layers / --use_moe` 和训练时对齐的原因。（第 [10 章](../10-experiments/03-eval-conclusions-sft-vs-rl.md) 有个真实踩坑：GRPO 脚本默认 4 层，训出的权重和 8 层 SFT 对不上，eval 直接报缺 key。）
+结构由当前代码的 `MiniMindConfig` 现搭，`.pth` 只提供参数。于是 `.pth` 路线最怕**参数和结构对不上**：512 权重却传 `--hidden_size 768`、dense 权重却加 `--use_moe 1`、MoE 权重忘了 `_moe` 后缀、层数不符——都会让 `load_state_dict(strict=True)` 报 missing/unexpected key。这就是运行原生权重时必须把 `--hidden_size / --num_hidden_layers / --use_moe` 和训练时对齐的原因。
 
 ## Transformers 目录：自带一切
 

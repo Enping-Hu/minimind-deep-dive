@@ -2,7 +2,7 @@
 
 `trainer/train_pretrain.py` 是整个项目最基础的训练入口。后面的 SFT、DPO、PPO/GRPO 目标函数各异，但这套工程骨架——解析参数、建模型和数据、跑训练循环、存 checkpoint——几乎一致。先吃透这份脚本，等于吃透项目的训练骨架。
 
-这一节走它的整体结构，到「一步训练做了什么」为止。`loss → backward → optimizer.step` 这条更新链的数学细节集中在 [第 8 章](../08-training-mechanics/01-update-skeleton.md)，学习率调度、断点续训、混合精度、DDP 这些工程件在[附录](../appendix/01-training-engineering.md)。
+这一节走它的整体结构，到「一步训练做了什么」为止。`loss → backward → optimizer.step` 这条更新链的数学细节集中在 [第 8 章](../08-training-mechanics/01-update-skeleton.md)；学习率调度、断点续训、混合精度、DDP 这些工程件在本节随主流程一并点到，不单独展开。
 
 ## 脚本分两块
 
