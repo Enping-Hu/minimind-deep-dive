@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="780" viewBox="0 0 1280 780" role="img" aria-labelledby="title desc">
+  <title id="title">MiniMind 权重格式与转换路线</title>
+  <desc id="desc">展示 MiniMind 原生 PyTorch pth 权重、Transformers 目录、Llama-compatible 转换、vLLM、WebUI、API 和 llama.cpp/MNN 的关系。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff8ed"/>
+      <stop offset="0.55" stop-color="#eef6f5"/>
+      <stop offset="1" stop-color="#f2f0ff"/>
+    </linearGradient>
+    <linearGradient id="pth" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5c4033"/>
+      <stop offset="1" stop-color="#a66a43"/>
+    </linearGradient>
+    <linearGradient id="tf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#174a68"/>
+      <stop offset="1" stop-color="#2f86a6"/>
+    </linearGradient>
+    <linearGradient id="run" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#226b4f"/>
+      <stop offset="1" stop-color="#6fa35f"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#2a2a2a" flood-opacity="0.18"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334b53"/>
+    </marker>
+    <style>
+      .title { font: 800 34px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #17242a; }
+      .subtitle { font: 500 17px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #52656d; }
+      .label { font: 800 22px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #fff; }
+      .small { font: 500 15px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #f4fbfb; }
+      .dark { font: 800 20px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #1c2e35; }
+      .muted { font: 500 15px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #5a6b72; }
+      .code { font: 650 14px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fill: #18313a; }
+      .box { rx: 24; filter: url(#shadow); }
+      .line { stroke: #334b53; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #6f858c; stroke-width: 2.5; fill: none; stroke-dasharray: 8 8; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1280" height="780" fill="url(#bg)"/>
+  <circle cx="1130" cy="125" r="105" fill="#ffffff" opacity="0.45"/>
+  <circle cx="112" cy="660" r="135" fill="#ffffff" opacity="0.42"/>
+  <path d="M0 706 C185 640 275 730 455 666 C635 600 790 715 970 652 C1115 602 1190 615 1280 570 L1280 780 L0 780 Z" fill="#e1ead9" opacity="0.62"/>
+
+  <text x="58" y="65" class="title">MiniMind 权重格式：先分清文件长什么样，再决定怎么跑</text>
+  <text x="60" y="98" class="subtitle">核心判断：`.pth` 是原生 state_dict；`MiniMind2/` 是 Transformers 目录；端侧和高效框架通常还要再转换。</text>
+
+  <rect x="70" y="158" width="330" height="135" class="box" fill="url(#pth)"/>
+  <text x="100" y="199" class="label">原生 PyTorch 权重</text>
+  <text x="100" y="231" class="small">out/full_sft_512.pth</text>
+  <text x="100" y="258" class="small">只有参数 state_dict</text>
+
+  <rect x="70" y="355" width="330" height="135" class="box" fill="url(#tf)"/>
+  <text x="100" y="396" class="label">Transformers 目录</text>
+  <text x="100" y="428" class="small">MiniMind2/config.json</text>
+  <text x="100" y="455" class="small">tokenizer + config + model weights</text>
+
+  <rect x="475" y="155" width="330" height="138" class="box" fill="#ffffff"/>
+  <text x="505" y="194" class="dark">路线 A：直接原生推理</text>
+  <text x="505" y="224" class="code">eval_llm.py --load_from model</text>
+  <text x="505" y="253" class="muted">需要 hidden_size / layers / use_moe 对上</text>
+
+  <rect x="475" y="350" width="330" height="155" class="box" fill="#ffffff"/>
+  <text x="505" y="389" class="dark">路线 B：convert_model.py</text>
+  <text x="505" y="419" class="code">torch -> Transformers</text>
+  <text x="505" y="447" class="muted">save_pretrained + tokenizer.save_pretrained</text>
+  <text x="505" y="475" class="muted">可选 MiniMind 自定义结构或 Llama-compatible</text>
+
+  <rect x="890" y="126" width="315" height="118" class="box" fill="url(#run)"/>
+  <text x="918" y="164" class="label">eval_llm 实验</text>
+  <text x="918" y="194" class="small">固定 prompt / tokens/s</text>
+  <text x="918" y="219" class="small">最小验证优先</text>
+
+  <rect x="890" y="285" width="315" height="118" class="box" fill="url(#run)"/>
+  <text x="918" y="323" class="label">WebUI / API</text>
+  <text x="918" y="353" class="small">from_pretrained 目录加载</text>
+  <text x="918" y="378" class="small">OpenAI-compatible 服务</text>
+
+  <rect x="890" y="444" width="315" height="118" class="box" fill="url(#run)"/>
+  <text x="918" y="482" class="label">vLLM</text>
+  <text x="918" y="512" class="small">Transformers 目录启动服务</text>
+  <text x="918" y="537" class="small">后续再做系统优化</text>
+
+  <rect x="890" y="603" width="315" height="118" class="box" fill="url(#run)"/>
+  <text x="918" y="641" class="label">llama.cpp / MNN</text>
+  <text x="918" y="671" class="small">HF -> GGUF 或 MNN</text>
+  <text x="918" y="696" class="small">端侧部署路线，暂不主攻</text>
+
+  <path class="line" d="M400 226 L475 226"/>
+  <path class="line" d="M400 226 C440 226 435 427 475 427"/>
+  <path class="line" d="M400 423 L475 423"/>
+
+  <path class="line" d="M805 226 L890 185"/>
+  <path class="line" d="M805 427 L890 344"/>
+  <path class="line" d="M805 427 C850 427 842 503 890 503"/>
+  <path class="dash" d="M805 427 C850 515 835 662 890 662"/>
+
+  <rect x="70" y="548" width="735" height="112" rx="24" fill="#ffffff" opacity="0.94" filter="url(#shadow)"/>
+  <text x="100" y="586" class="dark">学习抓手</text>
+  <text x="100" y="615" class="muted">先会判断当前手里是什么格式，再选入口：`.pth` 优先 eval_llm 原生路线；Transformers 目录优先 eval_llm/WebUI/API/vLLM。</text>
+  <text x="100" y="645" class="muted">不要一上来背部署命令。格式不对时，命令看起来对也会加载失败。</text>
+</svg>

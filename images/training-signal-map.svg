@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="820" viewBox="0 0 1240 820" role="img" aria-labelledby="title desc">
+  <title id="title">MiniMind 训练信号总览图</title>
+  <desc id="desc">对比 Pretrain、SFT、DPO、PPO、GRPO、SPO 的输入数据、监督信号、是否在线生成、是否需要 reference、critic 或 baseline。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbff"/>
+      <stop offset="0.50" stop-color="#f6fbf2"/>
+      <stop offset="1" stop-color="#fff7ef"/>
+    </linearGradient>
+    <linearGradient id="main" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1f6f8b"/>
+      <stop offset="1" stop-color="#2d9c72"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#17324d" flood-opacity="0.12"/>
+    </filter>
+    <style>
+      .title { font: 700 30px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #173247; }
+      .subtitle { font: 400 15px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #52677a; }
+      .stage-title { font: 700 18px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #173247; }
+      .text { font: 400 13px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #43576a; }
+      .small { font: 400 12px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #647789; }
+      .white { font: 700 14px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #ffffff; }
+      .card { fill: #ffffff; stroke: #d8e4ea; stroke-width: 1.3; rx: 22; filter: url(#shadow); }
+      .tag { fill: url(#main); rx: 13; }
+    </style>
+  </defs>
+
+  <rect width="1240" height="820" fill="url(#bg)"/>
+  <circle cx="1080" cy="110" r="130" fill="#f1c56b" opacity="0.20"/>
+  <circle cx="120" cy="700" r="160" fill="#68b8d0" opacity="0.12"/>
+  <path d="M0 120 C180 78 300 170 470 124 S770 62 960 140 S1120 196 1240 152" fill="none" stroke="#9bc8b7" stroke-width="2" opacity="0.42"/>
+
+  <text x="58" y="58" class="title">MiniMind 训练信号总览：从 next-token 到 reward advantage</text>
+  <text x="58" y="86" class="subtitle">看懂项目不是背脚本名，而是能说清每个阶段“数据给了什么、模型学什么、loss/advantage 从哪里来”。</text>
+
+  <g transform="translate(60,130)">
+    <rect class="card" width="350" height="175"/>
+    <text x="24" y="36" class="stage-title">Pretrain</text>
+    <rect class="tag" x="232" y="20" width="90" height="26"/>
+    <text x="249" y="38" class="white">基础能力</text>
+    <text x="24" y="70" class="text">输入：大规模普通文本 token</text>
+    <text x="24" y="98" class="text">信号：next-token prediction</text>
+    <text x="24" y="126" class="text">loss：CrossEntropy，pad 为 -100</text>
+    <text x="24" y="152" class="small">目标：学习语言和世界知识分布</text>
+  </g>
+
+  <g transform="translate(445,130)">
+    <rect class="card" width="350" height="175"/>
+    <text x="24" y="36" class="stage-title">SFT</text>
+    <rect class="tag" x="232" y="20" width="90" height="26"/>
+    <text x="249" y="38" class="white">指令跟随</text>
+    <text x="24" y="70" class="text">输入：chat template 完整对话</text>
+    <text x="24" y="98" class="text">信号：assistant 回复 token</text>
+    <text x="24" y="126" class="text">loss：只监督 assistant 区域</text>
+    <text x="24" y="152" class="small">目标：学会按用户问题回答</text>
+  </g>
+
+  <g transform="translate(830,130)">
+    <rect class="card" width="350" height="175"/>
+    <text x="24" y="36" class="stage-title">DPO</text>
+    <rect class="tag" x="232" y="20" width="90" height="26"/>
+    <text x="249" y="38" class="white">离线偏好</text>
+    <text x="24" y="70" class="text">输入：prompt + chosen/rejected</text>
+    <text x="24" y="98" class="text">信号：chosen 应优于 rejected</text>
+    <text x="24" y="126" class="text">参照：frozen ref_model</text>
+    <text x="24" y="152" class="small">目标：直接优化偏好排序</text>
+  </g>
+
+  <g transform="translate(60,360)">
+    <rect class="card" width="350" height="210"/>
+    <text x="24" y="36" class="stage-title">PPO</text>
+    <rect class="tag" x="232" y="20" width="90" height="26"/>
+    <text x="249" y="38" class="white">在线 RL</text>
+    <text x="24" y="70" class="text">输入：prompt，policy 在线生成</text>
+    <text x="24" y="98" class="text">信号：reward - critic value</text>
+    <text x="24" y="126" class="text">组件：critic、old actor、ref_model</text>
+    <text x="24" y="154" class="text">约束：ratio clip + KL/ref</text>
+    <text x="24" y="182" class="small">目标：稳定地增强高 advantage 回答</text>
+  </g>
+
+  <g transform="translate(445,360)">
+    <rect class="card" width="350" height="210"/>
+    <text x="24" y="36" class="stage-title">GRPO</text>
+    <rect class="tag" x="232" y="20" width="90" height="26"/>
+    <text x="249" y="38" class="white">组内相对</text>
+    <text x="24" y="70" class="text">输入：同一 prompt 生成 G 条回答</text>
+    <text x="24" y="98" class="text">信号：(reward - group mean) / std</text>
+    <text x="24" y="126" class="text">组件：ref_model，无 critic</text>
+    <text x="24" y="154" class="text">约束：token-level KL/ref</text>
+    <text x="24" y="182" class="small">目标：用同题多回答替代 value model</text>
+  </g>
+
+  <g transform="translate(830,360)">
+    <rect class="card" width="350" height="210"/>
+    <text x="24" y="36" class="stage-title">SPO</text>
+    <rect class="tag" x="232" y="20" width="90" height="26"/>
+    <text x="249" y="38" class="white">单流优化</text>
+    <text x="24" y="70" class="text">输入：每个 prompt 生成 1 条回答</text>
+    <text x="24" y="98" class="text">信号：reward - tracker baseline</text>
+    <text x="24" y="126" class="text">组件：AutoAdaptiveValueTracker</text>
+    <text x="24" y="154" class="text">约束：token-level KL/ref</text>
+    <text x="24" y="182" class="small">目标：用跨 batch baseline 替代 critic/组采样</text>
+  </g>
+
+  <g transform="translate(120,650)">
+    <rect width="1000" height="72" rx="28" fill="url(#main)" filter="url(#shadow)"/>
+    <text x="36" y="30" class="white">学习主线：Pretrain 学“语言分布” → SFT 学“按指令回答” → DPO 学“偏好排序” → PPO/GRPO/SPO 学“在线生成后按 reward/advantage 调整 policy”。</text>
+    <text x="36" y="54" class="white">面试抓手：不要只说训练脚本，重点说清数据形态、训练信号、reference/baseline/critic 的角色差异。</text>
+  </g>
+</svg>

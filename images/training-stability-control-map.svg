@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="700" viewBox="0 0 1320 700" role="img" aria-labelledby="title desc">
+  <title id="title">MiniMind training stability control map</title>
+  <desc id="desc">A Chinese-first diagram mapping learning rate, scheduler, gradient clipping, PPO clip, KL penalty, and advantage clamp to different layers of the training chain.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f4fbff"/>
+      <stop offset="48%" stop-color="#fff7e8"/>
+      <stop offset="100%" stop-color="#eef8f0"/>
+    </linearGradient>
+    <linearGradient id="cardBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e4f1ff"/>
+    </linearGradient>
+    <linearGradient id="cardAmber" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffdfa"/>
+      <stop offset="100%" stop-color="#f2dfb8"/>
+    </linearGradient>
+    <linearGradient id="cardGreen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fbfff9"/>
+      <stop offset="100%" stop-color="#d8ecd8"/>
+    </linearGradient>
+    <linearGradient id="cardRose" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffafa"/>
+      <stop offset="100%" stop-color="#f3d7d4"/>
+    </linearGradient>
+    <filter id="shadow" x="-16%" y="-16%" width="132%" height="132%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#263238" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2e4052"/>
+    </marker>
+    <style>
+      .title { font: 700 31px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .subtitle { font: 500 15px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #5c6872; }
+      .phase { font: 700 17px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .cardTitle { font: 700 16px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #21313f; }
+      .text { font: 500 13px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #374957; }
+      .small { font: 500 12px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #62717c; }
+      .code { font: 600 12px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #253746; }
+      .badge { font: 700 12px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #ffffff; }
+      .arrow { stroke: #2e4052; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+      .soft { stroke: #80652a; stroke-width: 2.1; fill: none; stroke-dasharray: 7 6; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1320" height="700" rx="30" fill="url(#bg)"/>
+  <circle cx="1148" cy="118" r="138" fill="#dbeeff" opacity="0.68"/>
+  <circle cx="142" cy="578" r="156" fill="#e4eed1" opacity="0.66"/>
+  <path d="M54 126 C222 58, 374 166, 540 118 S894 62, 1268 148" stroke="#ffffff" stroke-width="24" opacity="0.56" fill="none"/>
+
+  <text x="50" y="56" class="title">训练稳定性机制总图：别把所有“防发散”混成一类</text>
+  <text x="52" y="84" class="subtitle">同样是让训练别跑飞，它们分别作用在 reward/advantage、policy objective、KL/reference、gradient 和 learning rate 层。</text>
+
+  <g filter="url(#shadow)">
+    <rect x="64" y="132" width="194" height="112" rx="20" fill="url(#cardGreen)" stroke="#b8d3b8"/>
+    <rect x="84" y="154" width="38" height="23" rx="11.5" fill="#4e8b60"/>
+    <text x="95" y="171" class="badge">1</text>
+    <text x="84" y="200" class="cardTitle">reward / advantage</text>
+    <text x="84" y="224" class="text">先稳住训练信号</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="308" y="132" width="194" height="112" rx="20" fill="url(#cardAmber)" stroke="#dfc78d"/>
+    <rect x="328" y="154" width="38" height="23" rx="11.5" fill="#9b7627"/>
+    <text x="339" y="171" class="badge">2</text>
+    <text x="328" y="200" class="cardTitle">policy objective</text>
+    <text x="328" y="224" class="text">再限制目标太激进</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="552" y="132" width="194" height="112" rx="20" fill="url(#cardRose)" stroke="#e1b8b4"/>
+    <rect x="572" y="154" width="38" height="23" rx="11.5" fill="#aa5b55"/>
+    <text x="583" y="171" class="badge">3</text>
+    <text x="572" y="200" class="cardTitle">KL / reference</text>
+    <text x="572" y="224" class="text">约束不要整体漂移</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="796" y="132" width="194" height="112" rx="20" fill="url(#cardBlue)" stroke="#bdd3e9"/>
+    <rect x="816" y="154" width="38" height="23" rx="11.5" fill="#3578ad"/>
+    <text x="827" y="171" class="badge">4</text>
+    <text x="816" y="200" class="cardTitle">gradient</text>
+    <text x="816" y="224" class="text">更新前限制梯度范数</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1040" y="132" width="194" height="112" rx="20" fill="url(#cardBlue)" stroke="#bdd3e9"/>
+    <rect x="1060" y="154" width="38" height="23" rx="11.5" fill="#3578ad"/>
+    <text x="1071" y="171" class="badge">5</text>
+    <text x="1060" y="200" class="cardTitle">learning rate</text>
+    <text x="1060" y="224" class="text">控制每一步走多大</text>
+  </g>
+
+  <path d="M258 188 L300 188" class="arrow"/>
+  <path d="M502 188 L544 188" class="arrow"/>
+  <path d="M746 188 L788 188" class="arrow"/>
+  <path d="M990 188 L1032 188" class="arrow"/>
+
+  <g filter="url(#shadow)">
+    <rect x="76" y="310" width="262" height="248" rx="22" fill="url(#cardGreen)" stroke="#b8d3b8"/>
+    <text x="102" y="348" class="phase">信号层：advantage clamp</text>
+    <text x="102" y="382" class="text">裁剪对象：advantage</text>
+    <text x="102" y="411" class="text">源码：GRPO</text>
+    <text x="102" y="438" class="code">torch.clamp(..., -10, 10)</text>
+    <text x="102" y="474" class="small">目的：极端 reward 差异不要把</text>
+    <text x="102" y="493" class="small">policy loss 推得过猛。</text>
+    <text x="102" y="530" class="small">关键词：reward scale / advantage</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="376" y="310" width="262" height="248" rx="22" fill="url(#cardAmber)" stroke="#dfc78d"/>
+    <text x="402" y="348" class="phase">目标层：PPO ratio clip</text>
+    <text x="402" y="382" class="text">裁剪对象：pi_new / pi_old</text>
+    <text x="402" y="411" class="text">源码：PPO</text>
+    <text x="402" y="438" class="code">clamp(ratio, 1-eps, 1+eps)</text>
+    <text x="402" y="474" class="small">目的：不要让当前 policy 相对</text>
+    <text x="402" y="493" class="small">old policy 一步变化太大。</text>
+    <text x="402" y="530" class="small">关键词：trust region / objective</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="676" y="310" width="262" height="248" rx="22" fill="url(#cardRose)" stroke="#e1b8b4"/>
+    <text x="702" y="348" class="phase">漂移层：KL penalty</text>
+    <text x="702" y="382" class="text">约束对象：policy vs ref</text>
+    <text x="702" y="411" class="text">源码：PPO / GRPO / SPO</text>
+    <text x="702" y="438" class="code">kl_ref / beta * per_token_kl</text>
+    <text x="702" y="474" class="small">目的：奖励优化时不要把模型</text>
+    <text x="702" y="493" class="small">整体语言能力带偏。</text>
+    <text x="702" y="530" class="small">关键词：reference model / drift</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="976" y="310" width="262" height="248" rx="22" fill="url(#cardBlue)" stroke="#bdd3e9"/>
+    <text x="1002" y="348" class="phase">更新层：grad clip + lr</text>
+    <text x="1002" y="382" class="text">对象：param.grad / step size</text>
+    <text x="1002" y="411" class="text">源码：所有训练脚本</text>
+    <text x="1002" y="438" class="code">clip_grad_norm_ + scheduler</text>
+    <text x="1002" y="474" class="small">目的：梯度不要爆，参数每步</text>
+    <text x="1002" y="493" class="small">更新也不要过大。</text>
+    <text x="1002" y="530" class="small">关键词：optimizer.step / lr curve</text>
+  </g>
+
+  <path d="M338 434 L368 434" class="soft"/>
+  <path d="M638 434 L668 434" class="soft"/>
+  <path d="M938 434 L968 434" class="soft"/>
+
+  <text x="94" y="620" class="small">读源码时的检查顺序：先问裁剪对象，再问发生位置，最后问它是在改变训练信号、目标函数、参考约束、梯度，还是更新步长。</text>
+</svg>

@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="560" viewBox="0 0 1260 560" role="img" aria-labelledby="title desc">
+  <title id="title">AdamW learning rate weight decay optimizer step flow</title>
+  <desc id="desc">MiniMind optimizer step intuition: gradients, AdamW moments, learning rate, weight decay, scheduler, and parameter update.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7fbff"/>
+      <stop offset="48%" stop-color="#fff5e7"/>
+      <stop offset="100%" stop-color="#edf8ef"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e5f1ff"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffdf7"/>
+      <stop offset="100%" stop-color="#f1dfb5"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7fff8"/>
+      <stop offset="100%" stop-color="#d8ecd8"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="9" stdDeviation="11" flood-color="#263238" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2f4050"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .subtitle { font: 500 15px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #5b6770; }
+      .card-title { font: 700 17px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .card-text { font: 500 13px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #35444f; }
+      .code { font: 600 13px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #21313f; }
+      .small { font: 500 12px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #62717c; }
+      .arrow { stroke: #2f4050; stroke-width: 2.3; fill: none; marker-end: url(#arrow); }
+      .soft { stroke: #8b6f2e; stroke-width: 2; fill: none; stroke-dasharray: 7 6; marker-end: url(#arrow); }
+      .badge { font: 700 12px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <rect width="1260" height="560" rx="28" fill="url(#bg)"/>
+  <circle cx="1110" cy="96" r="112" fill="#d9edff" opacity="0.68"/>
+  <circle cx="130" cy="456" r="130" fill="#e7efd4" opacity="0.66"/>
+  <path d="M42 122 C212 50, 358 170, 524 112 S862 60, 1218 142" stroke="#ffffff" stroke-width="24" opacity="0.55" fill="none"/>
+
+  <text x="48" y="54" class="title">AdamW / learning rate / weight decay：optimizer.step 里发生什么</text>
+  <text x="50" y="82" class="subtitle">本节只抓最小直觉：梯度给方向，AdamW 稳定方向，learning rate 控制步长，weight decay 抑制权重过大。</text>
+
+  <g filter="url(#shadow)">
+    <rect x="56" y="132" width="174" height="118" rx="18" fill="url(#blue)" stroke="#c7d8e8"/>
+    <rect x="74" y="150" width="36" height="22" rx="11" fill="#3c78a8"/>
+    <text x="85" y="166" class="badge">1</text>
+    <text x="74" y="194" class="card-title">梯度输入</text>
+    <text x="74" y="220" class="code">param.grad</text>
+    <text x="74" y="241" class="small">loss 告诉参数该怎么动</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="276" y="132" width="196" height="118" rx="18" fill="url(#amber)" stroke="#dec987"/>
+    <rect x="294" y="150" width="36" height="22" rx="11" fill="#9b7627"/>
+    <text x="305" y="166" class="badge">2</text>
+    <text x="294" y="194" class="card-title">AdamW 动量统计</text>
+    <text x="294" y="220" class="code">m / v</text>
+    <text x="294" y="241" class="small">一阶方向 + 二阶尺度</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="518" y="132" width="176" height="118" rx="18" fill="url(#amber)" stroke="#dec987"/>
+    <rect x="536" y="150" width="36" height="22" rx="11" fill="#9b7627"/>
+    <text x="547" y="166" class="badge">3</text>
+    <text x="536" y="194" class="card-title">学习率控制步长</text>
+    <text x="536" y="220" class="code">param_group['lr']</text>
+    <text x="536" y="241" class="small">决定这一步迈多大</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="740" y="132" width="176" height="118" rx="18" fill="url(#green)" stroke="#b9d2bd"/>
+    <rect x="758" y="150" width="36" height="22" rx="11" fill="#4f8c5f"/>
+    <text x="769" y="166" class="badge">4</text>
+    <text x="758" y="194" class="card-title">weight decay</text>
+    <text x="758" y="220" class="code">AdamW</text>
+    <text x="758" y="241" class="small">把权重往小一点拉</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="962" y="132" width="184" height="118" rx="18" fill="url(#green)" stroke="#b9d2bd"/>
+    <rect x="980" y="150" width="36" height="22" rx="11" fill="#4f8c5f"/>
+    <text x="991" y="166" class="badge">5</text>
+    <text x="980" y="194" class="card-title">参数更新</text>
+    <text x="980" y="220" class="code">optimizer.step()</text>
+    <text x="980" y="241" class="small">真正改 parameter</text>
+  </g>
+
+  <path class="arrow" d="M232 191 H270"/>
+  <path class="arrow" d="M474 191 H512"/>
+  <path class="arrow" d="M696 191 H734"/>
+  <path class="arrow" d="M918 191 H956"/>
+
+  <g filter="url(#shadow)">
+    <rect x="80" y="330" width="326" height="138" rx="20" fill="#ffffff" opacity="0.94" stroke="#d8dee4"/>
+    <text x="106" y="366" class="card-title">Pretrain / SFT / DPO</text>
+    <text x="106" y="396" class="code">lr = get_lr(...)</text>
+    <text x="106" y="422" class="code">param_group['lr'] = lr</text>
+    <text x="106" y="446" class="small">每个 step 手动写入 cosine decay 学习率</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="468" y="330" width="326" height="138" rx="20" fill="#ffffff" opacity="0.94" stroke="#d8dee4"/>
+    <text x="494" y="366" class="card-title">PPO / GRPO / SPO</text>
+    <text x="494" y="396" class="code">CosineAnnealingLR</text>
+    <text x="494" y="422" class="code">scheduler.step()</text>
+    <text x="494" y="446" class="small">优化器 step 后由 scheduler 更新学习率</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="856" y="330" width="326" height="138" rx="20" fill="#ffffff" opacity="0.94" stroke="#d8dee4"/>
+    <text x="882" y="366" class="card-title">最小口头版</text>
+    <text x="882" y="396" class="card-text">gradient 给方向，AdamW 用历史梯度平滑方向，</text>
+    <text x="882" y="422" class="card-text">learning rate 控制步长，weight decay 做约束，</text>
+    <text x="882" y="446" class="card-text">scheduler 决定训练过程中步长怎么变。</text>
+  </g>
+
+  <path class="soft" d="M246 326 C284 284, 450 274, 606 254"/>
+  <path class="soft" d="M632 326 C662 292, 676 274, 696 252"/>
+</svg>

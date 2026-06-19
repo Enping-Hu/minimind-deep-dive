@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="640" viewBox="0 0 1260 640" role="img" aria-labelledby="title desc">
+  <title id="title">Gradient clipping vs PPO ratio clipping</title>
+  <desc id="desc">MiniMind note diagram comparing gradient norm clipping, PPO ratio clipping, and GRPO advantage clamp.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f6fbff"/>
+      <stop offset="52%" stop-color="#fff7ea"/>
+      <stop offset="100%" stop-color="#eff7ef"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#dfeeff"/>
+    </linearGradient>
+    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffdfa"/>
+      <stop offset="100%" stop-color="#f5dfb5"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fbfff9"/>
+      <stop offset="100%" stop-color="#d8ecd8"/>
+    </linearGradient>
+    <filter id="shadow" x="-18%" y="-18%" width="136%" height="136%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#263238" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2c3e50"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .subtitle { font: 500 15px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #5d6872; }
+      .section { font: 700 19px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .label { font: 700 15px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #243442; }
+      .text { font: 500 13px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #364a57; }
+      .small { font: 500 12px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #60717d; }
+      .code { font: 600 12px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #21313f; }
+      .badge { font: 700 12px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #ffffff; }
+      .arrow { stroke: #2c3e50; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #8c6c2e; stroke-width: 2.2; fill: none; stroke-dasharray: 7 6; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1260" height="640" rx="30" fill="url(#bg)"/>
+  <circle cx="1110" cy="108" r="126" fill="#dbeeff" opacity="0.68"/>
+  <circle cx="154" cy="520" r="150" fill="#e4eed1" opacity="0.64"/>
+  <path d="M42 130 C196 68, 336 164, 500 118 S842 62, 1214 146" stroke="#ffffff" stroke-width="24" opacity="0.58" fill="none"/>
+
+  <text x="48" y="56" class="title">gradient clipping vs PPO clip：两个 clip 不是一回事</text>
+  <text x="50" y="84" class="subtitle">同样叫 clip，但它们裁剪的对象、发生的位置、影响的训练环节都不同。</text>
+
+  <g filter="url(#shadow)">
+    <rect x="58" y="128" width="536" height="206" rx="22" fill="url(#blue)" stroke="#bdd3e9"/>
+    <rect x="78" y="150" width="40" height="24" rx="12" fill="#3578ad"/>
+    <text x="89" y="167" class="badge">A</text>
+    <text x="132" y="168" class="section">梯度裁剪：限制“更新前的梯度整体大小”</text>
+
+    <rect x="88" y="206" width="138" height="64" rx="14" fill="#ffffff" stroke="#c8d9ea"/>
+    <text x="108" y="233" class="label">loss.backward()</text>
+    <text x="108" y="254" class="small">产生 param.grad</text>
+
+    <rect x="282" y="206" width="164" height="64" rx="14" fill="#ffffff" stroke="#c8d9ea"/>
+    <text x="304" y="233" class="label">clip_grad_norm_</text>
+    <text x="304" y="254" class="small">缩放过大的梯度范数</text>
+
+    <rect x="498" y="206" width="66" height="64" rx="14" fill="#ffffff" stroke="#c8d9ea"/>
+    <text x="516" y="233" class="label">step</text>
+    <text x="512" y="254" class="small">更新参数</text>
+
+    <path d="M226 238 L274 238" class="arrow"/>
+    <path d="M446 238 L490 238" class="arrow"/>
+
+    <text x="88" y="302" class="code">torch.nn.utils.clip_grad_norm_(model.parameters(), args.grad_clip)</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="666" y="128" width="536" height="206" rx="22" fill="url(#orange)" stroke="#dfc78d"/>
+    <rect x="686" y="150" width="40" height="24" rx="12" fill="#9b7627"/>
+    <text x="697" y="167" class="badge">B</text>
+    <text x="740" y="168" class="section">PPO ratio clip：限制“新旧 policy 变化过猛”</text>
+
+    <rect x="696" y="206" width="112" height="64" rx="14" fill="#ffffff" stroke="#dfc78d"/>
+    <text x="718" y="233" class="label">ratio</text>
+    <text x="712" y="254" class="small">新/旧概率比</text>
+
+    <rect x="858" y="206" width="136" height="64" rx="14" fill="#ffffff" stroke="#dfc78d"/>
+    <text x="880" y="233" class="label">clamp ratio</text>
+    <text x="878" y="254" class="small">限制在 1±eps</text>
+
+    <rect x="1044" y="206" width="128" height="64" rx="14" fill="#ffffff" stroke="#dfc78d"/>
+    <text x="1067" y="233" class="label">policy_loss</text>
+    <text x="1061" y="254" class="small">形成反向信号</text>
+
+    <path d="M808 238 L850 238" class="arrow"/>
+    <path d="M994 238 L1036 238" class="arrow"/>
+
+    <text x="696" y="302" class="code">surr2 = torch.clamp(ratio, 1-eps, 1+eps) * advantages</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="136" y="390" width="988" height="166" rx="24" fill="url(#green)" stroke="#b6d1b9"/>
+    <rect x="160" y="414" width="40" height="24" rx="12" fill="#4d8a5e"/>
+    <text x="171" y="431" class="badge">C</text>
+    <text x="214" y="432" class="section">GRPO advantage clamp：又是第三种东西</text>
+
+    <text x="164" y="474" class="text">GRPO 里的 clamp 裁剪的是标准化后的 advantage 数值，目的是防止极端 reward 差异把训练信号放得太大。</text>
+    <text x="164" y="504" class="code">advantages = torch.clamp((rewards - mean_r) / (std_r + 1e-4), -10, 10)</text>
+    <text x="164" y="536" class="small">它不是梯度裁剪，也不是 PPO 的 ratio clip。看到 clamp/clip 时，先问：裁剪的对象是谁？发生在 backward 前还是 backward 后？</text>
+  </g>
+
+  <path d="M326 344 C390 376, 490 380, 564 360" class="dash"/>
+  <path d="M934 344 C884 374, 780 380, 702 360" class="dash"/>
+  <text x="546" y="370" class="small">名字相似，但所在层级不同</text>
+</svg>

@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="520" viewBox="0 0 1180 520" role="img" aria-labelledby="title desc">
+  <title id="title">logits log_softmax gather flow</title>
+  <desc id="desc">MiniMind probability chain from logits over vocabulary to log probabilities and target token log-prob extraction by gather.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff8ec"/>
+      <stop offset="50%" stop-color="#eef7ff"/>
+      <stop offset="100%" stop-color="#eef8ef"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e7f2ff"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffdf7"/>
+      <stop offset="100%" stop-color="#f4e3bd"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fff8"/>
+      <stop offset="100%" stop-color="#d9ecd9"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="9" stdDeviation="11" flood-color="#263238" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2f4050"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .subtitle { font: 500 15px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #5b6770; }
+      .card-title { font: 700 18px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .card-text { font: 500 14px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #35444f; }
+      .code { font: 600 14px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #21313f; }
+      .small { font: 500 12px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #62717c; }
+      .arrow { stroke: #2f4050; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+      .badge { font: 700 12px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <rect width="1180" height="520" rx="28" fill="url(#bg)"/>
+  <circle cx="1050" cy="100" r="112" fill="#dbeeff" opacity="0.7"/>
+  <circle cx="130" cy="420" r="132" fill="#f1dfb3" opacity="0.5"/>
+  <path d="M40 118 C210 42, 340 172, 514 110 S840 58, 1138 140" stroke="#ffffff" stroke-width="22" opacity="0.58" fill="none"/>
+
+  <text x="48" y="54" class="title">logits / log_softmax / gather：怎么取出目标 token 的概率</text>
+  <text x="50" y="82" class="subtitle">同一条概率链连接 Causal LM cross entropy、DPO chosen/rejected log-prob、PPO/GRPO/SPO response log-prob。</text>
+
+  <g filter="url(#shadow)">
+    <rect x="52" y="128" width="196" height="130" rx="20" fill="url(#blue)" stroke="#c7d8e8"/>
+    <rect x="72" y="148" width="38" height="24" rx="12" fill="#3c78a8"/>
+    <text x="84" y="165" class="badge">1</text>
+    <text x="72" y="194" class="card-title">模型输出 logits</text>
+    <text x="72" y="222" class="code">[B, T, V]</text>
+    <text x="72" y="245" class="small">每个位置对词表所有 token 打分</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="300" y="128" width="202" height="130" rx="20" fill="url(#amber)" stroke="#dec987"/>
+    <rect x="320" y="148" width="38" height="24" rx="12" fill="#9b7627"/>
+    <text x="332" y="165" class="badge">2</text>
+    <text x="320" y="194" class="card-title">变成 log-prob</text>
+    <text x="320" y="222" class="code">F.log_softmax(...)</text>
+    <text x="320" y="245" class="small">对词表维归一化后取对数</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="554" y="128" width="202" height="130" rx="20" fill="url(#amber)" stroke="#dec987"/>
+    <rect x="574" y="148" width="38" height="24" rx="12" fill="#9b7627"/>
+    <text x="586" y="165" class="badge">3</text>
+    <text x="574" y="194" class="card-title">用 labels 当索引</text>
+    <text x="574" y="222" class="code">labels.unsqueeze(...)</text>
+    <text x="574" y="245" class="small">告诉 gather 要取哪个 token</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="808" y="128" width="202" height="130" rx="20" fill="url(#green)" stroke="#b9d2bd"/>
+    <rect x="828" y="148" width="38" height="24" rx="12" fill="#4f8c5f"/>
+    <text x="840" y="165" class="badge">4</text>
+    <text x="828" y="194" class="card-title">抽出目标 log-prob</text>
+    <text x="828" y="222" class="code">gather(...).squeeze</text>
+    <text x="828" y="245" class="small">得到每个位置真实 token 的分数</text>
+  </g>
+
+  <path class="arrow" d="M250 193 H294"/>
+  <path class="arrow" d="M504 193 H548"/>
+  <path class="arrow" d="M758 193 H802"/>
+
+  <g filter="url(#shadow)">
+    <rect x="84" y="326" width="300" height="126" rx="20" fill="#ffffff" opacity="0.94" stroke="#d8dee4"/>
+    <text x="108" y="360" class="card-title">CE loss 路线</text>
+    <text x="108" y="390" class="code">F.cross_entropy(logits, labels)</text>
+    <text x="108" y="416" class="card-text">内部等价于 log_softmax 后取目标 token，</text>
+    <text x="108" y="438" class="card-text">再做负号和平均。</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="438" y="326" width="300" height="126" rx="20" fill="#ffffff" opacity="0.94" stroke="#d8dee4"/>
+    <text x="462" y="360" class="card-title">DPO 路线</text>
+    <text x="462" y="390" class="code">logits_to_log_probs</text>
+    <text x="462" y="416" class="card-text">显式取 chosen/rejected 每个 token 的</text>
+    <text x="462" y="438" class="card-text">log-prob，再比较 policy 和 ref。</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="792" y="326" width="300" height="126" rx="20" fill="#ffffff" opacity="0.94" stroke="#d8dee4"/>
+    <text x="816" y="360" class="card-title">RL 路线</text>
+    <text x="816" y="390" class="code">per_token_logps</text>
+    <text x="816" y="416" class="card-text">抽出生成 response 的 token log-prob，</text>
+    <text x="816" y="438" class="card-text">再和 advantage / KL 组合成 loss。</text>
+  </g>
+
+  <path class="arrow" d="M909 260 C850 302, 732 305, 592 320"/>
+  <path class="arrow" d="M907 260 C930 285, 940 302, 942 320"/>
+  <path class="arrow" d="M906 260 C710 304, 424 300, 234 320"/>
+</svg>

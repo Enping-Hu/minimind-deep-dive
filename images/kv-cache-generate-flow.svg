@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="960" viewBox="0 0 1500 960">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#eef6ff"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f7fbff"/>
+    </linearGradient>
+    <linearGradient id="cache" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#bfdbfe"/>
+    </linearGradient>
+    <linearGradient id="newtok" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dcfce7"/>
+      <stop offset="100%" stop-color="#bbf7d0"/>
+    </linearGradient>
+    <linearGradient id="attn" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#64748b" flood-opacity="0.16"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L11,4 z" fill="#475569"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L11,4 z" fill="#2563eb"/>
+    </marker>
+    <style>
+      .title { font: 800 38px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 19px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .label { font: 760 23px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .small { font: 500 16px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .hint { font: 500 15px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #64748b; }
+      .code { font: 700 18px 'SFMono-Regular','Menlo','Consolas',monospace; fill: #334155; }
+      .panel { fill: url(#panel); stroke: #dbe7f3; stroke-width: 2; rx: 26; filter: url(#shadow); }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; rx: 18; filter: url(#shadow); }
+      .cache { fill: url(#cache); stroke: #2563eb; stroke-width: 2.4; rx: 18; filter: url(#shadow); }
+      .newtok { fill: url(#newtok); stroke: #16a34a; stroke-width: 2.4; rx: 18; filter: url(#shadow); }
+      .attn { fill: url(#attn); stroke: #d97706; stroke-width: 2.4; rx: 18; filter: url(#shadow); }
+      .out { fill: #fee2e2; stroke: #ef4444; stroke-width: 2.4; rx: 18; filter: url(#shadow); }
+      .arrow { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .cacheArrow { stroke: #2563eb; stroke-width: 3; fill: none; marker-end: url(#arrowBlue); stroke-dasharray: 9 7; }
+      .soft { stroke: #94a3b8; stroke-width: 2; fill: none; stroke-dasharray: 7 7; }
+      .divider { stroke: #e2e8f0; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="960" fill="url(#bg)"/>
+  <text x="70" y="70" class="title">KV cache 与 generate：逐 token 生成时复用历史 K/V</text>
+  <text x="70" y="106" class="subtitle">没有 cache 时每一步都重算完整前缀；有 cache 时只计算新 token 的 Q/K/V，并把新 K/V 接到历史缓存后面。</text>
+
+  <rect x="60" y="140" width="1380" height="730" class="panel"/>
+
+  <rect x="105" y="210" width="310" height="112" class="box"/>
+  <text x="260" y="246" text-anchor="middle" class="label">第一步：整段 prompt</text>
+  <text x="260" y="278" text-anchor="middle" class="code">input_ids: [B, S]</text>
+  <text x="260" y="304" text-anchor="middle" class="hint">一次性计算 prompt 的 hidden states</text>
+
+  <path d="M415 266 L515 266" class="arrow"/>
+
+  <rect x="515" y="210" width="315" height="112" class="attn"/>
+  <text x="672" y="246" text-anchor="middle" class="label">Attention 计算 K/V</text>
+  <text x="672" y="278" text-anchor="middle" class="code">K,V: [B, S, n_kv, D]</text>
+  <text x="672" y="304" text-anchor="middle" class="hint">每层都会产出自己的 K/V</text>
+
+  <path d="M830 266 L940 266" class="arrow"/>
+
+  <rect x="940" y="200" width="360" height="132" class="cache"/>
+  <text x="1120" y="236" text-anchor="middle" class="label">保存 past_key_values</text>
+  <text x="1120" y="269" text-anchor="middle" class="code">每层一个 (past_k, past_v)</text>
+  <text x="1120" y="298" text-anchor="middle" class="hint">供下一步增量推理复用</text>
+
+  <path d="M1120 332 C1120 405, 1050 442, 960 470" class="cacheArrow"/>
+
+  <rect x="105" y="430" width="310" height="112" class="newtok"/>
+  <text x="260" y="466" text-anchor="middle" class="label">后续步：只喂新 token</text>
+  <text x="260" y="498" text-anchor="middle" class="code">input_ids: [B, 1]</text>
+  <text x="260" y="524" text-anchor="middle" class="hint">GenerationMixin 循环驱动</text>
+
+  <path d="M415 486 L515 486" class="arrow"/>
+
+  <rect x="515" y="420" width="345" height="132" class="attn"/>
+  <text x="688" y="455" text-anchor="middle" class="label">只算新 token 的 Q/K/V</text>
+  <text x="688" y="488" text-anchor="middle" class="code">new K,V: [B, 1, n_kv, D]</text>
+  <text x="688" y="517" text-anchor="middle" class="hint">历史 token 的 K/V 不再重算</text>
+
+  <path d="M860 486 L965 486" class="arrow"/>
+
+  <rect x="965" y="420" width="335" height="132" class="cache"/>
+  <text x="1132" y="455" text-anchor="middle" class="label">拼接历史 K/V</text>
+  <text x="1132" y="488" text-anchor="middle" class="code">cat([past, new], dim=1)</text>
+  <text x="1132" y="517" text-anchor="middle" class="hint">缓存长度随生成步数增长</text>
+
+  <path d="M1132 552 C1120 615, 1040 662, 930 678" class="cacheArrow"/>
+
+  <rect x="515" y="650" width="315" height="112" class="out"/>
+  <text x="672" y="685" text-anchor="middle" class="label">lm_head 得到 logits</text>
+  <text x="672" y="718" text-anchor="middle" class="code">logits: [B, 1, vocab]</text>
+  <text x="672" y="746" text-anchor="middle" class="hint">采样或贪心选择下一个 token</text>
+
+  <path d="M830 706 L965 706" class="arrow"/>
+  <rect x="965" y="650" width="335" height="112" class="box"/>
+  <text x="1132" y="685" text-anchor="middle" class="label">生成新 token</text>
+  <text x="1132" y="718" text-anchor="middle" class="code">append to sequence</text>
+  <text x="1132" y="746" text-anchor="middle" class="hint">继续下一轮，直到 EOS 或 max_new_tokens</text>
+
+  <path d="M965 735 C760 835, 350 790, 260 552" class="soft"/>
+
+  <line x1="105" y1="810" x2="1395" y2="810" class="divider"/>
+  <text x="105" y="846" class="label">源码对应</text>
+  <text x="105" y="878" class="small">1. `Attention.forward`: 有 `past_key_value` 时用 `torch.cat([past, new], dim=1)` 拼接 K/V。</text>
+  <text x="105" y="908" class="small">2. `MiniMindModel.forward`: 用 `start_pos` 切 RoPE，并把每层 `present` 收集成 `presents` 返回。</text>
+</svg>

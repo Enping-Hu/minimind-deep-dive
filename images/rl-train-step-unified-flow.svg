@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="1040" viewBox="0 0 1560 1040" role="img" aria-labelledby="title desc">
+  <title id="title">PPO GRPO SPO 统一训练步源码图</title>
+  <desc id="desc">展示 MiniMind 中 PPO、GRPO、SPO 三种在线 RL 训练步共享的主链路，以及它们在 baseline、KL 约束和更新方式上的关键差异。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fbff"/>
+      <stop offset="100%" stop-color="#fff8ef"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f9fbff"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#475569" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L11,4 z" fill="#475569"/>
+    </marker>
+    <style>
+      .title { font: 800 34px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 18px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .label { font: 700 22px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .small { font: 500 16px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .hint { font: 500 15px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #64748b; }
+      .panel { fill: url(#panel); stroke: #dbe4ee; stroke-width: 2; rx: 22; filter: url(#shadow); }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; rx: 18; filter: url(#shadow); }
+      .shared { fill: #dbeafe; stroke: #2563eb; stroke-width: 2.2; rx: 18; filter: url(#shadow); }
+      .ppo { fill: #dcfce7; stroke: #16a34a; stroke-width: 2.2; rx: 18; filter: url(#shadow); }
+      .grpo { fill: #fef3c7; stroke: #d97706; stroke-width: 2.2; rx: 18; filter: url(#shadow); }
+      .spo { fill: #f3e8ff; stroke: #7c3aed; stroke-width: 2.2; rx: 18; filter: url(#shadow); }
+      .arrow { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .divider { stroke: #e2e8f0; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect width="1560" height="1040" fill="url(#bg)"/>
+  <text x="56" y="62" class="title">PPO / GRPO / SPO：reward 到参数更新的统一源码链</text>
+  <text x="56" y="94" class="subtitle">这一节不再分开讲三种方法，而是先抓共享训练步，再看它们在 baseline、KL 和 update 上各自怎么分叉。</text>
+
+  <rect x="44" y="124" width="1472" height="872" class="panel"/>
+
+  <rect x="86" y="172" width="274" height="98" class="shared"/>
+  <text x="223" y="208" text-anchor="middle" class="label">RLAIFDataset prompt</text>
+  <text x="223" y="240" text-anchor="middle" class="small">`add_generation_prompt=True`</text>
+
+  <path d="M360 221 L450 221" class="arrow"/>
+
+  <rect x="450" y="172" width="290" height="98" class="shared"/>
+  <text x="595" y="208" text-anchor="middle" class="label">policy.generate</text>
+  <text x="595" y="240" text-anchor="middle" class="small">先在线生成 completion</text>
+
+  <path d="M740 221 L830 221" class="arrow"/>
+
+  <rect x="830" y="172" width="286" height="98" class="shared"/>
+  <text x="973" y="208" text-anchor="middle" class="label">calculate_rewards</text>
+  <text x="973" y="240" text-anchor="middle" class="small">reward model + 规则奖励</text>
+
+  <path d="M1116 221 L1210 221" class="arrow"/>
+
+  <rect x="1210" y="172" width="240" height="98" class="shared"/>
+  <text x="1330" y="208" text-anchor="middle" class="label">构造 advantage</text>
+  <text x="1330" y="240" text-anchor="middle" class="small">三者开始分叉</text>
+
+  <line x1="78" y1="326" x2="1480" y2="326" class="divider"/>
+
+  <rect x="88" y="364" width="428" height="276" class="ppo"/>
+  <text x="302" y="404" text-anchor="middle" class="label">PPO</text>
+  <text x="110" y="446" class="small">1. critic_model 估计 value</text>
+  <text x="110" y="476" class="small">2. old_actor_model 提供旧 policy</text>
+  <text x="110" y="506" class="small">3. `ratio + clip` 限制单步更新幅度</text>
+  <text x="110" y="536" class="small">4. 还要单独优化 value_loss</text>
+
+  <rect x="566" y="364" width="428" height="276" class="grpo"/>
+  <text x="780" y="404" text-anchor="middle" class="label">GRPO</text>
+  <text x="588" y="446" class="small">1. 同一 prompt 生成 G 条回答</text>
+  <text x="588" y="476" class="small">2. 组内 reward 均值 / 方差做 baseline</text>
+  <text x="588" y="506" class="small">3. 不训练 critic，也没有 old actor</text>
+  <text x="588" y="536" class="small">4. 直接做 group-relative advantage</text>
+
+  <rect x="1044" y="364" width="428" height="276" class="spo"/>
+  <text x="1258" y="404" text-anchor="middle" class="label">SPO</text>
+  <text x="1066" y="446" class="small">1. 每个 prompt 只生成 1 条回答</text>
+  <text x="1066" y="476" class="small">2. tracker 维护跨 batch baseline</text>
+  <text x="1066" y="506" class="small">3. 不训练 critic，也不做组采样</text>
+  <text x="1066" y="536" class="small">4. update() 再刷新 tracker 状态</text>
+
+  <line x1="78" y1="692" x2="1480" y2="692" class="divider"/>
+
+  <rect x="136" y="734" width="1288" height="126" class="shared"/>
+  <text x="780" y="772" text-anchor="middle" class="label">三者共同的后半段</text>
+  <text x="780" y="808" text-anchor="middle" class="small">都还要把当前 policy 的 log-prob 和冻结 ref model 的 log-prob 对齐到 completion token；都保留 KL/ref 约束；MoE 时 aux_loss 也仍然会被加回总 loss。</text>
+  <text x="780" y="838" text-anchor="middle" class="small">最后都走 `loss.backward() -> optimizer.step() -> scheduler.step() -> zero_grad()`。</text>
+
+  <rect x="136" y="892" width="1288" height="56" class="box"/>
+  <text x="780" y="926" text-anchor="middle" class="small">一句话抓手：PPO 用 critic + old actor 稳定更新；GRPO 用组内多回答替代 critic；SPO 用自适应 tracker 替代 critic 和组采样。</text>
+</svg>

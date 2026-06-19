@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#eef6ff"/>
+    </linearGradient>
+    <linearGradient id="panelA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+    <linearGradient id="panelB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f9fbff"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#94a3b8" flood-opacity="0.18"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
+    </marker>
+    <style>
+      .title { font: 700 34px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 18px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #334155; }
+      .panel-title { font: 700 24px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .panel-note { font: 500 15px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .tag { font: 700 13px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #334155; }
+      .small { font: 500 14px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .tiny { font: 500 13px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #64748b; }
+      .panel { fill: url(#panelA); stroke: #dbe7f3; stroke-width: 2; rx: 24; filter: url(#shadow); }
+      .panelB { fill: url(#panelB); stroke: #dbe7f3; stroke-width: 2; rx: 24; filter: url(#shadow); }
+      .q { fill: #dbeafe; stroke: #2563eb; stroke-width: 2.2; rx: 14; }
+      .kv { fill: #dcfce7; stroke: #16a34a; stroke-width: 2.2; rx: 14; }
+      .mqa { fill: #fef3c7; stroke: #d97706; stroke-width: 2.2; rx: 14; }
+      .pill-q { fill: #eff6ff; stroke: #bfdbfe; stroke-width: 1.5; rx: 18; }
+      .pill-kv { fill: #f0fdf4; stroke: #bbf7d0; stroke-width: 1.5; rx: 18; }
+      .pill-cost { fill: #fff7ed; stroke: #fed7aa; stroke-width: 1.5; rx: 18; }
+      .arrow { stroke: #64748b; stroke-width: 2.6; fill: none; marker-end: url(#arrow); }
+      .soft { stroke: #94a3b8; stroke-width: 1.8; fill: none; stroke-dasharray: 7 6; }
+      .divider { stroke: #dbe7f3; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1400" height="900" fill="url(#bg)"/>
+
+  <text x="60" y="64" class="title">MHA、GQA、MQA 对比示意</text>
+  <text x="60" y="96" class="subtitle">核心区别：保留多少个 Query 头，以及有多少个 Query 头共享同一组 Key/Value 头。</text>
+
+  <rect x="50" y="135" width="400" height="540" class="panel"/>
+  <rect x="500" y="135" width="400" height="540" class="panelB"/>
+  <rect x="950" y="135" width="400" height="540" class="panel"/>
+
+  <text x="250" y="180" text-anchor="middle" class="panel-title">MHA</text>
+  <text x="700" y="180" text-anchor="middle" class="panel-title">GQA</text>
+  <text x="1150" y="180" text-anchor="middle" class="panel-title">MQA</text>
+
+  <rect x="160" y="196" width="180" height="34" class="pill-q"/>
+  <text x="250" y="218" text-anchor="middle" class="tag">Q 头数 = KV 头数</text>
+  <rect x="586" y="196" width="228" height="34" class="pill-kv"/>
+  <text x="700" y="218" text-anchor="middle" class="tag">Q 头数 &gt; KV 头数 &gt; 1</text>
+  <rect x="1070" y="196" width="160" height="34" class="pill-cost"/>
+  <text x="1150" y="218" text-anchor="middle" class="tag">KV 头数 = 1</text>
+
+  <!-- Column labels -->
+  <text x="120" y="268" class="small">Query 头</text>
+  <text x="286" y="268" class="small">Key / Value 头</text>
+  <text x="570" y="268" class="small">Query 头</text>
+  <text x="730" y="268" class="small">共享的 Key / Value 头</text>
+  <text x="1020" y="268" class="small">Query 头</text>
+  <text x="1178" y="268" class="small">单个 Key / Value 头</text>
+
+  <!-- MHA blocks -->
+  <g>
+    <rect x="102" y="290" width="62" height="48" class="q"/>
+    <rect x="102" y="355" width="62" height="48" class="q"/>
+    <rect x="102" y="420" width="62" height="48" class="q"/>
+    <rect x="102" y="485" width="62" height="48" class="q"/>
+    <text x="133" y="321" text-anchor="middle" class="small">Q1</text>
+    <text x="133" y="386" text-anchor="middle" class="small">Q2</text>
+    <text x="133" y="451" text-anchor="middle" class="small">Q3</text>
+    <text x="133" y="516" text-anchor="middle" class="small">Q4</text>
+
+    <rect x="290" y="290" width="72" height="48" class="kv"/>
+    <rect x="290" y="355" width="72" height="48" class="kv"/>
+    <rect x="290" y="420" width="72" height="48" class="kv"/>
+    <rect x="290" y="485" width="72" height="48" class="kv"/>
+    <text x="326" y="321" text-anchor="middle" class="small">KV1</text>
+    <text x="326" y="386" text-anchor="middle" class="small">KV2</text>
+    <text x="326" y="451" text-anchor="middle" class="small">KV3</text>
+    <text x="326" y="516" text-anchor="middle" class="small">KV4</text>
+
+    <path d="M164 314 C 215 314, 236 314, 290 314" class="arrow"/>
+    <path d="M164 379 C 215 379, 236 379, 290 379" class="arrow"/>
+    <path d="M164 444 C 215 444, 236 444, 290 444" class="arrow"/>
+    <path d="M164 509 C 215 509, 236 509, 290 509" class="arrow"/>
+
+    <rect x="82" y="575" width="286" height="62" class="pill-cost"/>
+    <text x="225" y="601" text-anchor="middle" class="tag">表达最充分</text>
+    <text x="225" y="624" text-anchor="middle" class="tiny">但 K/V 投影和 KV cache 开销最大</text>
+  </g>
+
+  <!-- GQA blocks -->
+  <g>
+    <rect x="552" y="290" width="62" height="48" class="q"/>
+    <rect x="552" y="355" width="62" height="48" class="q"/>
+    <rect x="552" y="420" width="62" height="48" class="q"/>
+    <rect x="552" y="485" width="62" height="48" class="q"/>
+    <text x="583" y="321" text-anchor="middle" class="small">Q1</text>
+    <text x="583" y="386" text-anchor="middle" class="small">Q2</text>
+    <text x="583" y="451" text-anchor="middle" class="small">Q3</text>
+    <text x="583" y="516" text-anchor="middle" class="small">Q4</text>
+
+    <rect x="742" y="322" width="84" height="56" class="kv"/>
+    <rect x="742" y="436" width="84" height="56" class="kv"/>
+    <text x="784" y="356" text-anchor="middle" class="small">KV1</text>
+    <text x="784" y="470" text-anchor="middle" class="small">KV2</text>
+
+    <path d="M614 314 C 670 314, 692 335, 742 350" class="arrow"/>
+    <path d="M614 379 C 670 379, 692 365, 742 350" class="arrow"/>
+    <path d="M614 444 C 670 444, 692 451, 742 464" class="arrow"/>
+    <path d="M614 509 C 670 509, 692 486, 742 464" class="arrow"/>
+
+    <path d="M742 350 C 706 350, 680 350, 640 350" class="soft"/>
+    <path d="M742 464 C 706 464, 680 464, 640 464" class="soft"/>
+
+    <rect x="520" y="575" width="362" height="62" class="pill-kv"/>
+    <text x="701" y="601" text-anchor="middle" class="tag">工程上最常见的折中方案</text>
+    <text x="701" y="624" text-anchor="middle" class="tiny">保留较多 Query 视角，同时明显降低 K/V 与 KV cache 开销</text>
+  </g>
+
+  <!-- MQA blocks -->
+  <g>
+    <rect x="1002" y="290" width="62" height="48" class="q"/>
+    <rect x="1002" y="355" width="62" height="48" class="q"/>
+    <rect x="1002" y="420" width="62" height="48" class="q"/>
+    <rect x="1002" y="485" width="62" height="48" class="q"/>
+    <text x="1033" y="321" text-anchor="middle" class="small">Q1</text>
+    <text x="1033" y="386" text-anchor="middle" class="small">Q2</text>
+    <text x="1033" y="451" text-anchor="middle" class="small">Q3</text>
+    <text x="1033" y="516" text-anchor="middle" class="small">Q4</text>
+
+    <rect x="1185" y="387" width="94" height="64" class="mqa"/>
+    <text x="1232" y="426" text-anchor="middle" class="small">KV</text>
+
+    <path d="M1064 314 C 1128 314, 1148 375, 1185 406" class="arrow"/>
+    <path d="M1064 379 C 1128 379, 1148 395, 1185 416" class="arrow"/>
+    <path d="M1064 444 C 1128 444, 1148 432, 1185 426" class="arrow"/>
+    <path d="M1064 509 C 1128 509, 1148 465, 1185 436" class="arrow"/>
+
+    <rect x="970" y="575" width="324" height="62" class="pill-cost"/>
+    <text x="1132" y="601" text-anchor="middle" class="tag">KV 开销最省</text>
+    <text x="1132" y="624" text-anchor="middle" class="tiny">但共享最强，表达能力折损也通常最大</text>
+  </g>
+
+  <line x1="60" y1="710" x2="1340" y2="710" class="divider"/>
+  <text x="60" y="753" class="panel-title">这个项目里的 `repeat_kv` 在干什么</text>
+  <text x="60" y="785" class="panel-note">1. 先只计算较少的 Key / Value 头。</text>
+  <text x="60" y="815" class="panel-note">2. 在真正做 attention 矩阵乘法之前，把共享的 KV 头复制展开到和 Query 头数量一致。</text>
+  <text x="60" y="845" class="panel-note">3. 这一步只是“为了对齐而复制”，并没有创造新的 KV 信息。</text>
+</svg>

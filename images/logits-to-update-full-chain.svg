@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="560" viewBox="0 0 1260 560" role="img" aria-labelledby="title desc">
+  <title id="title">logits to parameter update full chain</title>
+  <desc id="desc">A complete MiniMind training math chain from logits to token log-prob, masked aggregation, scalar loss, backward gradients, and optimizer parameter update.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7fbff"/>
+      <stop offset="42%" stop-color="#fff7e8"/>
+      <stop offset="100%" stop-color="#edf8ef"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e5f1ff"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffdf7"/>
+      <stop offset="100%" stop-color="#f1dfb5"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7fff8"/>
+      <stop offset="100%" stop-color="#d8ecd8"/>
+    </linearGradient>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff8f6"/>
+      <stop offset="100%" stop-color="#f0d4ca"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="9" stdDeviation="11" flood-color="#263238" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2f4050"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .subtitle { font: 500 15px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #5b6770; }
+      .card-title { font: 700 17px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .card-text { font: 500 13px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #35444f; }
+      .code { font: 600 13px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #21313f; }
+      .small { font: 500 12px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #62717c; }
+      .arrow { stroke: #2f4050; stroke-width: 2.3; fill: none; marker-end: url(#arrow); }
+      .loop { stroke: #6c7a86; stroke-width: 2; fill: none; stroke-dasharray: 7 6; marker-end: url(#arrow); }
+      .badge { font: 700 12px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <rect width="1260" height="560" rx="28" fill="url(#bg)"/>
+  <circle cx="1100" cy="90" r="112" fill="#d9edff" opacity="0.68"/>
+  <circle cx="126" cy="458" r="132" fill="#e9efd5" opacity="0.68"/>
+  <path d="M42 122 C212 48, 356 170, 520 112 S862 60, 1218 142" stroke="#ffffff" stroke-width="24" opacity="0.55" fill="none"/>
+
+  <text x="48" y="54" class="title">从 logits 到参数更新：训练数学闭环</text>
+  <text x="50" y="82" class="subtitle">第 62-64 节收束：概率提取、mask 聚合、标量 loss、反向传播和 optimizer.step 是同一条链路。</text>
+
+  <g filter="url(#shadow)">
+    <rect x="50" y="132" width="168" height="118" rx="18" fill="url(#blue)" stroke="#c7d8e8"/>
+    <rect x="68" y="150" width="36" height="22" rx="11" fill="#3c78a8"/>
+    <text x="79" y="166" class="badge">1</text>
+    <text x="68" y="194" class="card-title">模型输出</text>
+    <text x="68" y="220" class="code">logits [B,T,V]</text>
+    <text x="68" y="241" class="small">对词表所有 token 打分</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="258" y="132" width="178" height="118" rx="18" fill="url(#blue)" stroke="#c7d8e8"/>
+    <rect x="276" y="150" width="36" height="22" rx="11" fill="#3c78a8"/>
+    <text x="287" y="166" class="badge">2</text>
+    <text x="276" y="194" class="card-title">取目标概率</text>
+    <text x="276" y="220" class="code">log_softmax + gather</text>
+    <text x="276" y="241" class="small">得到目标 token log-prob</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="476" y="132" width="168" height="118" rx="18" fill="url(#amber)" stroke="#dec987"/>
+    <rect x="494" y="150" width="36" height="22" rx="11" fill="#9b7627"/>
+    <text x="505" y="166" class="badge">3</text>
+    <text x="494" y="194" class="card-title">筛有效 token</text>
+    <text x="494" y="220" class="code">score * mask</text>
+    <text x="494" y="241" class="small">去掉 prompt/pad/EOS 后</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="684" y="132" width="168" height="118" rx="18" fill="url(#amber)" stroke="#dec987"/>
+    <rect x="702" y="150" width="36" height="22" rx="11" fill="#9b7627"/>
+    <text x="713" y="166" class="badge">4</text>
+    <text x="702" y="194" class="card-title">聚合成样本分数</text>
+    <text x="702" y="220" class="code">sum / mean</text>
+    <text x="702" y="241" class="small">序列分数或回答 loss</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="892" y="132" width="168" height="118" rx="18" fill="url(#green)" stroke="#b9d2bd"/>
+    <rect x="910" y="150" width="36" height="22" rx="11" fill="#4f8c5f"/>
+    <text x="921" y="166" class="badge">5</text>
+    <text x="910" y="194" class="card-title">得到标量目标</text>
+    <text x="910" y="220" class="code">scalar loss</text>
+    <text x="910" y="241" class="small">CE / DPO / policy loss</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1080" y="132" width="130" height="118" rx="18" fill="url(#red)" stroke="#d8b9ae"/>
+    <rect x="1098" y="150" width="36" height="22" rx="11" fill="#a8604d"/>
+    <text x="1109" y="166" class="badge">6</text>
+    <text x="1098" y="194" class="card-title">反向传播</text>
+    <text x="1098" y="220" class="code">backward()</text>
+    <text x="1098" y="241" class="small">写入 param.grad</text>
+  </g>
+
+  <path class="arrow" d="M220 191 H252"/>
+  <path class="arrow" d="M438 191 H470"/>
+  <path class="arrow" d="M646 191 H678"/>
+  <path class="arrow" d="M854 191 H886"/>
+  <path class="arrow" d="M1062 191 H1074"/>
+
+  <g filter="url(#shadow)">
+    <rect x="770" y="350" width="178" height="116" rx="18" fill="#ffffff" opacity="0.94" stroke="#d8dee4"/>
+    <text x="792" y="386" class="card-title">梯度安全处理</text>
+    <text x="792" y="414" class="code">clip_grad_norm_</text>
+    <text x="792" y="438" class="small">限制梯度别过猛</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="990" y="350" width="178" height="116" rx="18" fill="#ffffff" opacity="0.94" stroke="#d8dee4"/>
+    <text x="1012" y="386" class="card-title">参数真正更新</text>
+    <text x="1012" y="414" class="code">optimizer.step()</text>
+    <text x="1012" y="438" class="small">根据 grad 改参数</text>
+  </g>
+
+  <path class="arrow" d="M1145 252 V342"/>
+  <path class="arrow" d="M950 408 H984"/>
+  <path class="loop" d="M1080 348 C1032 306, 892 294, 670 306 C446 318, 230 314, 132 260"/>
+
+  <g filter="url(#shadow)">
+    <rect x="80" y="336" width="552" height="144" rx="20" fill="#ffffff" opacity="0.94" stroke="#d8dee4"/>
+    <text x="108" y="372" class="card-title">一句话版本</text>
+    <text x="108" y="404" class="card-text">模型先给每个位置的整个词表打分，再取目标 token 的 log-prob。</text>
+    <text x="108" y="430" class="card-text">mask 决定哪些 token 参与训练，sum/mean 决定如何聚合成标量 loss。</text>
+    <text x="108" y="456" class="card-text">backward 计算梯度，optimizer.step 才真正更新参数。</text>
+  </g>
+</svg>

@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+  <title id="title">MiniMind 推理与服务层链路</title>
+  <desc id="desc">展示 eval_llm、web_demo、serve_openai_api 三个入口如何共用 chat template、tokenizer、model.generate 和输出 streaming 链路。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7fbff"/>
+      <stop offset="0.55" stop-color="#f4f0e8"/>
+      <stop offset="1" stop-color="#eef7f0"/>
+    </linearGradient>
+    <linearGradient id="entry" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2f6f73"/>
+      <stop offset="1" stop-color="#63a46c"/>
+    </linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#183a5a"/>
+      <stop offset="1" stop-color="#2f6f73"/>
+    </linearGradient>
+    <linearGradient id="out" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9a5b28"/>
+      <stop offset="1" stop-color="#d39b4a"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#203040" flood-opacity="0.18"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#38515a"/>
+    </marker>
+    <style>
+      .title { font: 800 34px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #17242a; }
+      .subtitle { font: 500 17px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #52656d; }
+      .label { font: 700 21px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #ffffff; }
+      .small { font: 500 15px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #eef7f0; }
+      .dark { font: 700 19px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #1d2d33; }
+      .muted { font: 500 14px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #586b72; }
+      .code { font: 600 14px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fill: #17313a; }
+      .box { rx: 24; filter: url(#shadow); }
+      .line { stroke: #38515a; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #6f858c; stroke-width: 2.5; fill: none; stroke-dasharray: 8 8; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1280" height="760" fill="url(#bg)"/>
+  <circle cx="105" cy="118" r="86" fill="#ffffff" opacity="0.45"/>
+  <circle cx="1160" cy="630" r="130" fill="#ffffff" opacity="0.38"/>
+  <path d="M0 690 C190 625 260 725 440 660 C620 592 760 725 960 650 C1110 595 1190 612 1280 570 L1280 760 L0 760 Z" fill="#dbead8" opacity="0.62"/>
+
+  <text x="58" y="65" class="title">MiniMind 推理与服务层：三个入口，一条生成链路</text>
+  <text x="60" y="98" class="subtitle">重点不是先学部署系统，而是看懂 messages 如何变成模型输入，generate 如何把 token 流出来。</text>
+
+  <rect x="70" y="165" width="305" height="122" class="box" fill="url(#entry)"/>
+  <text x="96" y="205" class="label">入口 A：CLI 测试</text>
+  <text x="96" y="236" class="small">eval_llm.py</text>
+  <text x="96" y="263" class="small">固定 prompt / 手动对话 / tokens/s</text>
+
+  <rect x="70" y="337" width="305" height="122" class="box" fill="url(#entry)"/>
+  <text x="96" y="377" class="label">入口 B：WebUI</text>
+  <text x="96" y="408" class="small">scripts/web_demo.py</text>
+  <text x="96" y="435" class="small">Streamlit 本地模型或 API 模式</text>
+
+  <rect x="70" y="509" width="305" height="122" class="box" fill="url(#entry)"/>
+  <text x="96" y="549" class="label">入口 C：API 服务</text>
+  <text x="96" y="580" class="small">scripts/serve_openai_api.py</text>
+  <text x="96" y="607" class="small">/v1/chat/completions</text>
+
+  <rect x="485" y="150" width="360" height="78" class="box" fill="#ffffff"/>
+  <text x="515" y="184" class="dark">1. 组织 messages</text>
+  <text x="515" y="209" class="muted">user / assistant 历史对话列表</text>
+
+  <rect x="485" y="256" width="360" height="86" class="box" fill="#ffffff"/>
+  <text x="515" y="290" class="dark">2. apply_chat_template</text>
+  <text x="515" y="315" class="code">add_generation_prompt=True</text>
+
+  <rect x="485" y="370" width="360" height="78" class="box" fill="#ffffff"/>
+  <text x="515" y="404" class="dark">3. tokenizer 编码</text>
+  <text x="515" y="429" class="muted">文本变成 input_ids / attention_mask</text>
+
+  <rect x="485" y="476" width="360" height="92" class="box" fill="url(#core)"/>
+  <text x="515" y="512" class="label">4. model.generate</text>
+  <text x="515" y="541" class="small">内部复用 KV cache 逐 token 生成</text>
+
+  <rect x="925" y="150" width="285" height="94" class="box" fill="url(#out)"/>
+  <text x="953" y="188" class="label">CLI 输出</text>
+  <text x="953" y="217" class="small">TextStreamer 直接打印</text>
+
+  <rect x="925" y="302" width="285" height="118" class="box" fill="url(#out)"/>
+  <text x="953" y="340" class="label">WebUI 输出</text>
+  <text x="953" y="369" class="small">TextIteratorStreamer</text>
+  <text x="953" y="396" class="small">边生成边刷新页面</text>
+
+  <rect x="925" y="490" width="285" height="130" class="box" fill="url(#out)"/>
+  <text x="953" y="528" class="label">API 输出</text>
+  <text x="953" y="557" class="small">Queue + StreamingResponse</text>
+  <text x="953" y="584" class="small">按 OpenAI SSE 格式返回</text>
+
+  <path class="line" d="M375 226 C420 226 430 189 485 189"/>
+  <path class="line" d="M375 398 C430 398 430 189 485 189"/>
+  <path class="line" d="M375 570 C430 570 430 189 485 189"/>
+
+  <path class="line" d="M665 228 L665 256"/>
+  <path class="line" d="M665 342 L665 370"/>
+  <path class="line" d="M665 448 L665 476"/>
+
+  <path class="dash" d="M845 522 C900 522 880 197 925 197"/>
+  <path class="dash" d="M845 522 C900 522 880 361 925 361"/>
+  <path class="dash" d="M845 522 C900 522 880 555 925 555"/>
+
+  <rect x="485" y="617" width="725" height="75" rx="22" fill="#ffffff" opacity="0.92" filter="url(#shadow)"/>
+  <text x="515" y="649" class="dark">学习抓手</text>
+  <text x="515" y="674" class="muted">先把三个入口共同的生成链路吃透，再展开 vLLM、llama.cpp、并发、鉴权、部署这些系统工程话题。</text>
+</svg>

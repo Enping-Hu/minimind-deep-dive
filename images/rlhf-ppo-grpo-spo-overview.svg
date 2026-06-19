@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="720" viewBox="0 0 1180 720" role="img" aria-labelledby="title desc">
+  <title id="title">PPO、GRPO、SPO 强化学习训练总览</title>
+  <desc id="desc">展示 MiniMind 中从 prompt、在线生成、reward 打分、优势估计到 policy 更新的共同流程，并比较 PPO、GRPO、SPO 的差异。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbff"/>
+      <stop offset="0.55" stop-color="#eef7f2"/>
+      <stop offset="1" stop-color="#fff7ed"/>
+    </linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1f6f8b"/>
+      <stop offset="1" stop-color="#2d9c72"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#17324d" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#315166"/>
+    </marker>
+    <style>
+      .title { font: 700 30px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #163247; }
+      .subtitle { font: 400 15px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #52677a; }
+      .box-title { font: 700 18px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #17324d; }
+      .box-text { font: 400 14px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #43576a; }
+      .small { font: 400 12px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #5c7082; }
+      .method-title { font: 700 17px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #102f43; }
+      .method-text { font: 400 13px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #43576a; }
+      .pill { font: 700 12px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #ffffff; }
+      .card { fill: #ffffff; stroke: #d6e3eb; stroke-width: 1.4; rx: 22; filter: url(#shadow); }
+      .method { fill: rgba(255,255,255,0.88); stroke: #d9e6dd; stroke-width: 1.3; rx: 20; filter: url(#shadow); }
+      .arrow { stroke: #315166; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .soft-arrow { stroke: #8aa0ad; stroke-width: 2; fill: none; marker-end: url(#arrow); stroke-dasharray: 6 6; }
+    </style>
+  </defs>
+
+  <rect width="1180" height="720" fill="url(#bg)"/>
+  <circle cx="1040" cy="95" r="110" fill="#f6c56b" opacity="0.22"/>
+  <circle cx="120" cy="620" r="150" fill="#4ba3c7" opacity="0.12"/>
+  <path d="M0 128 C170 80 260 176 420 128 S730 56 920 130 S1110 188 1180 150" fill="none" stroke="#9bc8b7" stroke-width="2" opacity="0.45"/>
+
+  <text x="58" y="58" class="title">MiniMind RLHF / RLAIF 训练总览</text>
+  <text x="58" y="86" class="subtitle">核心不是“背 PPO 公式”，而是看懂：模型在线生成回答，reward 给分，再把分数变成更新 policy 的训练信号。</text>
+
+  <g transform="translate(55,130)">
+    <rect class="card" width="170" height="100"/>
+    <text x="24" y="35" class="box-title">1. Prompt</text>
+    <text x="24" y="61" class="box-text">来自 RLAIFDataset</text>
+    <text x="24" y="82" class="small">add_generation_prompt=True</text>
+  </g>
+
+  <g transform="translate(280,130)">
+    <rect class="card" width="180" height="100"/>
+    <text x="24" y="35" class="box-title">2. Policy 生成</text>
+    <text x="24" y="61" class="box-text">generate responses</text>
+    <text x="24" y="82" class="small">不是直接读标准答案</text>
+  </g>
+
+  <g transform="translate(520,130)">
+    <rect class="card" width="180" height="100"/>
+    <text x="24" y="35" class="box-title">3. Reward 打分</text>
+    <text x="24" y="61" class="box-text">reward_model + 规则奖励</text>
+    <text x="24" y="82" class="small">输出每条回答的分数</text>
+  </g>
+
+  <g transform="translate(760,130)">
+    <rect class="card" width="180" height="100"/>
+    <text x="24" y="35" class="box-title">4. Advantage</text>
+    <text x="24" y="61" class="box-text">reward 减 baseline</text>
+    <text x="24" y="82" class="small">判断“比预期好多少”</text>
+  </g>
+
+  <g transform="translate(995,130)">
+    <rect class="card" width="130" height="100"/>
+    <text x="22" y="35" class="box-title">5. 更新</text>
+    <text x="22" y="61" class="box-text">policy loss</text>
+    <text x="22" y="82" class="small">反向传播</text>
+  </g>
+
+  <path class="arrow" d="M225 180 H276"/>
+  <path class="arrow" d="M460 180 H516"/>
+  <path class="arrow" d="M700 180 H756"/>
+  <path class="arrow" d="M940 180 H991"/>
+
+  <g transform="translate(62,286)">
+    <rect width="1040" height="54" rx="27" fill="url(#core)" opacity="0.94"/>
+    <text x="38" y="34" class="pill">共同主线：prompt → 当前模型在线生成 completion → reward 给分 → 构造优势/基线 → 用 KL 或 clip 控制更新幅度 → policy 变得更偏向高分回答</text>
+  </g>
+
+  <g transform="translate(70,395)">
+    <rect class="method" width="310" height="205"/>
+    <text x="28" y="38" class="method-title">PPO</text>
+    <text x="28" y="68" class="method-text">有 old actor：比较新旧 policy 概率</text>
+    <text x="28" y="94" class="method-text">有 critic：估计 value 作为 baseline</text>
+    <text x="28" y="120" class="method-text">ratio + clip：限制一次更新别太猛</text>
+    <text x="28" y="146" class="method-text">ref model：作为 KL 约束参照</text>
+    <rect x="28" y="166" width="170" height="24" rx="12" fill="#1f6f8b"/>
+    <text x="42" y="183" class="pill">稳，但组件最多</text>
+  </g>
+
+  <g transform="translate(435,395)">
+    <rect class="method" width="310" height="205"/>
+    <text x="28" y="38" class="method-title">GRPO</text>
+    <text x="28" y="68" class="method-text">同一 prompt 生成多条回答</text>
+    <text x="28" y="94" class="method-text">组内 reward 均值/方差做相对优势</text>
+    <text x="28" y="120" class="method-text">不需要 critic value model</text>
+    <text x="28" y="146" class="method-text">token 级 KL 控制远离 ref</text>
+    <rect x="28" y="166" width="190" height="24" rx="12" fill="#2d9c72"/>
+    <text x="42" y="183" class="pill">用组内比较替代 critic</text>
+  </g>
+
+  <g transform="translate(800,395)">
+    <rect class="method" width="310" height="205"/>
+    <text x="28" y="38" class="method-title">SPO</text>
+    <text x="28" y="68" class="method-text">每个 prompt 生成一条回答</text>
+    <text x="28" y="94" class="method-text">AutoAdaptiveValueTracker 给 baseline</text>
+    <text x="28" y="120" class="method-text">advantage = reward - baseline</text>
+    <text x="28" y="146" class="method-text">仍然用 ref log-prob 做 KL 惩罚</text>
+    <rect x="28" y="166" width="185" height="24" rx="12" fill="#c7772b"/>
+    <text x="42" y="183" class="pill">更轻量的在线优化</text>
+  </g>
+
+  <path class="soft-arrow" d="M625 340 C600 375 490 377 380 430"/>
+  <path class="soft-arrow" d="M625 340 C625 375 600 377 590 430"/>
+  <path class="soft-arrow" d="M625 340 C690 375 785 377 800 430"/>
+
+  <g transform="translate(82,650)">
+    <text x="0" y="0" class="small">读源码时先抓变量角色：`prompts`、`outputs/completion_ids`、`rewards`、`advantages`、`ref_per_token_logps`、`policy_loss`。</text>
+    <text x="0" y="24" class="small">当前阶段先理解训练信号如何产生；PPO 的严格策略梯度推导、GAE、KL 理论可以放到下一节逐步展开。</text>
+  </g>
+</svg>

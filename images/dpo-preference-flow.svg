@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="980" viewBox="0 0 1500 980">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#fff7ed"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fbfbff"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#64748b" flood-opacity="0.16"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L11,4 z" fill="#475569"/>
+    </marker>
+    <style>
+      .title { font: 800 38px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 19px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .label { font: 760 23px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .small { font: 500 16px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .hint { font: 500 15px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #64748b; }
+      .code { font: 700 18px 'SFMono-Regular','Menlo','Consolas',monospace; fill: #334155; }
+      .panel { fill: url(#panel); stroke: #dbe7f3; stroke-width: 2; rx: 26; filter: url(#shadow); }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; rx: 18; filter: url(#shadow); }
+      .chosen { fill: #dcfce7; stroke: #16a34a; stroke-width: 2.2; rx: 18; filter: url(#shadow); }
+      .rejected { fill: #fee2e2; stroke: #ef4444; stroke-width: 2.2; rx: 18; filter: url(#shadow); }
+      .policy { fill: #dbeafe; stroke: #2563eb; stroke-width: 2.2; rx: 18; filter: url(#shadow); }
+      .ref { fill: #f3e8ff; stroke: #9333ea; stroke-width: 2.2; rx: 18; filter: url(#shadow); }
+      .loss { fill: #fef3c7; stroke: #d97706; stroke-width: 2.2; rx: 18; filter: url(#shadow); }
+      .arrow { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .soft { stroke: #94a3b8; stroke-width: 2; fill: none; stroke-dasharray: 7 7; }
+      .divider { stroke: #e2e8f0; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="980" fill="url(#bg)"/>
+  <text x="70" y="70" class="title">DPO：让 policy 相对 ref 更偏向 chosen</text>
+  <text x="70" y="106" class="subtitle">同一个 prompt 下有 chosen/rejected 两个回答；DPO 比较 policy 与参考模型的相对 log-prob 差距，直接优化偏好。</text>
+
+  <rect x="60" y="140" width="1380" height="760" class="panel"/>
+
+  <rect x="105" y="210" width="250" height="105" class="box"/>
+  <text x="230" y="247" text-anchor="middle" class="label">同一个问题</text>
+  <text x="230" y="280" text-anchor="middle" class="code">prompt</text>
+  <text x="230" y="304" text-anchor="middle" class="hint">来自偏好数据</text>
+
+  <path d="M355 262 L455 220" class="arrow"/>
+  <path d="M355 262 L455 340" class="arrow"/>
+
+  <rect x="455" y="170" width="260" height="95" class="chosen"/>
+  <text x="585" y="206" text-anchor="middle" class="label">chosen</text>
+  <text x="585" y="238" text-anchor="middle" class="small">更好的回答</text>
+
+  <rect x="455" y="300" width="260" height="95" class="rejected"/>
+  <text x="585" y="336" text-anchor="middle" class="label">rejected</text>
+  <text x="585" y="368" text-anchor="middle" class="small">较差的回答</text>
+
+  <path d="M715 218 L815 218" class="arrow"/>
+  <path d="M715 348 L815 348" class="arrow"/>
+  <path d="M715 218 C760 250, 770 310, 815 348" class="soft"/>
+  <path d="M715 348 C760 315, 770 255, 815 218" class="soft"/>
+
+  <rect x="815" y="170" width="270" height="95" class="policy"/>
+  <text x="950" y="205" text-anchor="middle" class="label">policy model</text>
+  <text x="950" y="236" text-anchor="middle" class="code">正在训练</text>
+
+  <rect x="815" y="300" width="270" height="95" class="ref"/>
+  <text x="950" y="335" text-anchor="middle" class="label">reference model</text>
+  <text x="950" y="366" text-anchor="middle" class="code">冻结不更新</text>
+
+  <path d="M1085 218 L1190 250" class="arrow"/>
+  <path d="M1085 348 L1190 315" class="arrow"/>
+
+  <rect x="1190" y="220" width="245" height="132" class="loss"/>
+  <text x="1312" y="256" text-anchor="middle" class="label">DPO loss</text>
+  <text x="1312" y="289" text-anchor="middle" class="code">pi_logratios - ref_logratios</text>
+  <text x="1312" y="320" text-anchor="middle" class="hint">鼓励 chosen 相对 rejected 更高</text>
+
+  <rect x="170" y="500" width="340" height="130" class="box"/>
+  <text x="340" y="537" text-anchor="middle" class="label">DPODataset</text>
+  <text x="340" y="570" text-anchor="middle" class="code">x/y/mask</text>
+  <text x="340" y="600" text-anchor="middle" class="hint">chosen 和 rejected 各构造一份</text>
+
+  <path d="M510 565 L635 565" class="arrow"/>
+
+  <rect x="635" y="500" width="350" height="130" class="box"/>
+  <text x="810" y="537" text-anchor="middle" class="label">logits_to_log_probs</text>
+  <text x="810" y="570" text-anchor="middle" class="code">gather label 对应 log-prob</text>
+  <text x="810" y="600" text-anchor="middle" class="hint">只用 mask 保留 assistant 回复区域</text>
+
+  <path d="M985 565 L1110 565" class="arrow"/>
+
+  <rect x="1110" y="500" width="250" height="130" class="loss"/>
+  <text x="1235" y="537" text-anchor="middle" class="label">更新 policy</text>
+  <text x="1235" y="570" text-anchor="middle" class="code">ref 不反传</text>
+  <text x="1235" y="600" text-anchor="middle" class="hint">loss.backward()</text>
+
+  <line x1="105" y1="735" x2="1395" y2="735" class="divider"/>
+  <text x="105" y="778" class="label">一句话记忆</text>
+  <text x="105" y="815" class="small">SFT：告诉模型 assistant 应该怎么答。</text>
+  <text x="105" y="845" class="small">DPO：告诉模型在两个回答中，更应该偏向 chosen，而不是 rejected。</text>
+</svg>

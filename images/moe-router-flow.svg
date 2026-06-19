@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="980" viewBox="0 0 1500 980">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#fff7ed"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f9fbff"/>
+    </linearGradient>
+    <linearGradient id="router" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+    <linearGradient id="expert" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dcfce7"/>
+      <stop offset="100%" stop-color="#bbf7d0"/>
+    </linearGradient>
+    <linearGradient id="shared" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#bfdbfe"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#64748b" flood-opacity="0.16"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L11,4 z" fill="#475569"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L11,4 z" fill="#ea580c"/>
+    </marker>
+    <style>
+      .title { font: 800 38px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 19px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .label { font: 760 23px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .small { font: 500 16px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .hint { font: 500 15px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #64748b; }
+      .code { font: 700 18px 'SFMono-Regular','Menlo','Consolas',monospace; fill: #334155; }
+      .panel { fill: url(#panel); stroke: #dbe7f3; stroke-width: 2; rx: 26; filter: url(#shadow); }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; rx: 18; filter: url(#shadow); }
+      .router { fill: url(#router); stroke: #d97706; stroke-width: 2.4; rx: 20; filter: url(#shadow); }
+      .expert { fill: url(#expert); stroke: #16a34a; stroke-width: 2.4; rx: 18; filter: url(#shadow); }
+      .shared { fill: url(#shared); stroke: #2563eb; stroke-width: 2.4; rx: 18; filter: url(#shadow); }
+      .merge { fill: #fee2e2; stroke: #ef4444; stroke-width: 2.4; rx: 999; filter: url(#shadow); }
+      .loss { fill: #f3e8ff; stroke: #9333ea; stroke-width: 2.2; rx: 18; filter: url(#shadow); }
+      .arrow { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .route { stroke: #ea580c; stroke-width: 3; fill: none; marker-end: url(#arrowOrange); stroke-dasharray: 9 7; }
+      .soft { stroke: #94a3b8; stroke-width: 2; fill: none; stroke-dasharray: 7 7; }
+      .divider { stroke: #e2e8f0; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="980" fill="url(#bg)"/>
+  <text x="70" y="70" class="title">MoE：router 选择 expert，aux loss 防止路由塌缩</text>
+  <text x="70" y="106" class="subtitle">MiniMind 的 MoE 把单个 FFN 扩展成多个专家；每个 token 只走 top-k 个 routed experts，并额外叠加 shared experts。</text>
+
+  <rect x="60" y="138" width="1380" height="760" class="panel"/>
+
+  <rect x="100" y="390" width="250" height="100" class="box"/>
+  <text x="225" y="426" text-anchor="middle" class="label">输入 token 表示</text>
+  <text x="225" y="457" text-anchor="middle" class="code">x: [B, S, H]</text>
+  <text x="225" y="481" text-anchor="middle" class="hint">先展平为 [B*S, H]</text>
+
+  <path d="M350 440 L455 290" class="arrow"/>
+  <path d="M350 440 L455 600" class="arrow"/>
+
+  <rect x="455" y="220" width="270" height="140" class="router"/>
+  <text x="590" y="257" text-anchor="middle" class="label">Router / Gate</text>
+  <text x="590" y="288" text-anchor="middle" class="code">logits = x @ W_gate</text>
+  <text x="590" y="318" text-anchor="middle" class="code">scores = softmax(logits)</text>
+  <text x="590" y="344" text-anchor="middle" class="hint">为每个 token 给出专家概率</text>
+
+  <rect x="790" y="190" width="185" height="76" class="expert"/>
+  <text x="882" y="220" text-anchor="middle" class="label">Expert 0</text>
+  <text x="882" y="249" text-anchor="middle" class="small">FeedForward</text>
+
+  <rect x="790" y="292" width="185" height="76" class="expert"/>
+  <text x="882" y="322" text-anchor="middle" class="label">Expert 1</text>
+  <text x="882" y="351" text-anchor="middle" class="small">FeedForward</text>
+
+  <rect x="790" y="394" width="185" height="76" class="expert"/>
+  <text x="882" y="424" text-anchor="middle" class="label">Expert 2</text>
+  <text x="882" y="453" text-anchor="middle" class="small">FeedForward</text>
+
+  <rect x="790" y="496" width="185" height="76" class="expert"/>
+  <text x="882" y="526" text-anchor="middle" class="label">Expert 3</text>
+  <text x="882" y="555" text-anchor="middle" class="small">FeedForward</text>
+
+  <path d="M725 290 C755 235, 760 228, 790 228" class="route"/>
+  <path d="M725 290 C755 310, 760 330, 790 330" class="route"/>
+  <path d="M725 290 C755 365, 760 430, 790 432" class="soft"/>
+  <path d="M725 290 C755 440, 760 535, 790 534" class="soft"/>
+  <text x="742" y="182" class="hint">top-k 路由：示例选择 Expert 0 和 Expert 1</text>
+
+  <rect x="455" y="555" width="270" height="112" class="shared"/>
+  <text x="590" y="592" text-anchor="middle" class="label">Shared Expert</text>
+  <text x="590" y="623" text-anchor="middle" class="code">所有 token 都会经过</text>
+  <text x="590" y="650" text-anchor="middle" class="hint">提供稳定的通用 FFN 分支</text>
+
+  <path d="M975 228 C1035 228, 1055 350, 1110 415" class="arrow"/>
+  <path d="M975 330 C1035 330, 1055 385, 1110 425" class="arrow"/>
+  <path d="M725 611 C890 611, 995 520, 1110 455" class="arrow"/>
+
+  <circle cx="1160" cy="435" r="58" class="merge"/>
+  <text x="1160" y="424" text-anchor="middle" class="label">加权</text>
+  <text x="1160" y="454" text-anchor="middle" class="label">合并</text>
+  <text x="1160" y="512" text-anchor="middle" class="code">sum(weight_i * expert_i)</text>
+
+  <path d="M1218 435 L1310 435" class="arrow"/>
+  <rect x="1310" y="388" width="95" height="94" class="box"/>
+  <text x="1358" y="425" text-anchor="middle" class="label">输出</text>
+  <text x="1358" y="455" text-anchor="middle" class="code">[B,S,H]</text>
+
+  <rect x="980" y="625" width="350" height="118" class="loss"/>
+  <text x="1155" y="662" text-anchor="middle" class="label">aux_loss</text>
+  <text x="1155" y="695" text-anchor="middle" class="small">约束专家负载均衡</text>
+  <text x="1155" y="723" text-anchor="middle" class="hint">避免所有 token 挤到少数专家</text>
+  <path d="M725 330 C900 520, 980 615, 980 665" class="soft"/>
+
+  <line x1="100" y1="780" x2="1405" y2="780" class="divider"/>
+  <text x="100" y="825" class="label">源码对应</text>
+  <text x="100" y="860" class="small">1. `MoEGate.forward` 计算 `scores`，再用 `torch.topk` 得到 `topk_idx` 和 `topk_weight`。</text>
+  <text x="100" y="890" class="small">2. `MOEFeedForward.forward` 把 token 分给 routed experts，按权重加权求和，再加 shared experts。</text>
+</svg>

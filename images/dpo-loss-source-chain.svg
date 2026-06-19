@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1520" height="1000" viewBox="0 0 1520 1000" role="img" aria-labelledby="title desc">
+  <title id="title">DPO 源码链路图</title>
+  <desc id="desc">展示 DPO 训练中从 DPODataset 的 chosen/rejected 输入，到 policy/ref 模型 logits，再到 log-prob、mask 聚合、chosen/rejected 分开与 dpo_loss 的完整源码链路。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fbff"/>
+      <stop offset="100%" stop-color="#fff7ed"/>
+    </linearGradient>
+    <linearGradient id="mainBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fbff"/>
+    </linearGradient>
+    <linearGradient id="blueBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#e0f2fe"/>
+    </linearGradient>
+    <linearGradient id="greenBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dcfce7"/>
+      <stop offset="100%" stop-color="#d1fae5"/>
+    </linearGradient>
+    <linearGradient id="purpleBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f3e8ff"/>
+      <stop offset="100%" stop-color="#ede9fe"/>
+    </linearGradient>
+    <linearGradient id="orangeBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffedd5"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#475569" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L11,4 z" fill="#475569"/>
+    </marker>
+    <style>
+      .title { font: 800 34px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 18px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .label { font: 700 22px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .small { font: 500 16px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .hint { font: 500 15px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #64748b; }
+      .code { font: 700 17px 'SFMono-Regular','Menlo','Consolas',monospace; fill: #334155; }
+      .box { fill: url(#mainBox); stroke: #cbd5e1; stroke-width: 2; rx: 18; filter: url(#shadow); }
+      .blue { fill: url(#blueBox); stroke: #2563eb; stroke-width: 2.2; rx: 20; filter: url(#shadow); }
+      .green { fill: url(#greenBox); stroke: #16a34a; stroke-width: 2.2; rx: 20; filter: url(#shadow); }
+      .purple { fill: url(#purpleBox); stroke: #7c3aed; stroke-width: 2.2; rx: 20; filter: url(#shadow); }
+      .orange { fill: url(#orangeBox); stroke: #ea580c; stroke-width: 2.2; rx: 20; filter: url(#shadow); }
+      .arrow { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .panel { fill: #ffffff; stroke: #dbe4ee; stroke-width: 2; rx: 22; filter: url(#shadow); }
+    </style>
+  </defs>
+
+  <rect width="1520" height="1000" fill="url(#bg)"/>
+  <text x="54" y="62" class="title">dpo_loss：从 chosen/rejected 到 preference objective</text>
+  <text x="54" y="94" class="subtitle">这一节要抓的不是“DPO 很厉害”，而是源码里数据、log-prob、参考模型和偏好差值目标到底怎么接起来。</text>
+
+  <rect x="44" y="124" width="1430" height="834" class="panel"/>
+
+  <rect x="86" y="170" width="266" height="126" class="box"/>
+  <text x="219" y="206" text-anchor="middle" class="label">DPODataset</text>
+  <text x="219" y="238" text-anchor="middle" class="small">chosen / rejected</text>
+  <text x="219" y="266" text-anchor="middle" class="code">x, y, mask</text>
+
+  <path d="M352 233 L438 233" class="arrow"/>
+
+  <rect x="438" y="154" width="314" height="158" class="blue"/>
+  <text x="595" y="190" text-anchor="middle" class="label">train_dpo.py 拼 batch</text>
+  <text x="595" y="222" text-anchor="middle" class="code">cat chosen + rejected</text>
+  <text x="595" y="252" text-anchor="middle" class="small">前半 batch 是 chosen</text>
+  <text x="595" y="278" text-anchor="middle" class="small">后半 batch 是 rejected</text>
+
+  <path d="M752 233 L846 233" class="arrow"/>
+
+  <rect x="846" y="144" width="266" height="178" class="green"/>
+  <text x="979" y="182" text-anchor="middle" class="label">policy model</text>
+  <text x="979" y="214" text-anchor="middle" class="small">正在训练</text>
+  <text x="979" y="244" text-anchor="middle" class="code">outputs.logits</text>
+  <text x="979" y="274" text-anchor="middle" class="small">logits: [2B, T, V]</text>
+
+  <rect x="1142" y="144" width="266" height="178" class="purple"/>
+  <text x="1275" y="182" text-anchor="middle" class="label">reference model</text>
+  <text x="1275" y="214" text-anchor="middle" class="small">冻结不更新</text>
+  <text x="1275" y="244" text-anchor="middle" class="code">ref_outputs.logits</text>
+  <text x="1275" y="274" text-anchor="middle" class="small">logits: [2B, T, V]</text>
+
+  <path d="M979 322 L979 424" class="arrow"/>
+  <path d="M1275 322 L1275 424" class="arrow"/>
+
+  <rect x="804" y="424" width="286" height="150" class="blue"/>
+  <text x="947" y="460" text-anchor="middle" class="label">logits_to_log_probs</text>
+  <text x="947" y="492" text-anchor="middle" class="code">log_softmax + gather(y)</text>
+  <text x="947" y="522" text-anchor="middle" class="small">取真实 label token 的 log-prob</text>
+
+  <rect x="1160" y="424" width="286" height="150" class="purple"/>
+  <text x="1303" y="460" text-anchor="middle" class="label">同一函数跑 ref</text>
+  <text x="1303" y="492" text-anchor="middle" class="code">ref_log_probs</text>
+  <text x="1303" y="522" text-anchor="middle" class="small">policy/ref 都对同一批 y 打分</text>
+
+  <path d="M1160 500 L1090 500" class="arrow"/>
+
+  <path d="M1090 574 L1090 652" class="arrow"/>
+
+  <rect x="874" y="652" width="432" height="156" class="green"/>
+  <text x="1090" y="688" text-anchor="middle" class="label">mask 聚合 assistant 区域</text>
+  <text x="1090" y="720" text-anchor="middle" class="code">(log_probs * mask).sum / mask.sum</text>
+  <text x="1090" y="750" text-anchor="middle" class="small">得到每条 chosen/rejected 回答的平均 log-prob</text>
+
+  <path d="M874 730 L650 730" class="arrow"/>
+
+  <rect x="444" y="652" width="346" height="156" class="orange"/>
+  <text x="617" y="688" text-anchor="middle" class="label">chosen / rejected 分开</text>
+  <text x="617" y="720" text-anchor="middle" class="code">前半 = chosen，后半 = rejected</text>
+  <text x="617" y="750" text-anchor="middle" class="small">policy 和 ref 都各自拆成两半</text>
+
+  <path d="M444 730 L270 730" class="arrow"/>
+
+  <rect x="86" y="652" width="298" height="156" class="orange"/>
+  <text x="235" y="688" text-anchor="middle" class="label">dpo_loss 核心</text>
+  <text x="235" y="720" text-anchor="middle" class="code">pi_logratios - ref_logratios</text>
+  <text x="235" y="750" text-anchor="middle" class="small">policy 相对 ref 是否更偏向 chosen</text>
+
+  <path d="M235 808 L235 878" class="arrow"/>
+
+  <rect x="96" y="878" width="278" height="54" class="box"/>
+  <text x="235" y="911" text-anchor="middle" class="code">loss = -logsigmoid(beta * logits)</text>
+
+  <rect x="468" y="878" width="884" height="54" class="box"/>
+  <text x="910" y="911" text-anchor="middle" class="small">一句话抓手：DPO 不直接算 CE，而是比较“policy 对 chosen 相对 rejected 的偏好”是否比冻结 reference 更强。</text>
+</svg>

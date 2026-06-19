@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="520" viewBox="0 0 1180 520" role="img" aria-labelledby="title desc">
+  <title id="title">mask sum mean aggregation flow</title>
+  <desc id="desc">How token-level log probabilities or losses are filtered by mask and aggregated into sequence-level scores or scalar policy losses.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fbff"/>
+      <stop offset="45%" stop-color="#fff5e5"/>
+      <stop offset="100%" stop-color="#edf8ef"/>
+    </linearGradient>
+    <linearGradient id="card1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e7f2ff"/>
+    </linearGradient>
+    <linearGradient id="card2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffdf8"/>
+      <stop offset="100%" stop-color="#f2dfb8"/>
+    </linearGradient>
+    <linearGradient id="card3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f6fff7"/>
+      <stop offset="100%" stop-color="#d9ecd9"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="9" stdDeviation="11" flood-color="#263238" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2f4050"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .subtitle { font: 500 15px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #5b6770; }
+      .card-title { font: 700 18px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .card-text { font: 500 14px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #35444f; }
+      .code { font: 600 14px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #21313f; }
+      .small { font: 500 12px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #62717c; }
+      .arrow { stroke: #2f4050; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+      .badge { font: 700 12px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <rect width="1180" height="520" rx="28" fill="url(#bg)"/>
+  <circle cx="1010" cy="96" r="102" fill="#d9edff" opacity="0.7"/>
+  <circle cx="138" cy="426" r="124" fill="#e7efd4" opacity="0.65"/>
+  <path d="M42 118 C196 52, 334 160, 500 104 S824 62, 1138 138" stroke="#ffffff" stroke-width="22" opacity="0.56" fill="none"/>
+
+  <text x="48" y="54" class="title">mask / sum / mean：token 分数怎么聚合成一条回答的分数</text>
+  <text x="50" y="82" class="subtitle">DPO、PPO、GRPO、SPO 都先拿到 token 级 log-prob 或 loss，再筛有效 token，最后聚合成序列级或标量目标。</text>
+
+  <g filter="url(#shadow)">
+    <rect x="54" y="132" width="200" height="126" rx="20" fill="url(#card1)" stroke="#c7d8e8"/>
+    <rect x="74" y="150" width="38" height="24" rx="12" fill="#3c78a8"/>
+    <text x="86" y="167" class="badge">1</text>
+    <text x="74" y="196" class="card-title">token 级分数</text>
+    <text x="74" y="224" class="code">[B, T] / [B, R]</text>
+    <text x="74" y="246" class="small">每个 token 一个 log-prob 或 loss</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="306" y="132" width="200" height="126" rx="20" fill="url(#card2)" stroke="#dec987"/>
+    <rect x="326" y="150" width="38" height="24" rx="12" fill="#9b7627"/>
+    <text x="338" y="167" class="badge">2</text>
+    <text x="326" y="196" class="card-title">mask 筛选</text>
+    <text x="326" y="224" class="code">score * mask</text>
+    <text x="326" y="246" class="small">只保留 response / 有效 label</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="558" y="132" width="200" height="126" rx="20" fill="url(#card2)" stroke="#dec987"/>
+    <rect x="578" y="150" width="38" height="24" rx="12" fill="#9b7627"/>
+    <text x="590" y="167" class="badge">3</text>
+    <text x="578" y="196" class="card-title">sum 或 mean</text>
+    <text x="578" y="224" class="code">sum / mask.sum</text>
+    <text x="578" y="246" class="small">变成每条样本的分数</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="810" y="132" width="200" height="126" rx="20" fill="url(#card3)" stroke="#b9d2bd"/>
+    <rect x="830" y="150" width="38" height="24" rx="12" fill="#4f8c5f"/>
+    <text x="842" y="167" class="badge">4</text>
+    <text x="830" y="196" class="card-title">batch 标量目标</text>
+    <text x="830" y="224" class="code">.mean()</text>
+    <text x="830" y="246" class="small">进入 backward 的 scalar loss</text>
+  </g>
+
+  <path class="arrow" d="M256 195 H300"/>
+  <path class="arrow" d="M508 195 H552"/>
+  <path class="arrow" d="M760 195 H804"/>
+
+  <g filter="url(#shadow)">
+    <rect x="76" y="326" width="310" height="126" rx="20" fill="#ffffff" opacity="0.94" stroke="#d8dee4"/>
+    <text x="100" y="360" class="card-title">DPO</text>
+    <text x="100" y="390" class="code">(log_probs * mask).sum / mask.sum</text>
+    <text x="100" y="416" class="card-text">得到 chosen/rejected 的平均 token log-prob，</text>
+    <text x="100" y="438" class="card-text">避免长回答天然更吃亏。</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="434" y="326" width="310" height="126" rx="20" fill="#ffffff" opacity="0.94" stroke="#d8dee4"/>
+    <text x="458" y="360" class="card-title">PPO</text>
+    <text x="458" y="390" class="code">(logp_tokens * final_mask).sum</text>
+    <text x="458" y="416" class="card-text">把 response token log-prob 加成整条回答</text>
+    <text x="458" y="438" class="card-text">的 log-prob，用于 ratio / KL。</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="792" y="326" width="310" height="126" rx="20" fill="#ffffff" opacity="0.94" stroke="#d8dee4"/>
+    <text x="816" y="360" class="card-title">GRPO / SPO</text>
+    <text x="816" y="390" class="code">(loss * mask).sum / mask.sum</text>
+    <text x="816" y="416" class="card-text">先按回答长度平均，再对 batch 平均，</text>
+    <text x="816" y="438" class="card-text">形成可反传的 policy loss。</text>
+  </g>
+
+  <path class="arrow" d="M654 260 C570 302, 370 304, 230 320"/>
+  <path class="arrow" d="M657 260 C628 293, 602 306, 589 320"/>
+  <path class="arrow" d="M660 260 C748 304, 884 302, 946 320"/>
+</svg>

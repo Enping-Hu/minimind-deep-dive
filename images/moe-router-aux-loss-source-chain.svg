@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="720" viewBox="0 0 1320 720" role="img" aria-labelledby="title desc">
+  <title id="title">MiniMind MoE router aux loss source chain</title>
+  <desc id="desc">A Chinese-first diagram showing MoEGate, top-k routing, routed experts, shared experts, aux loss aggregation, and training loss connection.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5fbff"/>
+      <stop offset="48%" stop-color="#fff7e8"/>
+      <stop offset="100%" stop-color="#edf8f1"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e4f1ff"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffdf8"/>
+      <stop offset="100%" stop-color="#f3dfb6"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fbfff9"/>
+      <stop offset="100%" stop-color="#d7ecd8"/>
+    </linearGradient>
+    <linearGradient id="rose" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffafa"/>
+      <stop offset="100%" stop-color="#f2d8d5"/>
+    </linearGradient>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="9" stdDeviation="11" flood-color="#263238" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2e4052"/>
+    </marker>
+    <style>
+      .title { font: 700 31px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .subtitle { font: 500 15px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #5c6872; }
+      .cardTitle { font: 700 17px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #21313f; }
+      .text { font: 500 13px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #364957; }
+      .small { font: 500 12px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #62717c; }
+      .code { font: 600 12px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #243746; }
+      .badge { font: 700 12px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #ffffff; }
+      .arrow { stroke: #2e4052; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+      .soft { stroke: #80652a; stroke-width: 2.1; fill: none; stroke-dasharray: 7 6; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1320" height="720" rx="30" fill="url(#bg)"/>
+  <circle cx="1148" cy="112" r="138" fill="#dbeeff" opacity="0.66"/>
+  <circle cx="148" cy="594" r="160" fill="#e3efd2" opacity="0.64"/>
+  <path d="M50 128 C224 56, 382 168, 554 118 S900 60, 1268 150" stroke="#ffffff" stroke-width="24" opacity="0.56" fill="none"/>
+
+  <text x="50" y="56" class="title">MoE router / expert / aux_loss 源码链路</text>
+  <text x="52" y="84" class="subtitle">MoE 的主线不是“有很多 FFN”这么简单，而是 token 先被 router 分配，再由 selected experts 处理，同时用 aux_loss 约束负载均衡。</text>
+
+  <g filter="url(#shadow)">
+    <rect x="58" y="132" width="190" height="110" rx="20" fill="url(#blue)" stroke="#bdd3e9"/>
+    <rect x="82" y="154" width="42" height="24" rx="12" fill="#3578ad"/>
+    <text x="89" y="171" class="badge">1</text>
+    <text x="82" y="200" class="cardTitle">输入 hidden_states</text>
+    <text x="82" y="224" class="code">[B, T, H]</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="296" y="132" width="210" height="110" rx="20" fill="url(#amber)" stroke="#dfc78d"/>
+    <rect x="320" y="154" width="42" height="24" rx="12" fill="#9b7627"/>
+    <text x="327" y="171" class="badge">2</text>
+    <text x="320" y="200" class="cardTitle">MoEGate 打分</text>
+    <text x="320" y="224" class="code">scores = softmax(Wx)</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="554" y="132" width="210" height="110" rx="20" fill="url(#amber)" stroke="#dfc78d"/>
+    <rect x="578" y="154" width="42" height="24" rx="12" fill="#9b7627"/>
+    <text x="585" y="171" class="badge">3</text>
+    <text x="578" y="200" class="cardTitle">选择 top-k experts</text>
+    <text x="578" y="224" class="code">topk_idx / topk_weight</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="812" y="132" width="210" height="110" rx="20" fill="url(#green)" stroke="#b8d3ba"/>
+    <rect x="836" y="154" width="42" height="24" rx="12" fill="#4d8b5f"/>
+    <text x="843" y="171" class="badge">4</text>
+    <text x="836" y="200" class="cardTitle">routed experts</text>
+    <text x="836" y="224" class="code">FeedForward_i(x)</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1070" y="132" width="190" height="110" rx="20" fill="url(#green)" stroke="#b8d3ba"/>
+    <rect x="1094" y="154" width="42" height="24" rx="12" fill="#4d8b5f"/>
+    <text x="1101" y="171" class="badge">5</text>
+    <text x="1094" y="200" class="cardTitle">加权合并输出</text>
+    <text x="1094" y="224" class="code">sum(weight * expert)</text>
+  </g>
+
+  <path d="M248 187 L288 187" class="arrow"/>
+  <path d="M506 187 L546 187" class="arrow"/>
+  <path d="M764 187 L804 187" class="arrow"/>
+  <path d="M1022 187 L1062 187" class="arrow"/>
+
+  <g filter="url(#shadow)">
+    <rect x="250" y="320" width="250" height="118" rx="20" fill="url(#rose)" stroke="#e1b8b4"/>
+    <text x="278" y="356" class="cardTitle">aux_loss 分支</text>
+    <text x="278" y="388" class="code">ce / Pi / fi</text>
+    <text x="278" y="414" class="small">约束 router 不要长期偏向少数 experts</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="566" y="320" width="250" height="118" rx="20" fill="url(#green)" stroke="#b8d3ba"/>
+    <text x="594" y="356" class="cardTitle">shared experts</text>
+    <text x="594" y="388" class="code">y += expert(identity)</text>
+    <text x="594" y="414" class="small">所有 token 都会走，提供通用能力兜底</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="882" y="320" width="250" height="118" rx="20" fill="url(#rose)" stroke="#e1b8b4"/>
+    <text x="910" y="356" class="cardTitle">汇总到模型输出</text>
+    <text x="910" y="388" class="code">output.aux_loss</text>
+    <text x="910" y="414" class="small">训练脚本再决定是否加到总 loss</text>
+  </g>
+
+  <path d="M660 244 C610 294, 506 302, 440 320" class="soft"/>
+  <path d="M917 244 C872 286, 766 298, 708 320" class="soft"/>
+  <path d="M500 379 L558 379" class="arrow"/>
+  <path d="M816 379 L874 379" class="arrow"/>
+
+  <g filter="url(#shadow)">
+    <rect x="246" y="540" width="828" height="76" rx="22" fill="#ffffff" stroke="#cbd8e1"/>
+    <text x="278" y="574" class="cardTitle">训练总 loss</text>
+    <text x="426" y="574" class="code">total_loss = main_loss + aux_loss</text>
+    <text x="278" y="600" class="small">main_loss 学语言建模 / 偏好 / RL 目标；aux_loss 学 router 负载均衡。两者目标不同，但一起反向传播。</text>
+  </g>
+</svg>

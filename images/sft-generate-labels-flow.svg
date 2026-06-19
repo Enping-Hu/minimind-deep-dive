@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1480" height="980" viewBox="0 0 1480 980" role="img" aria-labelledby="title desc">
+  <title id="title">SFTDataset.generate_labels 信息流</title>
+  <desc id="desc">展示 SFTDataset 如何把 conversations 通过 chat template 变成 input_ids，再用 bos_id/eos_id 扫描 assistant 段，构造 assistant-only supervision 的 labels，并与模型侧 shift cross entropy 闭环。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fbff"/>
+      <stop offset="100%" stop-color="#f4fbf6"/>
+    </linearGradient>
+    <linearGradient id="mainBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fbff"/>
+    </linearGradient>
+    <linearGradient id="blueBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#e0f2fe"/>
+    </linearGradient>
+    <linearGradient id="greenBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dcfce7"/>
+      <stop offset="100%" stop-color="#d1fae5"/>
+    </linearGradient>
+    <linearGradient id="orangeBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffedd5"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+    <linearGradient id="redBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fee2e2"/>
+      <stop offset="100%" stop-color="#fecaca"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#475569" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L11,4 z" fill="#475569"/>
+    </marker>
+    <style>
+      .title { font: 800 34px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 18px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .label { font: 700 22px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .small { font: 500 16px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .hint { font: 500 15px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #64748b; }
+      .code { font: 700 17px 'SFMono-Regular','Menlo','Consolas',monospace; fill: #334155; }
+      .box { fill: url(#mainBox); stroke: #cbd5e1; stroke-width: 2; rx: 18; filter: url(#shadow); }
+      .blue { fill: url(#blueBox); stroke: #2563eb; stroke-width: 2.2; rx: 20; filter: url(#shadow); }
+      .green { fill: url(#greenBox); stroke: #16a34a; stroke-width: 2.2; rx: 20; filter: url(#shadow); }
+      .orange { fill: url(#orangeBox); stroke: #ea580c; stroke-width: 2.2; rx: 20; filter: url(#shadow); }
+      .red { fill: url(#redBox); stroke: #dc2626; stroke-width: 2.2; rx: 20; filter: url(#shadow); }
+      .arrow { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .panel { fill: #ffffff; stroke: #dbe4ee; stroke-width: 2; rx: 22; filter: url(#shadow); }
+    </style>
+  </defs>
+
+  <rect width="1480" height="980" fill="url(#bg)"/>
+  <text x="54" y="62" class="title">SFTDataset.generate_labels：assistant-only supervision 的数据闭环</text>
+  <text x="54" y="94" class="subtitle">这条链不是“简单复制 labels”，而是“整段对话输入 + 只给 assistant 回复写回真实标签 + 模型侧再做 next-token 对齐”。</text>
+
+  <rect x="46" y="124" width="1388" height="806" class="panel"/>
+
+  <rect x="86" y="176" width="238" height="92" class="box"/>
+  <text x="205" y="212" text-anchor="middle" class="label">原始 conversations</text>
+  <text x="205" y="242" text-anchor="middle" class="small">system / user / assistant</text>
+
+  <path d="M324 222 L410 222" class="arrow"/>
+
+  <rect x="410" y="152" width="296" height="140" class="blue"/>
+  <text x="558" y="188" text-anchor="middle" class="label">create_chat_prompt</text>
+  <text x="558" y="220" text-anchor="middle" class="code">apply_chat_template(...)</text>
+  <text x="558" y="248" text-anchor="middle" class="small">add_generation_prompt = False</text>
+  <text x="558" y="274" text-anchor="middle" class="hint">训练样本里已经包含 assistant 回复</text>
+
+  <path d="M706 222 L798 222" class="arrow"/>
+
+  <rect x="798" y="152" width="278" height="140" class="green"/>
+  <text x="937" y="188" text-anchor="middle" class="label">tokenize + pad</text>
+  <text x="937" y="220" text-anchor="middle" class="code">input_ids[:max_length]</text>
+  <text x="937" y="248" text-anchor="middle" class="small">pad 到固定长度</text>
+  <text x="937" y="274" text-anchor="middle" class="hint">得到整段对话输入</text>
+
+  <path d="M1076 222 L1168 222" class="arrow"/>
+
+  <rect x="1168" y="152" width="214" height="140" class="orange"/>
+  <text x="1275" y="188" text-anchor="middle" class="label">generate_labels</text>
+  <text x="1275" y="220" text-anchor="middle" class="code">labels = [-100] * N</text>
+  <text x="1275" y="248" text-anchor="middle" class="small">默认全不监督</text>
+
+  <path d="M1275 292 L1275 374" class="arrow"/>
+
+  <rect x="1088" y="374" width="334" height="154" class="orange"/>
+  <text x="1255" y="410" text-anchor="middle" class="label">扫描 assistant 段</text>
+  <text x="1255" y="442" text-anchor="middle" class="code">bos_id = &lt;bos&gt;assistant\\n</text>
+  <text x="1255" y="472" text-anchor="middle" class="code">eos_id = &lt;eos&gt;\\n</text>
+  <text x="1255" y="502" text-anchor="middle" class="small">找到 assistant 起点与终点</text>
+
+  <path d="M1088 452 L886 452" class="arrow"/>
+
+  <rect x="646" y="374" width="364" height="154" class="green"/>
+  <text x="828" y="410" text-anchor="middle" class="label">只写回 assistant 标签</text>
+  <text x="828" y="442" text-anchor="middle" class="code">labels[j] = input_ids[j]</text>
+  <text x="828" y="472" text-anchor="middle" class="small">assistant 内容 + EOS 保留</text>
+  <text x="828" y="502" text-anchor="middle" class="hint">system / user / pad 仍然是 -100</text>
+
+  <path d="M646 452 L448 452" class="arrow"/>
+
+  <rect x="168" y="344" width="220" height="214" class="red"/>
+  <text x="278" y="382" text-anchor="middle" class="label">被屏蔽的位置</text>
+  <text x="278" y="420" text-anchor="middle" class="small">system</text>
+  <text x="278" y="450" text-anchor="middle" class="small">user</text>
+  <text x="278" y="480" text-anchor="middle" class="small">assistant 起始标记</text>
+  <text x="278" y="510" text-anchor="middle" class="small">pad</text>
+  <text x="278" y="540" text-anchor="middle" class="code">label = -100</text>
+
+  <path d="M828 528 L828 620" class="arrow"/>
+
+  <rect x="570" y="620" width="522" height="144" class="blue"/>
+  <text x="831" y="656" text-anchor="middle" class="label">交给模型侧 forward</text>
+  <text x="831" y="688" text-anchor="middle" class="code">shift_logits / shift_labels</text>
+  <text x="831" y="716" text-anchor="middle" class="small">ignore_index = -100</text>
+  <text x="831" y="742" text-anchor="middle" class="hint">只有 assistant 回复位置真正进入 CrossEntropy</text>
+
+  <rect x="200" y="620" width="274" height="144" class="box"/>
+  <text x="337" y="656" text-anchor="middle" class="label">一句话抓手</text>
+  <text x="337" y="690" text-anchor="middle" class="small">整段对话都输入模型</text>
+  <text x="337" y="720" text-anchor="middle" class="small">但只训练它续写 assistant 回复</text>
+
+  <rect x="1108" y="620" width="250" height="144" class="box"/>
+  <text x="1233" y="656" text-anchor="middle" class="label">与 pretrain 的差别</text>
+  <text x="1233" y="690" text-anchor="middle" class="small">pretrain 近似全文监督</text>
+  <text x="1233" y="720" text-anchor="middle" class="small">SFT 是结构化选择性监督</text>
+
+  <rect x="88" y="824" width="1298" height="64" class="box"/>
+  <text x="737" y="862" text-anchor="middle" class="small">核心记忆：`generate_labels` 解决“哪些位置该学”，第 50 节里的 `shift + cross_entropy` 解决“这些位置怎样按 next-token 方式对齐来学”。</text>
+</svg>

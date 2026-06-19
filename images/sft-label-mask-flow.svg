@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="940" viewBox="0 0 1500 940">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#f7fee7"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fbfdf8"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#64748b" flood-opacity="0.16"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L11,4 z" fill="#475569"/>
+    </marker>
+    <style>
+      .title { font: 800 38px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 19px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .label { font: 760 23px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .small { font: 500 16px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .hint { font: 500 15px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #64748b; }
+      .code { font: 700 18px 'SFMono-Regular','Menlo','Consolas',monospace; fill: #334155; }
+      .panel { fill: url(#panel); stroke: #dbe7f3; stroke-width: 2; rx: 26; filter: url(#shadow); }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; rx: 18; filter: url(#shadow); }
+      .sys { fill: #e2e8f0; stroke: #64748b; stroke-width: 2; rx: 14; }
+      .user { fill: #dbeafe; stroke: #2563eb; stroke-width: 2; rx: 14; }
+      .asst { fill: #dcfce7; stroke: #16a34a; stroke-width: 2; rx: 14; }
+      .mask { fill: #fee2e2; stroke: #ef4444; stroke-width: 2; rx: 14; }
+      .loss { fill: #fef3c7; stroke: #d97706; stroke-width: 2; rx: 14; }
+      .arrow { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .soft { stroke: #94a3b8; stroke-width: 2; fill: none; stroke-dasharray: 7 7; }
+      .divider { stroke: #e2e8f0; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="940" fill="url(#bg)"/>
+  <text x="70" y="70" class="title">SFT 标签逻辑：只监督 assistant 回复</text>
+  <text x="70" y="106" class="subtitle">SFT 输入仍是一整段对话，但 labels 只在 assistant 内容和结束符位置保留 token id；system/user/pad 都用 -100 屏蔽。</text>
+
+  <rect x="60" y="140" width="1380" height="710" class="panel"/>
+
+  <rect x="105" y="195" width="260" height="90" class="sys"/>
+  <text x="235" y="230" text-anchor="middle" class="label">system</text>
+  <text x="235" y="260" text-anchor="middle" class="small">角色设定 / 工具说明</text>
+
+  <rect x="385" y="195" width="260" height="90" class="user"/>
+  <text x="515" y="230" text-anchor="middle" class="label">user</text>
+  <text x="515" y="260" text-anchor="middle" class="small">用户问题</text>
+
+  <rect x="665" y="195" width="340" height="90" class="asst"/>
+  <text x="835" y="230" text-anchor="middle" class="label">assistant</text>
+  <text x="835" y="260" text-anchor="middle" class="small">模型应该学习生成的回复</text>
+
+  <rect x="1025" y="195" width="180" height="90" class="asst"/>
+  <text x="1115" y="230" text-anchor="middle" class="label">EOS</text>
+  <text x="1115" y="260" text-anchor="middle" class="small">结束符</text>
+
+  <rect x="1225" y="195" width="125" height="90" class="sys"/>
+  <text x="1288" y="230" text-anchor="middle" class="label">PAD</text>
+  <text x="1288" y="260" text-anchor="middle" class="small">补齐</text>
+
+  <path d="M235 285 L235 372" class="arrow"/>
+  <path d="M515 285 L515 372" class="arrow"/>
+  <path d="M835 285 L835 372" class="arrow"/>
+  <path d="M1115 285 L1115 372" class="arrow"/>
+  <path d="M1288 285 L1288 372" class="arrow"/>
+
+  <rect x="105" y="372" width="260" height="86" class="mask"/>
+  <text x="235" y="407" text-anchor="middle" class="label">label = -100</text>
+  <text x="235" y="435" text-anchor="middle" class="hint">不训练模型生成 system</text>
+
+  <rect x="385" y="372" width="260" height="86" class="mask"/>
+  <text x="515" y="407" text-anchor="middle" class="label">label = -100</text>
+  <text x="515" y="435" text-anchor="middle" class="hint">不训练模型复述用户问题</text>
+
+  <rect x="665" y="372" width="340" height="86" class="loss"/>
+  <text x="835" y="407" text-anchor="middle" class="label">label = input_id</text>
+  <text x="835" y="435" text-anchor="middle" class="hint">参与 next-token loss</text>
+
+  <rect x="1025" y="372" width="180" height="86" class="loss"/>
+  <text x="1115" y="407" text-anchor="middle" class="label">label = EOS</text>
+  <text x="1115" y="435" text-anchor="middle" class="hint">学习何时结束</text>
+
+  <rect x="1225" y="372" width="125" height="86" class="mask"/>
+  <text x="1288" y="407" text-anchor="middle" class="label">-100</text>
+  <text x="1288" y="435" text-anchor="middle" class="hint">pad</text>
+
+  <rect x="185" y="535" width="420" height="128" class="box"/>
+  <text x="395" y="574" text-anchor="middle" class="label">SFTDataset.generate_labels</text>
+  <text x="395" y="608" text-anchor="middle" class="code">labels = [-100] * len(input_ids)</text>
+  <text x="395" y="638" text-anchor="middle" class="hint">只找到 assistant 段后才写回真实 token id</text>
+
+  <path d="M605 599 L740 599" class="arrow"/>
+
+  <rect x="740" y="535" width="430" height="128" class="box"/>
+  <text x="955" y="574" text-anchor="middle" class="label">模型内部 shift 对齐</text>
+  <text x="955" y="608" text-anchor="middle" class="code">shift_logits vs shift_labels</text>
+  <text x="955" y="638" text-anchor="middle" class="hint">只有 label 不是 -100 的位置进入 CrossEntropy</text>
+
+  <line x1="105" y1="725" x2="1395" y2="725" class="divider"/>
+  <text x="105" y="768" class="label">一句话记忆</text>
+  <text x="105" y="805" class="small">Pretrain：有效正文 token 基本都参与训练。</text>
+  <text x="105" y="835" class="small">SFT：整段对话作为上下文输入，但只让 assistant 回复承担监督信号。</text>
+</svg>

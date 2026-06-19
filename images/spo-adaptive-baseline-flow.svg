@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="740" viewBox="0 0 1180 740" role="img" aria-labelledby="title desc">
+  <title id="title">MiniMind SPO 自适应 baseline 流程图</title>
+  <desc id="desc">展示 SPO 如何生成单条回答，用 AutoAdaptiveValueTracker 维护 baseline，用 reward-baseline 构造 advantage，并结合 reference KL 更新 policy。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffaf2"/>
+      <stop offset="0.5" stop-color="#f3fbff"/>
+      <stop offset="1" stop-color="#f1f7ec"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f6f8b"/>
+      <stop offset="1" stop-color="#3aa0c7"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d88b2a"/>
+      <stop offset="1" stop-color="#c65a42"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#17324d" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#315166"/>
+    </marker>
+    <style>
+      .title { font: 700 30px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #173247; }
+      .subtitle { font: 400 15px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #52677a; }
+      .card { fill: #ffffff; stroke: #d7e4ea; stroke-width: 1.3; rx: 22; filter: url(#shadow); }
+      .box-title { font: 700 18px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #173247; }
+      .text { font: 400 14px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #43576a; }
+      .small { font: 400 12px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #647789; }
+      .code { font: 600 13px 'JetBrains Mono', 'Menlo', monospace; fill: #24485d; }
+      .white-title { font: 700 18px 'Noto Sans CJK SC', 'PingFang SC', sans-serif; fill: #ffffff; }
+      .white-code { font: 600 13px 'JetBrains Mono', 'Menlo', monospace; fill: #ffffff; }
+      .arrow { stroke: #315166; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #8da3ae; stroke-width: 2; fill: none; marker-end: url(#arrow); stroke-dasharray: 7 6; }
+    </style>
+  </defs>
+
+  <rect width="1180" height="740" fill="url(#bg)"/>
+  <circle cx="1025" cy="118" r="124" fill="#f3bd67" opacity="0.22"/>
+  <circle cx="118" cy="628" r="150" fill="#65b8cb" opacity="0.12"/>
+  <path d="M0 128 C176 74 286 174 456 124 S744 62 930 140 S1098 188 1180 150" fill="none" stroke="#9bbec8" stroke-width="2" opacity="0.42"/>
+
+  <text x="58" y="58" class="title">SPO：用自适应 baseline tracker 替代 critic 和组采样</text>
+  <text x="58" y="86" class="subtitle">SPO 每个 prompt 只生成一条回答，不训练 critic，也不做组内多回答比较；它维护一个跨 batch 的 baseline。</text>
+
+  <g transform="translate(70,130)">
+    <rect class="card" width="170" height="96"/>
+    <text x="24" y="36" class="box-title">Prompt</text>
+    <text x="24" y="62" class="text">RLAIFDataset</text>
+    <text x="24" y="80" class="small">batch size = B</text>
+  </g>
+
+  <g transform="translate(300,122)">
+    <rect width="230" height="112" rx="24" fill="url(#blue)" filter="url(#shadow)"/>
+    <text x="26" y="38" class="white-title">Policy 生成</text>
+    <text x="26" y="68" class="white-code">num_return_sequences = 1</text>
+    <text x="26" y="92" class="white-code">outputs: [B, P+R]</text>
+  </g>
+
+  <g transform="translate(590,130)">
+    <rect class="card" width="195" height="96"/>
+    <text x="24" y="36" class="box-title">Reward</text>
+    <text x="24" y="62" class="text">每条回答打分</text>
+    <text x="24" y="80" class="code">rewards: [B]</text>
+  </g>
+
+  <g transform="translate(850,120)">
+    <rect class="card" width="245" height="116"/>
+    <text x="24" y="36" class="box-title">Value Tracker</text>
+    <text x="24" y="64" class="code">baseline = alpha/(alpha+beta)</text>
+    <text x="24" y="92" class="small">跨 batch 维护平均水平</text>
+  </g>
+
+  <path class="arrow" d="M240 178 H296"/>
+  <path class="arrow" d="M530 178 H586"/>
+  <path class="arrow" d="M785 178 H846"/>
+
+  <g transform="translate(165,340)">
+    <rect width="330" height="142" rx="24" fill="url(#amber)" filter="url(#shadow)"/>
+    <text x="28" y="38" class="white-title">Advantage</text>
+    <text x="28" y="72" class="white-code">baseline -> [-3, 3]</text>
+    <text x="28" y="102" class="white-code">adv = reward - baseline</text>
+    <text x="28" y="126" class="white-code">clamp(-5, 5)</text>
+  </g>
+
+  <g transform="translate(610,340)">
+    <rect class="card" width="330" height="142"/>
+    <text x="24" y="36" class="box-title">Policy Loss + KL</text>
+    <text x="24" y="66" class="code">-logp * advantage</text>
+    <text x="24" y="94" class="code">+ beta * per_token_kl</text>
+    <text x="24" y="120" class="small">只统计有效 completion token</text>
+  </g>
+
+  <path class="dash" d="M710 226 C590 278 455 305 330 340"/>
+  <path class="dash" d="M972 236 C858 284 646 310 456 340"/>
+  <path class="arrow" d="M495 412 H606"/>
+
+  <g transform="translate(255,575)">
+    <rect class="card" width="670" height="78"/>
+    <text x="34" y="32" class="box-title">Tracker 更新</text>
+    <text x="34" y="58" class="text">用本 batch 的 reward 和 mean log-prob 更新 alpha/beta；rho 根据 log-prob 变化调节历史信息保留程度。</text>
+  </g>
+
+  <path class="dash" d="M775 482 C790 520 760 554 715 575"/>
+  <path class="dash" d="M590 614 C780 682 992 520 972 238"/>
+
+  <g transform="translate(76,704)">
+    <text class="small" x="0" y="0">读源码抓手：`AutoAdaptiveValueTracker`、`get_baselines`、`unnormalized_baselines`、`advantages`、`value_tracker.update`、`rho`。</text>
+  </g>
+</svg>

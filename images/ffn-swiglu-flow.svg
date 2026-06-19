@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#edf7ef"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f7fbff"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dcfce7"/>
+      <stop offset="100%" stop-color="#bbf7d0"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#bfdbfe"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#64748b" flood-opacity="0.16"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L11,4 z" fill="#475569"/>
+    </marker>
+    <style>
+      .title { font: 800 38px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 19px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .label { font: 750 23px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .small { font: 500 16px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .hint { font: 500 15px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #64748b; }
+      .code { font: 700 18px 'SFMono-Regular','Menlo','Consolas',monospace; fill: #334155; }
+      .panel { fill: url(#panel); stroke: #dbe7f3; stroke-width: 2; rx: 26; filter: url(#shadow); }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; rx: 18; filter: url(#shadow); }
+      .gate { fill: url(#green); stroke: #16a34a; stroke-width: 2.3; rx: 18; filter: url(#shadow); }
+      .up { fill: url(#blue); stroke: #2563eb; stroke-width: 2.3; rx: 18; filter: url(#shadow); }
+      .merge { fill: url(#amber); stroke: #d97706; stroke-width: 2.3; rx: 999; filter: url(#shadow); }
+      .down { fill: #fee2e2; stroke: #ef4444; stroke-width: 2.3; rx: 18; filter: url(#shadow); }
+      .arrow { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .soft { stroke: #94a3b8; stroke-width: 2.2; fill: none; stroke-dasharray: 8 7; }
+      .divider { stroke: #e2e8f0; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1500" height="900" fill="url(#bg)"/>
+  <text x="70" y="70" class="title">FeedForward / SwiGLU 的信息流</text>
+  <text x="70" y="105" class="subtitle">Attention 负责 token 之间交换信息；FFN/SwiGLU 负责对每个 token 的 hidden 向量做非线性特征加工。</text>
+
+  <rect x="60" y="140" width="1380" height="680" class="panel"/>
+
+  <rect x="105" y="376" width="245" height="92" class="box"/>
+  <text x="227" y="410" text-anchor="middle" class="label">输入 token 表示</text>
+  <text x="227" y="439" text-anchor="middle" class="code">x: [B, S, H]</text>
+  <text x="227" y="461" text-anchor="middle" class="hint">每个位置各自处理</text>
+
+  <path d="M350 422 L430 345" class="arrow"/>
+  <path d="M350 422 L430 520" class="arrow"/>
+
+  <rect x="430" y="280" width="260" height="118" class="gate"/>
+  <text x="560" y="314" text-anchor="middle" class="label">门控分支</text>
+  <text x="560" y="345" text-anchor="middle" class="code">gate_proj: H -> I</text>
+  <text x="560" y="374" text-anchor="middle" class="small">再经过 SiLU 激活</text>
+
+  <rect x="430" y="468" width="260" height="104" class="up"/>
+  <text x="560" y="502" text-anchor="middle" class="label">内容分支</text>
+  <text x="560" y="533" text-anchor="middle" class="code">up_proj: H -> I</text>
+  <text x="560" y="557" text-anchor="middle" class="hint">提供被筛选的候选特征</text>
+
+  <path d="M690 339 C760 339, 790 382, 830 422" class="arrow"/>
+  <path d="M690 520 C760 520, 790 462, 830 422" class="arrow"/>
+
+  <circle cx="870" cy="422" r="50" class="merge"/>
+  <text x="870" y="414" text-anchor="middle" class="label">逐元素</text>
+  <text x="870" y="444" text-anchor="middle" class="label">相乘</text>
+  <text x="870" y="493" text-anchor="middle" class="code">SiLU(gate) * up</text>
+
+  <path d="M920 422 L1015 422" class="arrow"/>
+
+  <rect x="1015" y="370" width="265" height="104" class="down"/>
+  <text x="1148" y="404" text-anchor="middle" class="label">压回 hidden_size</text>
+  <text x="1148" y="435" text-anchor="middle" class="code">down_proj: I -> H</text>
+  <text x="1148" y="459" text-anchor="middle" class="hint">输出形状回到 [B, S, H]</text>
+
+  <path d="M1280 422 L1360 422" class="arrow"/>
+  <rect x="1360" y="376" width="70" height="92" class="box"/>
+  <text x="1395" y="413" text-anchor="middle" class="label">输出</text>
+  <text x="1395" y="442" text-anchor="middle" class="code">[B,S,H]</text>
+
+  <line x1="105" y1="635" x2="1395" y2="635" class="divider"/>
+
+  <text x="105" y="680" class="label">记忆重点</text>
+  <text x="105" y="718" class="small">1. `H` 是 hidden_size，`I` 是 intermediate_size，FFN 先升维再降维。</text>
+  <text x="105" y="752" class="small">2. `gate_proj` 不是普通线性层那么简单，它决定哪些候选特征被放大或压低。</text>
+  <text x="105" y="786" class="small">3. `up_proj` 产生候选特征，`down_proj` 把加工后的特征映射回 block 需要的隐藏维度。</text>
+
+  <rect x="1015" y="180" width="360" height="118" class="box"/>
+  <text x="1195" y="216" text-anchor="middle" class="label">源码对应</text>
+  <text x="1195" y="249" text-anchor="middle" class="code">down_proj(act(gate_proj(x)) * up_proj(x))</text>
+  <text x="1195" y="278" text-anchor="middle" class="hint">这一行就是 SwiGLU 的主体</text>
+</svg>

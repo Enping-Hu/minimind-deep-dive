@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="720" viewBox="0 0 1320 720" role="img" aria-labelledby="title desc">
+  <title id="title">MiniMind training hyperparameter reading map</title>
+  <desc id="desc">A Chinese-first map for reading MiniMind training hyperparameters by training-chain layer.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5fbff"/>
+      <stop offset="48%" stop-color="#fff6e8"/>
+      <stop offset="100%" stop-color="#edf8f1"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e4f1ff"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffdf8"/>
+      <stop offset="100%" stop-color="#f3dfb6"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fbfff9"/>
+      <stop offset="100%" stop-color="#d7ecd8"/>
+    </linearGradient>
+    <linearGradient id="rose" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffafa"/>
+      <stop offset="100%" stop-color="#f2d8d5"/>
+    </linearGradient>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="9" stdDeviation="11" flood-color="#263238" flood-opacity="0.14"/>
+    </filter>
+    <style>
+      .title { font: 700 31px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1f2d3d; }
+      .subtitle { font: 500 15px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #5c6872; }
+      .cardTitle { font: 700 18px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #21313f; }
+      .text { font: 500 13px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #364957; }
+      .small { font: 500 12px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #62717c; }
+      .code { font: 600 13px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #243746; }
+      .badge { font: 700 12px "JetBrains Mono", "SFMono-Regular", Consolas, monospace; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <rect width="1320" height="720" rx="30" fill="url(#bg)"/>
+  <circle cx="1140" cy="112" r="138" fill="#dbeeff" opacity="0.66"/>
+  <circle cx="148" cy="594" r="160" fill="#e3efd2" opacity="0.65"/>
+  <path d="M50 128 C224 56, 382 168, 554 118 S900 60, 1268 150" stroke="#ffffff" stroke-width="24" opacity="0.56" fill="none"/>
+
+  <text x="50" y="56" class="title">训练脚本超参数阅读法：先问它控制训练链路哪一层</text>
+  <text x="52" y="84" class="subtitle">不要孤立背默认值。先把参数放回数据、序列、目标、漂移约束、梯度、步长和记录层。</text>
+
+  <g filter="url(#shadow)">
+    <rect x="72" y="132" width="360" height="178" rx="22" fill="url(#green)" stroke="#b8d3ba"/>
+    <rect x="96" y="156" width="40" height="24" rx="12" fill="#4d8b5f"/>
+    <text x="107" y="173" class="badge">1</text>
+    <text x="150" y="174" class="cardTitle">数据量与有效 batch</text>
+    <text x="96" y="214" class="code">batch_size</text>
+    <text x="96" y="240" class="code">accumulation_steps</text>
+    <text x="96" y="274" class="small">决定一次参数更新吸收多少样本信号，也影响显存与噪声。</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="480" y="132" width="360" height="178" rx="22" fill="url(#green)" stroke="#b8d3ba"/>
+    <rect x="504" y="156" width="40" height="24" rx="12" fill="#4d8b5f"/>
+    <text x="515" y="173" class="badge">2</text>
+    <text x="558" y="174" class="cardTitle">序列与生成长度</text>
+    <text x="504" y="214" class="code">max_seq_len</text>
+    <text x="504" y="240" class="code">max_gen_len / num_generations</text>
+    <text x="504" y="274" class="small">决定输入输出 token 范围、RL 采样数量、时间和显存开销。</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="888" y="132" width="360" height="178" rx="22" fill="url(#amber)" stroke="#dfc78d"/>
+    <rect x="912" y="156" width="40" height="24" rx="12" fill="#9b7627"/>
+    <text x="923" y="173" class="badge">3</text>
+    <text x="966" y="174" class="cardTitle">目标函数强度</text>
+    <text x="912" y="214" class="code">clip_epsilon / vf_coef</text>
+    <text x="912" y="240" class="code">DPO beta</text>
+    <text x="912" y="274" class="small">决定 PPO/DPO 目标对 policy 的拉动方式与强度。</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="72" y="368" width="360" height="178" rx="22" fill="url(#rose)" stroke="#e1b8b4"/>
+    <rect x="96" y="392" width="40" height="24" rx="12" fill="#aa5b55"/>
+    <text x="107" y="409" class="badge">4</text>
+    <text x="150" y="410" class="cardTitle">reference 漂移约束</text>
+    <text x="96" y="450" class="code">kl_coef / RL beta</text>
+    <text x="96" y="476" class="code">update_old_actor_freq</text>
+    <text x="96" y="510" class="small">控制 policy 与 ref/old actor 的距离约束和快照更新节奏。</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="480" y="368" width="360" height="178" rx="22" fill="url(#blue)" stroke="#bdd3e9"/>
+    <rect x="504" y="392" width="40" height="24" rx="12" fill="#3578ad"/>
+    <text x="515" y="409" class="badge">5</text>
+    <text x="558" y="410" class="cardTitle">梯度与更新安全</text>
+    <text x="504" y="450" class="code">grad_clip</text>
+    <text x="504" y="476" class="code">learning_rate / critic_learning_rate</text>
+    <text x="504" y="510" class="small">控制梯度范数上限和每一步参数更新的全局步长。</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="888" y="368" width="360" height="178" rx="22" fill="url(#blue)" stroke="#bdd3e9"/>
+    <rect x="912" y="392" width="40" height="24" rx="12" fill="#3578ad"/>
+    <text x="923" y="409" class="badge">6</text>
+    <text x="966" y="410" class="cardTitle">训练进度与证据</text>
+    <text x="912" y="450" class="code">epochs / log_interval</text>
+    <text x="912" y="476" class="code">save_interval / from_resume</text>
+    <text x="912" y="510" class="small">控制训练持续多久、多久记录、多久保存、能否恢复现场。</text>
+  </g>
+
+  <text x="88" y="632" class="small">读一个参数时的三问：它控制什么对象？它在 forward/loss/backward/step 哪一层生效？调大它主要换来什么收益和代价？</text>
+</svg>

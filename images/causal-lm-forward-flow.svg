@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="880" viewBox="0 0 1400 880" role="img" aria-labelledby="title desc">
+  <title id="title">MiniMindForCausalLM.forward 信息流</title>
+  <desc id="desc">展示 MiniMindForCausalLM.forward 如何把 input_ids 经过 MiniMindModel 得到 hidden_states，再映射成 logits，并在有 labels 时做 shift 和 cross entropy，最后附加 aux_loss 输出。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fbff"/>
+      <stop offset="100%" stop-color="#f3faf3"/>
+    </linearGradient>
+    <linearGradient id="mainBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fbff"/>
+    </linearGradient>
+    <linearGradient id="blueBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#e0f2fe"/>
+    </linearGradient>
+    <linearGradient id="orangeBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffedd5"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+    <linearGradient id="greenBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dcfce7"/>
+      <stop offset="100%" stop-color="#d1fae5"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#475569" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L11,4 z" fill="#475569"/>
+    </marker>
+    <style>
+      .title { font: 800 34px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 18px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .label { font: 700 22px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #0f172a; }
+      .small { font: 500 16px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #475569; }
+      .hint { font: 500 15px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill: #64748b; }
+      .code { font: 700 18px 'SFMono-Regular','Menlo','Consolas',monospace; fill: #334155; }
+      .box { fill: url(#mainBox); stroke: #cbd5e1; stroke-width: 2; rx: 18; filter: url(#shadow); }
+      .blue { fill: url(#blueBox); stroke: #2563eb; stroke-width: 2.2; rx: 20; filter: url(#shadow); }
+      .orange { fill: url(#orangeBox); stroke: #ea580c; stroke-width: 2.2; rx: 20; filter: url(#shadow); }
+      .green { fill: url(#greenBox); stroke: #16a34a; stroke-width: 2.2; rx: 20; filter: url(#shadow); }
+      .arrow { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .panel { fill: #ffffff; stroke: #dbe4ee; stroke-width: 2; rx: 22; filter: url(#shadow); }
+    </style>
+  </defs>
+
+  <rect width="1400" height="880" fill="url(#bg)"/>
+
+  <text x="60" y="66" class="title">MiniMindForCausalLM.forward：从 hidden_states 到 logits/loss</text>
+  <text x="60" y="98" class="subtitle">这一层不负责再做 Attention，而是把基础模型输出的 hidden states 变成词表 logits，并在训练时完成 next-token loss 对齐。</text>
+
+  <rect x="52" y="132" width="1296" height="690" class="panel"/>
+
+  <rect x="100" y="212" width="240" height="88" class="box"/>
+  <text x="220" y="247" text-anchor="middle" class="label">输入</text>
+  <text x="220" y="275" text-anchor="middle" class="code">input_ids / labels</text>
+
+  <path d="M340 256 L432 256" class="arrow"/>
+
+  <rect x="432" y="182" width="330" height="148" class="blue"/>
+  <text x="597" y="220" text-anchor="middle" class="label">MiniMindModel.forward</text>
+  <text x="597" y="252" text-anchor="middle" class="small">embedding -> N 层 block -> final norm</text>
+  <text x="597" y="282" text-anchor="middle" class="code">hidden_states, past_key_values, aux_loss</text>
+  <text x="597" y="306" text-anchor="middle" class="hint">这里只输出特征，还不是词概率</text>
+
+  <path d="M762 256 L854 256" class="arrow"/>
+
+  <rect x="854" y="212" width="224" height="88" class="orange"/>
+  <text x="966" y="247" text-anchor="middle" class="label">lm_head</text>
+  <text x="966" y="275" text-anchor="middle" class="code">[B, T, H] -> [B, T, V]</text>
+
+  <path d="M1078 256 L1170 256" class="arrow"/>
+
+  <rect x="1170" y="212" width="156" height="88" class="green"/>
+  <text x="1248" y="247" text-anchor="middle" class="label">logits</text>
+  <text x="1248" y="275" text-anchor="middle" class="code">词表分数</text>
+
+  <rect x="866" y="394" width="430" height="188" class="orange"/>
+  <text x="1081" y="430" text-anchor="middle" class="label">训练时的 shift 对齐</text>
+  <text x="1081" y="466" text-anchor="middle" class="code">shift_logits = logits[..., :-1, :]</text>
+  <text x="1081" y="498" text-anchor="middle" class="code">shift_labels = labels[..., 1:]</text>
+  <text x="1081" y="530" text-anchor="middle" class="small">让位置 t 的输出去预测位置 t+1 的真实 token</text>
+  <text x="1081" y="556" text-anchor="middle" class="hint">这就是 next-token prediction 的真正落点</text>
+
+  <path d="M1248 300 L1248 394" class="arrow"/>
+  <path d="M220 300 C220 420, 500 470, 866 470" class="arrow"/>
+
+  <rect x="866" y="640" width="430" height="110" class="green"/>
+  <text x="1081" y="678" text-anchor="middle" class="label">CrossEntropyLoss</text>
+  <text x="1081" y="708" text-anchor="middle" class="code">ignore_index = -100</text>
+  <text x="1081" y="734" text-anchor="middle" class="small">padding 或被 mask 的位置不参与 loss</text>
+
+  <path d="M1081 582 L1081 640" class="arrow"/>
+
+  <rect x="118" y="438" width="540" height="268" class="box"/>
+  <text x="388" y="476" text-anchor="middle" class="label">推理分支还会做两件事</text>
+  <text x="150" y="526" class="small">1. `past_key_values` 原样带出，供 `generate()` 增量解码继续复用缓存。</text>
+  <text x="150" y="568" class="small">2. `logits_to_keep` 可以只保留最后若干个位置的 logits，减少不必要的显存与计算。</text>
+  <text x="150" y="610" class="small">3. 默认 `logits_to_keep = 0` 时，`slice(0, None)` 等价于保留全序列 logits。</text>
+  <text x="150" y="652" class="small">4. `output.aux_loss = aux_loss` 把上游 MoE router 的辅助损失也一起交给训练脚本。</text>
+
+  <rect x="494" y="742" width="430" height="56" class="box"/>
+  <text x="709" y="777" text-anchor="middle" class="code">CausalLMOutputWithPast(loss, logits, past_key_values, hidden_states) + aux_loss</text>
+
+  <path d="M1081 750 C1081 786, 928 770, 924 770" class="arrow"/>
+
+  <rect x="90" y="140" width="420" height="52" class="box"/>
+  <text x="300" y="173" text-anchor="middle" class="small">核心理解：基础模型负责“抽特征”，LM head 负责“映射到词表”，loss 负责“按 next-token 目标训练”。</text>
+</svg>
