@@ -15,7 +15,7 @@ MiniMind 自带训练好的 tokenizer，放在 `model/tokenizer.json` 和 `model
 | Mistral | 32,000 |
 | MiniMind | 6,400 |
 
-词表大小直接决定两个层的参数量：embedding 层 `vocab_size × hidden_size`，输出层（lm_head）同样大小。对 MiniMind 这种 `hidden_size=512` 的小模型，6400 的词表对应 `6400 × 512 ≈ 3.3M` 参数；如果换成 Qwen2 的 15 万词表，光这一层就 7000 万以上，会把一个 0.1B 模型的参数预算吃掉一大半。所以小模型选小词表是合理取舍：牺牲一点编解码效率（中文分得更碎），换回参数预算。代价是 PPL 这类按 token 统计的指标在不同 tokenizer 间不可直接比，跨 tokenizer 比较时 BPB（Bits Per Byte）更可靠。
+词表大小直接决定两个层的参数量：embedding 层 `vocab_size × hidden_size`，输出层（lm_head）同样大小。对 MiniMind 这种 `hidden_size=512` 的小模型（MiniMind2-Small 约 26M 参数），6400 的词表对应 `6400 × 512 ≈ 3.3M` 参数；如果换成 Qwen2 的 15 万词表，光这一层就 7000 万以上，比整个 Small 模型还大几倍。所以小模型选小词表是合理取舍：牺牲一点编解码效率（中文分得更碎），换回参数预算。代价是 PPL 这类按 token 统计的指标在不同 tokenizer 间不可直接比，跨 tokenizer 比较时 BPB（Bits Per Byte）更可靠。
 
 ## train_tokenizer.py：训一个 BPE 分词器
 
