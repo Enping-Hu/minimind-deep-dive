@@ -21,8 +21,8 @@
 
 最容易写错的是把「两版本来就一样的东西」当成 v3 的新特性。下面三项**两版完全一致**：
 
-- **`rope_theta` 都是 1e6**。v2、v3 的 `MiniMindConfig` 都默认 `rope_theta=1e6`（v3 `model_minimind.py:29`）。RoPE 的基底没变。
-- **`tie_word_embeddings` 两版都绑定** embedding 与 lm_head 权重。差别只在实现方式：v2 硬编码 `self.model.embed_tokens.weight = self.lm_head.weight`，v3 走 config flag（`model_minimind.py:242` `if self.config.tie_word_embeddings:`）——但结果都是绑定（[02-model/embedding](../01-foundations/02-embedding.md) 讲过 weight tying）。
+- **`rope_theta` 都是 1e6**。v2、v3 的 `MiniMindConfig` 都默认 `rope_theta=1e6`。RoPE 的基底没变。
+- **`tie_word_embeddings` 两版都绑定** embedding 与 lm_head 权重。差别只在实现方式：v2 在 `MiniMindForCausalLM.__init__` 里硬编码 `self.model.embed_tokens.weight = self.lm_head.weight`，v3 走 config flag（`if self.config.tie_word_embeddings:`）——但结果都是绑定（[02-model/embedding](../01-foundations/02-embedding.md) 讲过 weight tying）。
 - **MoE 的 router top-k 机制一致**：都是 `gate → softmax → topk → norm_topk_prob` 选 top-k 专家、训练时算 aux_loss。v3 改的只是「有没有 shared expert 那条支路」，不是 router 本身（见 [02-architecture-diffs](02-architecture-diffs.md)）。
 
 写 v2/v3 对照时，先排除这三项，避免「v3 才有 RoPE / v3 才绑定权重」这类错误。

@@ -4,7 +4,7 @@
 
 ## 两个 loss 分支
 
-v3 `train_grpo.py:135-142`：
+v3 `grpo_train_epoch` 的 loss 分支：
 
 ```python
 ratio = torch.exp(per_token_logps - old_per_token_logps)        # 逐 token
@@ -17,7 +17,7 @@ else:  # "grpo"，经典分支
                                  clipped_ratio * advantages.unsqueeze(1)) - args.beta * per_token_kl)
 ```
 
-默认值（`:226-228`）：`loss_type="cispo"`、`num_generations` 8→6、`beta` 0.02→0.1，另有 `epsilon_high=5.0`。**组内相对 advantage 算法不变**：仍是 `(reward − 组均值) / (组标准差 + eps)`（第 7 章的核心），CISPO 只改了 advantage 之后怎么进 loss。
+默认值（argparse）：`loss_type="cispo"`、`num_generations` 8→6、`beta` 0.02→0.1，另有 `epsilon_high=5.0`。**组内相对 advantage 算法不变**：仍是 `(reward − 组均值) / (组标准差 + eps)`（第 7 章的核心），CISPO 只改了 advantage 之后怎么进 loss。
 
 ## CISPO 和经典 GRPO 的关键区别
 
@@ -30,7 +30,7 @@ else:  # "grpo"，经典分支
 
 所以 CISPO 的动机是「别让越界 token 完全失去梯度信号」。这个做法来自 MiniMax-M1 系列。
 
-注意 v3 GRPO 仍是 on-policy 的近似：它也用 rollout 时的 `old_per_token_logps`（`:90`，detach）算 ratio，和 v3 PPO 用 logp 快照同源——不是第 7 章 v2 GRPO 里那个「前向≈1 的 `exp(logp − logp.detach())`」写法。
+注意 v3 GRPO 仍是 on-policy 的近似：它也用 rollout 时的 `old_per_token_logps`（detach）算 ratio，和 v3 PPO 用 logp 快照同源——不是第 7 章 v2 GRPO 里那个「前向≈1 的 `exp(logp − logp.detach())`」写法。
 
 ## 对第 7 章的影响
 
