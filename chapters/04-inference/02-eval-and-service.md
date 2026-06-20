@@ -22,7 +22,7 @@ messages → apply_chat_template(add_generation_prompt=True) → tokenizer → m
 
 ## 共享核心：add_generation_prompt 是关键
 
-对齐后的聊天模型，推理时不是把用户原句直接塞进去，而是先组织成消息列表、过 chat template（`eval_llm.py` L73–76）：
+对齐后的聊天模型，推理时不是把用户原句直接塞进去，而是先组织成消息列表、过 chat template（`eval_llm.py` 的 `main`）：
 
 ```python
 templates = {"conversation": conversation, "tokenize": False, "add_generation_prompt": True}
@@ -33,7 +33,7 @@ inputs = tokenizer.apply_chat_template(**templates) if args.weight != 'pretrain'
 
 注意 `pretrain` 权重例外：它不是聊天模型，直接用 `bos_token + prompt` 续写，不套 chat template。
 
-生成统一走 `model.generate`（L80–85，`do_sample` / `top_p` / `temperature`），配 `TextStreamer` 边生成边打印。
+生成统一走 `model.generate`（`do_sample` / `top_p` / `temperature`），配 `TextStreamer` 边生成边打印。
 
 ## 三个入口怎么各自包装
 
