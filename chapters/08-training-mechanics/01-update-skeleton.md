@@ -79,12 +79,42 @@ loss = loss / args.accumulation_steps
 - **「backward 更新参数」**——backward 只算并累积梯度，step 才更新。
 - **「DPO/PPO 是特殊算法，不用普通反向传播」**——它们特殊在 loss 构造；只要得到可微标量 loss，底层仍是 autograd + optimizer。
 
+<details>
+<summary>源码细节：scaler / unscale_ / clip / step 的调用顺序为什么是这个</summary>
+
+正文讲了每个配角的作用，这里补它们**顺序不能换**的原因（贴 `train_pretrain.py` 的 `train_epoch` 真实片段+函数名锚点，无行号，以片段为准）。
+
+```python
+scaler.scale(loss).backward()                      # ① loss 放大后再 backward
+if (step + 1) % args.accumulation_steps == 0:
+    scaler.unscale_(optimizer)                     # ② 先把梯度还原回真实尺度
+    torch.nn.utils.clip_grad_norm_(model.parameters(), args.grad_clip)  # ③ 再裁剪
+    scaler.step(optimizer)                         # ④ 更新（内部查 inf/nan）
+    scaler.update()                                # ⑤ 调整下次的缩放因子
+    optimizer.zero_grad(set_to_none=True)          # ⑥ 清梯度
+```
+
+**① scale 在 backward 前**：fp16 下小梯度会下溢成 0，先把 loss 乘一个大因子，链式法则下所有梯度同比放大，避开下溢。放大后的梯度存进 `param.grad`。
+
+**② unscale_ 必须在 clip 之前**：此刻 `param.grad` 还是放大状态。`clip_grad_norm_` 按梯度范数裁剪，如果对放大后的梯度裁，阈值 `grad_clip=1.0` 就完全不是真实尺度的 1.0 了。所以先 `unscale_` 把梯度除回真实尺度，clip 才裁在对的量级上。**顺序换了，裁剪阈值就失真。**
+
+**④ scaler.step 内部带 inf/nan 检查**：放大可能导致梯度溢出成 inf。`scaler.step` 发现 inf/nan 就**跳过这次更新**（不调 `optimizer.step`），避免污染参数；正常则照常更新。
+
+**⑤ scaler.update 动态调因子**：根据这一步有没有溢出，调整下次的缩放倍数——溢出就调小、长期不溢出就试着调大，自适应找最大安全放大倍数。
+
+**⑥ zero_grad 在 step 之后**：梯度累积期间（没到 `accumulation_steps`）不进这个 if 块、不清零，让梯度继续在 `param.grad` 上累加；到了累积边界才 step + 清零。这就是「DataLoader 每 batch backward、optimizer 每攒够才 step/zero_grad」的两种 step 节奏。
+
+bfloat16 时 `GradScaler(enabled=False)`，`scale`/`unscale_`/`step`/`update` 都退化成直通（不放大、直接调 `optimizer.step`），因为 bf16 动态范围大、不需要防下溢。
+
+</details>
+
 ## 练习
 
 1. 为什么说 `backward()` 不等于参数更新？两者中间隔着什么？
 2. 梯度累积为什么把 loss 除以 `accumulation_steps`？循环里的两种 step 各指什么？
 3. `clip_grad_norm_` 改的是梯度还是参数？漏掉 `zero_grad` 会怎样？
 4. DPO/PPO 目标函数特殊，为什么底层仍是 autograd + optimizer？
+5.（源码细节）为什么 `scaler.unscale_(optimizer)` 必须在 `clip_grad_norm_` 之前调用？
 
 <details>
 <summary>参考答案</summary>
@@ -93,4 +123,5 @@ loss = loss / args.accumulation_steps
 2. 用多次小 batch 梯度模拟大 batch，先缩小每次 loss 再累积，最终梯度尺度才接近大 batch；两种 step 是 DataLoader 每 batch 取数+backward、optimizer 每 accumulation_steps 步更新一次。
 3. 改的是梯度（按范数缩放），不直接改参数；漏 `zero_grad` 会把上一轮梯度错误叠加进下一轮。
 4. 它们特殊在 loss/objective 构造，只要得到可微标量 loss，autograd 就能算梯度、optimizer 就能更新需训练的参数。
+5. backward 后 `param.grad` 是被 scaler 放大过的；`clip_grad_norm_` 按范数裁剪，若裁放大后的梯度，`grad_clip` 阈值就不是真实尺度。先 `unscale_` 还原真实梯度，clip 才裁在对的量级上。
 </details>
