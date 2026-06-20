@@ -98,7 +98,7 @@ freqs_cos = torch.cat([torch.cos(freqs), torch.cos(freqs)], dim=-1)   # [end, di
 q_embed = (q * cos.unsqueeze(unsqueeze_dim)) + (rotate_half(q) * sin.unsqueeze(unsqueeze_dim))
 ```
 
-q 是 `[B, T, n_heads, head_dim]`（[02-attention](02-attention.md) 的 reshape 后），cos 切片出来是 `[T, head_dim]`。`unsqueeze_dim=1` 在第 1 维插一维 → `[T, 1, head_dim]`（这里实际按 q 的布局对齐到 `[1, T, 1, head_dim]` 量级），广播时**所有 head 共享同一套位置旋转**——位置信息只和「第几个 token」有关，与「第几个 head」无关，所以同位置的所有 head 转同样的角度。
+q 是 `[B, T, n_heads, head_dim]`（[02-attention](02-attention.md) 里 RoPE 在 transpose **之前**注入，所以是这个布局，不是 `[B, n_heads, T, head_dim]`），cos 切片出来是 `[T, head_dim]`。`unsqueeze_dim=1` 在第 1 维插一维 → `[T, 1, head_dim]`。广播按右对齐：cos 的 `[T, 1, head_dim]` 对上 q 末三维 `[T, n_heads, head_dim]`，正中间那个长度 1 的维对应 `n_heads`——于是**所有 head 共享同一套位置旋转**。位置信息只和「第几个 token」有关，与「第几个 head」无关，所以同位置的所有 head 转同样的角度。
 
 </details>
 
