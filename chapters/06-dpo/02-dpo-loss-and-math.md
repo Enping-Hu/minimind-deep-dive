@@ -4,7 +4,7 @@
 
 一句话先记住：**DPO 不是在问「chosen 概率大不大」，而是在问「当前 policy 相对 reference，是否更站在 chosen 这一边」。**
 
-源码：`trainer/train_dpo.py`，`dpo_loss`（L33–51）。
+源码：`trainer/train_dpo.py`，`dpo_loss`。
 
 ## 完整的 dpo_loss
 
