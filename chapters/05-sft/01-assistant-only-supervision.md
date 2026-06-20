@@ -2,7 +2,7 @@
 
 预训练让模型学会预测任意文本的下一个 token；SFT（监督微调）让模型学会**在给定 system/user 上下文后，像 assistant 那样回答**。两者训练循环几乎一样，区别全在标签：SFT 只监督 assistant 回复，其余位置一律 `-100`。
 
-源码：`dataset/lm_dataset.py`，`SFTDataset`（L52–105）、`generate_labels`（L74–90）。
+源码：`dataset/lm_dataset.py`，`SFTDataset`、`generate_labels`。
 
 ## 为什么不能像 pretrain 那样复制全部 labels
 
@@ -53,7 +53,7 @@ def generate_labels(self, input_ids):
     return labels
 ```
 
-两个标记（`SFTDataset.__init__` L58–59）：
+两个标记（`SFTDataset.__init__`）：
 
 ```python
 self.bos_id = tokenizer(f'{tokenizer.bos_token}assistant\n', add_special_tokens=False).input_ids  # <|im_start|>assistant\n
@@ -69,6 +69,37 @@ self.eos_id = tokenizer(f'{tokenizer.eos_token}\n', add_special_tokens=False).in
 ## 为什么 assistant 的结束符也要监督
 
 注意循环上界是 `end + len(self.eos_id)`，assistant 回复后的 `<|im_end|>\n` 也进 label。因为模型不仅要学会答什么，还要学会**何时停**。不监督 EOS，模型就难学到在合适位置收尾（这也呼应第 [10 章](../10-experiments/03-eval-conclusions-sft-vs-rl.md) 观察到的：SFT 后模型会干净地 EOS 收束，而 pretrain 模型会续写不停）。
+
+<details>
+<summary>源码细节：子串匹配、list 而非 tensor、边界保护</summary>
+
+`generate_labels` 的扫描看着像单 token 比对，其实是多 token 子串匹配（贴真实片段+函数名锚点，无行号，以片段为准）。
+
+**1. `bos_id`/`eos_id` 是 token 列表，匹配是「切片 == 列表」**
+
+```python
+self.bos_id = tokenizer(f'{tokenizer.bos_token}assistant\n', add_special_tokens=False).input_ids
+# 编码出来是个列表，如 [<|im_start|>, assistant, \n] 三个 token，不是单个
+...
+if input_ids[i:i + len(self.bos_id)] == self.bos_id:   # 切片长度 = len(bos_id)，整段比对
+```
+
+`<|im_start|>assistant\n` 经 tokenizer 编码是**好几个 token**，所以 `bos_id` 是个列表。`input_ids[i:i+len(self.bos_id)]` 取出等长切片，`== self.bos_id` 是**两个列表逐元素相等**（子序列匹配），不是单 token 比较。这就是为什么要 `i + len(self.bos_id)` 而不是 `i + 1`——一次跨过整个起点标记。`eos_id` 同理，匹配 `<|im_end|>\n` 那几个 token。
+
+**2. 此刻 `input_ids` 还是 Python list，不是 tensor**
+
+`generate_labels` 在 `__getitem__` 里、`torch.tensor(...)` **之前**调用，所以 `input_ids` 是 Python `list[int]`。列表切片 `==` 是 Python 原生列表比较（返回单个 bool），如果是 tensor，`==` 会变成逐元素返回布尔张量、不能直接 `if`。返回前才 `torch.tensor(input_ids)`、`torch.tensor(labels)` 转成 LongTensor。
+
+**3. `min(end + len(self.eos_id), self.max_length)` 防越界**
+
+```python
+for j in range(start, min(end + len(self.eos_id), self.max_length)):
+    labels[j] = input_ids[j]
+```
+
+如果 assistant 段在序列末尾、`end + len(eos_id)` 可能超过 `max_length`（被截断的情况），`min(..., self.max_length)` 把上界夹住，避免 `labels[j]` 索引越界。
+
+</details>
 
 ## mask 和 shift 是两回事
 
@@ -93,6 +124,7 @@ self.eos_id = tokenizer(f'{tokenizer.eos_token}\n', add_special_tokens=False).in
 2. `generate_labels` 为什么先把所有 label 设成 `-100`？`bos_id` 在这里指什么？
 3. 为什么 assistant 回复的 `<|im_end|>` 也要参与监督？
 4. labels 已按 assistant mask 处理，为什么还需要 shift？mask 和 shift 各解决什么？
+5.（源码细节）`input_ids[i:i+len(self.bos_id)] == self.bos_id` 为什么是切片而不是单 token 比较？此刻 `input_ids` 是 tensor 还是 list？
 
 <details>
 <summary>参考答案</summary>
@@ -101,4 +133,5 @@ self.eos_id = tokenizer(f'{tokenizer.eos_token}\n', add_special_tokens=False).in
 2. 默认不监督任何位置，只有明确命中 assistant 段才解除屏蔽，更安全；`bos_id` 是 `<|im_start|>assistant\n`，即 assistant 段起点标记，不是普通句首 BOS。
 3. 模型要学会何时停止回复；把 EOS 纳入 label 才能在合适位置生成结束符（否则像 pretrain 那样续写不停）。
 4. mask（`-100`）决定哪些 token 算 loss，shift 决定「当前 logits」与「下一个 token label」的 next-token 对齐；两者正交，SFT 仍是 next-token prediction 所以仍需 shift。
+5. `<|im_start|>assistant\n` 编码成多个 token，`bos_id` 是 token 列表，所以取等长切片整段比对（子序列匹配），`i` 也要跨 `len(bos_id)`；此刻 `input_ids` 还是 Python `list`（`torch.tensor` 在 `__getitem__` 返回前才转），`==` 是原生列表比较返回单个 bool。
 </details>
