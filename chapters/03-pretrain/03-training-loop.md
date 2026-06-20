@@ -6,14 +6,14 @@
 
 ## 脚本分两块
 
-- `train_epoch(...)`（L23）：单个 epoch 内的 step 级训练。
-- `if __name__ == "__main__":`（L73）：训练前准备、状态恢复、组织 epoch 循环。
+- `train_epoch(...)`：单个 epoch 内的 step 级训练。
+- `if __name__ == "__main__":`：训练前准备、状态恢复、组织 epoch 循环。
 
 建议先看 `main` 搭起整体，再看 `train_epoch` 看每步更新。
 
 ## main：训练前怎么搭起来
 
-按执行顺序（L99–158）：
+按执行顺序：
 
 1. 初始化分布式环境 + 随机种子（`init_distributed_mode`、`setup_seed(42)`）。
 2. 构造 `MiniMindConfig`，按 `from_resume` 检查是否有 checkpoint。
@@ -28,7 +28,7 @@
 
 ## train_epoch：一步训练做什么
 
-核心循环（L25–70）：
+核心循环：
 
 ```python
 for step, (input_ids, labels) in enumerate(loader, start=start_step + 1):
@@ -56,7 +56,7 @@ for step, (input_ids, labels) in enumerate(loader, start=start_step + 1):
 
 八件事：取 batch → 搬 GPU → 算 lr → autocast 前向 → `loss/accumulation_steps` → backward 累积 → 满足条件才 step → 日志和保存。
 
-注意「数据构造」和「数据搬运」是两件事：`PretrainDataset` 在 CPU 侧把文本变张量（[01-data-and-labels](01-data-and-labels.md)），训练循环每步再 `.to(device)` 搬上 GPU。学习率也不是优化器自动调的，是脚本每步用 `get_lr` 算好手动写进 `param_groups`（调度策略见附录）。
+注意「数据构造」和「数据搬运」是两件事：`PretrainDataset` 在 CPU 侧把文本变张量（[01-data-and-labels](01-data-and-labels.md)），训练循环每步再 `.to(device)` 搬上 GPU。学习率也不是优化器自动调的，是脚本每步用 `get_lr` 算好手动写进 `param_groups`（`get_lr` 的 cosine 调度见 [08-training-mechanics/05-optimizer](../08-training-mechanics/05-optimizer-adamw-scheduler.md)）。
 
 ## 关键默认值（核对自源码 argparse）
 
@@ -78,7 +78,7 @@ for step, (input_ids, labels) in enumerate(loader, start=start_step + 1):
 
 ## 保存
 
-每 `save_interval` 步、且是主进程时（L58–68）：把权重 `.half()` 存成 `out/pretrain_512.pth`，同时用 `lm_checkpoint` 存一份完整续训快照到 `checkpoints/`。保存前先 `raw_model = model.module`（拆 DDP 包装）再 `getattr(raw_model, '_orig_mod', raw_model)`（拆 `torch.compile` 包装），拿到原始模型再 `state_dict()`。
+每 `save_interval` 步、且是主进程时：把权重 `.half()` 存成 `out/pretrain_512.pth`，同时用 `lm_checkpoint` 存一份完整续训快照到 `checkpoints/`。保存前先 `raw_model = model.module`（拆 DDP 包装）再 `getattr(raw_model, '_orig_mod', raw_model)`（拆 `torch.compile` 包装），拿到原始模型再 `state_dict()`。
 
 ## 练习
 
