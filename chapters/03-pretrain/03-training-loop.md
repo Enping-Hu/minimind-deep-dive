@@ -56,6 +56,8 @@ for step, (input_ids, labels) in enumerate(loader, start=start_step + 1):
 
 八件事：取 batch → 搬 GPU → 算 lr → autocast 前向 → `loss/accumulation_steps` → backward 累积 → 满足条件才 step → 日志和保存。
 
+日志一般会把语言模型主 `loss` 和 MoE 的 `aux_loss`、当前 `lr` 分开记，而不是只记相加后的总数：训练出问题时，拆开看是主任务 loss 在抖、还是 aux 路由在抖、还是 lr 调度阶段的正常波动，比盯一个总数更容易定位问题出在哪。
+
 注意「数据构造」和「数据搬运」是两件事：`PretrainDataset` 在 CPU 侧把文本变张量（[01-data-and-labels](01-data-and-labels.md)），训练循环每步再 `.to(device)` 搬上 GPU。学习率也不是优化器自动调的，是脚本每步用 `get_lr` 算好手动写进 `param_groups`（`get_lr` 的 cosine 调度见 [08-training-mechanics/05-optimizer](../08-training-mechanics/05-optimizer-adamw-scheduler.md)）。
 
 ## 关键默认值（核对自源码 argparse）
@@ -71,6 +73,8 @@ for step, (input_ids, labels) in enumerate(loader, start=start_step + 1):
 | `dtype` | bfloat16 | 混合精度类型 |
 
 优化器是 `AdamW`，数据默认 `../dataset/pretrain_hq.jsonl`。
+
+默认 `dtype=bfloat16`，但脚本里 `scaler = GradScaler(enabled=(args.dtype=='float16'))`——**只有 fp16 才真正启用梯度缩放**。fp16 动态范围窄，小梯度容易下溢成 0，需要 GradScaler 先把 loss 放大、`unscale_` 时再缩回；bf16 的指数位和 fp32 一样多、动态范围大得多，基本不下溢，所以 bf16 时 scaler 关闭、`scaler.scale/step/update` 退化成普通调用。这就是为什么用 bf16 常说「不需要 loss scaling」。
 
 ## 梯度累积：为什么除以 accumulation_steps
 

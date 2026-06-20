@@ -18,6 +18,8 @@
 
 一句话：**lr/scheduler 控制每步走多大，gradient clipping 控制梯度别太大，PPO ratio clip 控制 policy 别相对 old 变太猛，KL penalty 控制 policy 别整体偏离 reference，advantage clamp 控制 reward 差异别把信号放太极端。** 都叫「稳定性」，但落在不同层——这是读 RL 训练代码不混乱的关键。
 
+还要注意这五层**不是每个阶段都用满**：Pretrain/SFT 只碰梯度层（grad clip）和步长层（lr/scheduler）；信号层（advantage clamp）、目标层（ratio clip）、漂移约束层（KL/ref）都是在线 RL 才多出来的。这也是为什么 RL 训练脚本明显比 SFT 复杂——它要同时管更多层稳定性。
+
 ![训练稳定性控制分层](../../images/training-stability-control-map.svg)
 
 ## 训练参数按链路分层读
@@ -28,6 +30,7 @@
 |---|---|---|
 | 数据量层 | `batch_size`, `accumulation_steps` | 一次更新看多少样本信号？ |
 | 序列层 | `max_seq_len`, `max_gen_len`, `num_generations` | 样本多长、RL 生成多少回答？ |
+| 采样层 | `temperature`, `top_p`, `do_sample` | RL 在线生成时怎么采样？ |
 | 目标层 | `clip_epsilon`, `vf_coef`, DPO `beta` | loss 对 policy 拉动多强？ |
 | 漂移约束层 | `kl_coef`, RL `beta`, `update_old_actor_freq` | policy 离 ref/old 多远算过头？ |
 | 梯度层 | `grad_clip` | 梯度范数最多多大？ |
@@ -47,6 +50,8 @@
 **PPO 目标层参数要放回总 loss 看。** `loss = policy_loss + vf_coef * value_loss + kl_coef * kl_ref + aux_loss`：`clip_epsilon` 限 ratio 偏离、`vf_coef` 调 critic value loss 权重、`kl_coef` 调 reference 约束强度。单看名字没用，放回总 loss 才知道各调哪部分。
 
 **同名 `beta` 不是一回事。** DPO 的 `beta` 在 `−logsigmoid(beta * logits)`，是偏好差缩放系数（[dpo-loss](../06-dpo/02-dpo-loss-and-math.md)）；GRPO/SPO 的 `beta` 在 `per_token_loss = ... + beta * per_token_kl`，是 KL penalty 权重（[grpo](../07-ppo-grpo/03-grpo.md)）。名字一样、公式位置不同——读到同名参数要看它在哪个公式里。
+
+**RL 的采样设置也是训练的一部分。** PPO/GRPO/SPO 训练时要当前 policy 在线 `generate`，`temperature` / `do_sample` 直接决定生成什么样的 response 去拿 reward——采样太保守探索不到更好的回答，太随机则 reward 信号噪声大。监督学习的数据是死的、没有这一层；RL 的数据是模型现采的，所以采样层参数也算训练设置，不只是推理设置。
 
 **记录恢复层不改训练数学，但是实验证据的基础。** `from_resume` 恢复训练现场、`save_interval` 决定多久存权重、`log_interval` 决定多久记 loss/reward/KL——它们不进 loss，但决定你能不能复盘和续训（第 [10 章](../10-experiments/02-server-training-records.md) 的真实记录就靠这些）。
 

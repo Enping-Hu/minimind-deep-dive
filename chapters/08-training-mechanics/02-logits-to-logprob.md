@@ -48,6 +48,8 @@ CE 把「取 log-prob + 加负号 + 平均」一步打包成标量。但 DPO/PPO
 
 语言模型固定对齐「位置 t 的 logits 预测位置 t+1 的 token」，所以 CE 路径 `shift_logits = logits[..., :-1, :]`、`shift_labels = labels[..., 1:]`，PPO 路径也有 `labels = gen_out[:, 1:]` + `logits[:, :-1]`。两者都在做同一件事——把「预测位置」和「被预测 token」错开一位（[02-forward-to-loss](../03-pretrain/02-forward-to-loss.md)），否则就成了拿当前位置预测当前位置，不是 next-token prediction。
 
+所以别把「DPO/PPO 显式取 token log-prob」误解成它们放弃了 next-token 对齐——它们同样要 shift 错位，只是不像 CE 那样把「取 log-prob + 加负号 + 平均」打包成一个标量，而是把每个 token 的 log-prob 留下来，给后面算偏好差、ratio、KL。**显式取 log-prob 和 next-token 对齐是两件正交的事，都要做。**
+
 ## 练习
 
 1. 为什么 logits 不能直接当概率？为什么 `log_softmax` 在词表维而非 batch/seq 维做？

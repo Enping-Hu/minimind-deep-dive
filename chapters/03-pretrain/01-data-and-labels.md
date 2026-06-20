@@ -4,6 +4,16 @@
 
 源码：`dataset/lm_dataset.py`，`PretrainDataset`。默认 `max_length=512`。
 
+## 数据从哪来
+
+`PretrainDataset.__init__` 用 HuggingFace `datasets` 读 jsonl：
+
+```python
+self.samples = load_dataset('json', data_files=data_path, split='train')
+```
+
+`data_path` 默认 `../dataset/pretrain_hq.jsonl`，每条样本至少含一个 `text` 字段——所以从数据集视角，一条 pretrain 样本本质就是一段原始文本。下面 `__getitem__` 再把单条 `text` 变成 `(input_ids, labels)`。
+
 ## __getitem__ 六步
 
 ```python

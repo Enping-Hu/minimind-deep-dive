@@ -33,7 +33,7 @@ inputs = tokenizer.apply_chat_template(**templates) if args.weight != 'pretrain'
 
 注意 `pretrain` 权重例外：它不是聊天模型，直接用 `bos_token + prompt` 续写，不套 chat template。
 
-生成统一走 `model.generate`（`do_sample` / `top_p` / `temperature`），配 `TextStreamer` 边生成边打印。
+生成统一走 `model.generate`（`do_sample` / `top_p` / `temperature`），配 `TextStreamer` 边生成边打印。`generate` 底层仍是 [KV cache](01-kv-cache-and-generate.md) 那套自回归增量生成——这些服务脚本只是包装，没有新增推理机制。
 
 ## 三个入口怎么各自包装
 
