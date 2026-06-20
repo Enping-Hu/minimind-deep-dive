@@ -67,10 +67,13 @@ batch prompts
 → get_per_token_logps：policy 和 ref 对生成 token 的逐 token log-prob
 → per_token_loss = −log_prob × advantage（+ ref 的 KL 惩罚）
 → completion_mask 只统计 EOS 前有效 token，聚合成标量
+→（MoE 时）总 loss 再叠加正交的 router aux_loss（dense 时为 0）
 → backward + optimizer.step 更新 policy
 ```
 
 差异只集中在「advantage 怎么构造」和「要不要 critic/old_actor」，其余（在线生成、reward 打分、per-token log-prob、completion_mask、ref KL、更新）都一样。把这条链记住，三个 RL 脚本就不再显得散。
+
+另外三个脚本的总 loss 都统一带 MoE 的 `aux_loss`：主训练目标在变，但只要模型是 MoE，router 的负载均衡约束就独立存在，写法仍是 `主目标 loss + aux_loss`（dense 时 `aux_loss=0`，见 [02-model/06-moe](../02-model/06-moe.md)）。
 
 其中 `get_per_token_logps`（`logits_to_keep` + shift 取 completion 区）和 `completion_mask`（EOS argmax 三步）是三个脚本**逐字复用**的同一段代码——它们的张量级写法在 [GRPO 折叠块](03-grpo.md) 里拆过，SPO 只是把 `num_return_sequences` 从多条改成 1 条（[SPO 折叠块](04-spo.md)）。这一节是抽象总表，具体张量实现回到各算法章看。
 

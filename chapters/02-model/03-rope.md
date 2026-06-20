@@ -70,6 +70,8 @@ freqs_sin = torch.cat([torch.sin(freqs), torch.sin(freqs)], dim=-1)
 
 这正是 RoPE 的好处：模型在算注意力时，天然感知到「这两个 token 相隔几步」，而不是「这个 token 在第几位」。相对位置通常比绝对位置更有用——同样的语法关系，在句首和句中应该一样成立。
 
+一个反直觉但关键的点：**源码里你找不到 `m - n` 这样一行**。RoPE 不显式构造相对位置矩阵，而是「先按各自的绝对位置 `m`、`n` 旋转 Q、K，再让点积自己把 `m−n` 算出来」——`m`、`n` 分别作为旋转角进入 Q、K，`m−n` 是两者点积时自然冒出来的副产物。这就是 RoPE 巧妙的地方。
+
 ## 长上下文与 YaRN（点到为止）
 
 RoPE 把不同维度绑定到不同频率，序列远超训练长度时，高频部分变化过快、位置模式会失真。长上下文方法（如 YaRN）就从这里入手：对原始频率做缩放/插值，让旋转在更长上下文下更稳。源码 `precompute_freqs_cis` 里 `rope_scaling`（`factor` / `beta_fast` / `beta_slow` / `type: "yarn"`）就是这条路径，默认关闭。细节超出本书范围，知道「长上下文改的是 RoPE 频率、不是 attention 主体」即可。
@@ -101,6 +103,12 @@ q_embed = (q * cos.unsqueeze(unsqueeze_dim)) + (rotate_half(q) * sin.unsqueeze(u
 q 是 `[B, T, n_heads, head_dim]`（[02-attention](02-attention.md) 里 RoPE 在 transpose **之前**注入，所以是这个布局，不是 `[B, n_heads, T, head_dim]`），cos 切片出来是 `[T, head_dim]`。`unsqueeze_dim=1` 在第 1 维插一维 → `[T, 1, head_dim]`。广播按右对齐：cos 的 `[T, 1, head_dim]` 对上 q 末三维 `[T, n_heads, head_dim]`，正中间那个长度 1 的维对应 `n_heads`——于是**所有 head 共享同一套位置旋转**。位置信息只和「第几个 token」有关，与「第几个 head」无关，所以同位置的所有 head 转同样的角度。
 
 </details>
+
+## 常见误区
+
+- **「RoPE 在代码里直接算了 `m−n`」**——没有。源码不显式构造 `m−n`，它是旋转后 Q/K 点积的自然产物（见「为什么能体现相对位置」一节）。
+- **「RoPE 只是另一种绝对位置编码」**——不准确。它确实按绝对位置旋转 Q/K，但进入 attention 分数后，点积体现的是相对位置差。
+- **「必须先掌握复数形式才能理解 RoPE」**——不必。先抓住「二维旋转 + 点积比较相对角度 + 位置差自然出现」三点，就足够读懂源码里的 RoPE 主线。
 
 ## 练习
 

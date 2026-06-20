@@ -78,10 +78,11 @@ scores[:, :, :, -seq_len:] += torch.triu(
 
 ```python
 scores = F.softmax(scores.float(), dim=-1).type_as(xq)
+scores = self.attn_dropout(scores)   # 注意力权重 dropout（训练时随机丢一部分注意力连接）
 output = scores @ xv          # [B,8,T,T] @ [B,8,T,64] = [B,8,T,64]
 ```
 
-分数转成概率分布（softmax 同样先升 float 再转回，理由同 RMSNorm），再用这个分布对 V 加权求和。一句话：先算「该关注谁」，再把「关注到的内容」按权重汇总。
+分数转成概率分布（softmax 同样先升 float 再转回，理由同 RMSNorm），再用这个分布对 V 加权求和。一句话：先算「该关注谁」，再把「关注到的内容」按权重汇总。softmax 后那行 `attn_dropout` 是对注意力权重做 dropout——训练时随机丢弃一部分注意力连接做正则，推理时 `nn.Dropout` 自动失效。
 
 **9. 拼回隐藏维度**
 
@@ -90,7 +91,7 @@ output = output.transpose(1, 2).reshape(bsz, seq_len, -1)   # [B, T, 512]
 output = self.resid_dropout(self.o_proj(output))            # [B, T, 512]
 ```
 
-多头结果拼回一个大向量，过 `o_proj` 融合各头信息，恢复成 `[B, T, hidden_size]`，回到 block 主链路。
+多头结果拼回一个大向量，过 `o_proj` 融合各头信息，恢复成 `[B, T, hidden_size]`，回到 block 主链路。`o_proj` 外面再包一层 `resid_dropout`，对写回残差主干前的输出做 dropout，和 `attn_dropout` 一样只在训练时正则。两处 dropout 的比率都由 `config.dropout` 控制（MiniMind 默认 `0.0`，即默认不开）。
 
 ![Attention 前向流程](../../images/attention-forward-flow.svg)
 

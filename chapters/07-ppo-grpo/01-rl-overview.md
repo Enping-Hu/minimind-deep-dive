@@ -21,6 +21,8 @@
 
 一条 response 是一串 token action（一条轨迹），训练信号只落在 response 区域——prompt 是条件、不是被奖励的动作。这和 SFT/DPO 只监督 assistant 区域是同一个思想。
 
+> 顺带厘清两对常混的词。**online / offline**：训练时要不要当前模型现场生成——SFT/DPO 是 offline（数据现成），PPO/GRPO/SPO 是 online（现场 `generate` 再打分）。**on-policy / off-policy**：更新用的数据是不是当前 policy 自己刚生成的——PPO/GRPO/SPO 都更接近 on-policy，而 DPO 用的是已有偏好数据，所以**不是 on-policy RL**。严格定义先不纠结，记住「DPO=离线偏好，三个 RL=在线 on-policy」即可。
+
 ## 共同骨架：loss = −log_prob × advantage
 
 policy 给每个 token 分配概率，一条 response 的 log-prob 是各 token log-prob 之和。最小直觉：

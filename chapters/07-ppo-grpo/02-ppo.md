@@ -86,9 +86,11 @@ class CriticModel(MiniMindForCausalLM):
 
     def forward(self, input_ids=None, attention_mask=None, **kwargs):
         outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, **kwargs)
-        hidden_states = self.model.norm(outputs[0])           # 复用基座的最终 RMSNorm
+        hidden_states = self.model.norm(outputs[0])           # 注意：outputs[0] 已 norm 过，这里又 norm 一次
         values = self.value_head(hidden_states).squeeze(-1)   # [B, P+R]：每个位置一个 value
 ```
+
+两个读源码才会注意到的点：(1) `self.model`（即 `MiniMindModel`）的 forward 返回的是**三元组** `(hidden_states, presents, aux_loss)`，所以要取 `outputs[0]` 才是隐藏状态；(2) `outputs[0]` 其实**已经在 `MiniMindModel` 内部过了一次最终 `norm`**（[03-pretrain/02](../03-pretrain/02-forward-to-loss.md) 里基座 forward 的最后一步就是 `self.norm`），这里再写 `self.model.norm(outputs[0])` 等于**又归一化了一次**，value_head 吃的是这个二次归一化后的 hidden。别误以为「基座没 norm、critic 来补」——基座 norm 过了，这是第二次。
 
 注意它输出的是**逐位置** value `[B, P+R]`，不是一个标量——怎么压成每条回答一个 baseline，见第 2 点。
 
