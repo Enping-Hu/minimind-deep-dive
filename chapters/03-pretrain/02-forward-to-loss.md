@@ -2,12 +2,12 @@
 
 训练脚本里就一句 `res = model(input_ids, labels=labels)`，背后是整条前向链：token 变向量、过多层 Transformer、投影回词表、和右移的标签做交叉熵。这一节把这条链走清楚，重点是 `shift` 和 `-100` 怎么把「预测下一个 token」落实成一个能 backward 的标量 loss。
 
-源码：`model/model_minimind.py`，`MiniMindForCausalLM.forward`（L641–672）。
+源码：`model/model_minimind.py`，`MiniMindForCausalLM.forward`。
 
 ## 两个模型类，各管一段
 
-- `MiniMindModel`（L556）：embedding + 多层 block + 最终 RMSNorm，输出 `hidden_states`——「提取特征」。
-- `MiniMindForCausalLM`（L623）：在上面加一个 `lm_head`，把特征投影到词表、并在有 `labels` 时算 loss——「特征变词表概率 + 算损失」。
+- `MiniMindModel`：embedding + 多层 block + 最终 RMSNorm，输出 `hidden_states`——「提取特征」。
+- `MiniMindForCausalLM`：在上面加一个 `lm_head`，把特征投影到词表、并在有 `labels` 时算 loss——「特征变词表概率 + 算损失」。
 
 训练脚本调的是后者。整条链：
 
@@ -76,12 +76,43 @@ F.cross_entropy(shift_logits.view(-1, vocab_size), shift_labels.view(-1), ignore
 
 dense 模型没有 MoE 层，`aux_loss` 由 `MiniMindModel` 里 `sum([...], new_zeros(1))` 自然得到 0，所以训练脚本统一写 `res.loss + res.aux_loss` 不需要判断是否开 MoE。
 
+<details>
+<summary>源码细节：contiguous、view 摊平、logits_to_keep 切片</summary>
+
+正文走通了形状链，这里补三个张量操作的细节（贴真实片段+函数名锚点，无行号，以片段为准）。
+
+**1. `.contiguous()` 为什么必要**
+
+```python
+shift_logits = logits[..., :-1, :].contiguous()
+shift_labels = labels[..., 1:].contiguous()
+loss = F.cross_entropy(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1), ignore_index=-100)
+```
+
+`logits[..., :-1, :]` 这种切片返回的是**非连续视图**（底层内存没动，只改了 stride/offset）。紧跟的 `.view(-1, vocab)` 要求张量内存连续，直接对非连续张量 `view` 会报错。`.contiguous()` 在需要时把数据复制成连续布局（已连续则原样返回），让后面的 `view` 能展平。这和 [GQA 的 repeat_kv](../02-model/04-gqa.md) 里 expand 后必须 reshape 物化是同一类问题——切片/扩张产生非连续视图，展平/合并维度前要先连续化。
+
+**2. `view(-1, vocab)` 把 loss 拍成「逐 token 分类」**
+
+`shift_logits` 是 `[B, T-1, vocab]`，`view(-1, vocab)` 摊成 `[B*(T-1), vocab]`；`shift_labels` 从 `[B, T-1]` 摊成 `[B*(T-1)]`。这样 `cross_entropy` 看到的就是 `B*(T-1)` 个独立的「在 vocab 类里选一个」的分类问题，每个位置算一次、对非 `-100` 位置求平均。语言模型训练本质就是「每个位置做一次词表大小的分类」，view 把 batch 和序列两维拍平成一长串分类样本。
+
+**3. `logits_to_keep` 的切片**
+
+```python
+slice_indices = slice(-logits_to_keep, None) if isinstance(logits_to_keep, int) else logits_to_keep
+logits = self.lm_head(hidden_states[:, slice_indices, :])
+```
+
+训练时 `logits_to_keep=0`，`slice(-0, None) == slice(0, None)` 即取全部位置（`-0==0`），算整段 loss。推理生成时传一个正数 `n`，`slice(-n, None)` 只取末尾 n 个位置过 `lm_head`——生成下一个 token 只需要最后一个位置的 logits，没必要对整段历史都投影到 6400 维词表，省显存和算力（[04-inference/01](../04-inference/01-kv-cache-and-generate.md) 的增量推理用到）。
+
+</details>
+
 ## 练习
 
 1. `MiniMindModel` 和 `MiniMindForCausalLM` 各输出什么？为什么 `hidden_states` 不能直接算交叉熵？
 2. `shift_logits = logits[..., :-1, :]`、`shift_labels = labels[..., 1:]` 分别去掉了哪个位置？为什么？
 3. 错位为什么放在模型里、而不是 dataset 里做？这对 `PretrainDataset` 的 `labels` 有什么影响？
 4. dense 模型 `res.aux_loss` 是多少？训练脚本为什么仍能统一写 `res.loss + res.aux_loss`？
+5.（源码细节）`shift_logits` 后面为什么要 `.contiguous()`？`view(-1, vocab)` 把 loss 变成了什么形式？
 
 <details>
 <summary>参考答案</summary>
@@ -90,4 +121,5 @@ dense 模型没有 MoE 层，`aux_loss` 由 `MiniMindModel` 里 `sum([...], new_
 2. `shift_logits` 去掉最后一个位置（它没有下一个 token 可预测），`shift_labels` 去掉第一个位置（它不作为任何位置的预测目标）；这样第 t 个 logits 对齐第 t+1 个 label。
 3. 错位在模型里做让逻辑集中；因此 dataset 给的 `labels` 可以是 `input_ids` 的直接拷贝，不用自己右移。
 4. dense 模型 `aux_loss=0`（由 `sum([...], new_zeros(1))` 得到）；所以加不加都不变，训练脚本统一写法不需判断是否开 MoE。
+5. 切片 `logits[..., :-1, :]` 产生非连续视图，`view` 要求连续内存，故先 `.contiguous()` 物化；`view(-1, vocab)` 把 `[B,T-1,vocab]` 摊成 `[B*(T-1), vocab]`，即 `B*(T-1)` 个独立的词表分类问题。
 </details>
