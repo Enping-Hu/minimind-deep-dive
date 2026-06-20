@@ -2,7 +2,7 @@
 
 block 的第二个子层是前馈网络。Attention 负责 token 之间横向交换信息，FeedForward 负责对每个 token 自己的 hidden 向量做非线性加工——放大某些特征、压低另一些。这一节讲 MiniMind 用的 SwiGLU 变体，以及它和 MoE 的关系。
 
-源码：`model/model_minimind.py`，`FeedForward`（L319–346）。
+源码：`model/model_minimind.py`，`FeedForward`。
 
 ## Attention 和 FeedForward 的分工
 
@@ -67,12 +67,40 @@ self.act_fn(self.gate_proj(x)) * self.up_proj(x)
 
 记住一点：MoE 的每个 expert 就是一个 `FeedForward`（下一节会看到 `self.experts = nn.ModuleList([FeedForward(config) for _ in range(n_routed_experts)])`）。所以先吃透一个 FeedForward 怎么加工 token，再看 MoE 怎么为不同 token 选不同 FeedForward，会顺很多。
 
+<details>
+<summary>源码细节：64 对齐的具体数值、与 v3 的一处差异</summary>
+
+代码很直白，这里只补两个小点（贴真实片段+函数名锚点，无行号，以片段为准）。
+
+**1. `64 * ((I + 63) // 64)` 到底算出多少**
+
+```python
+intermediate_size = int(config.hidden_size * 8 / 3)      # 512*8/3 = 1365
+config.intermediate_size = 64 * ((intermediate_size + 64 - 1) // 64)  # 64*((1365+63)//64) = 64*22 = 1408
+```
+
+默认 `hidden_size=512` 时，`8/3·H = 1365.33 → int 取 1365`，再 `(1365+63)//64 = 22`、`×64 = 1408`。所以实际 `intermediate_size=1408`（不是 1365）。`(I+63)//64` 是「向上取整到 64 倍数」的惯用写法——加 `64−1` 再整除，保证不足一档也进位。对齐到 64 倍数是为了让矩阵维度贴合 GPU 的 warp/tensor-core 粒度，算得更快，不改数学。
+
+**2. v2 forward 末尾有 dropout，v3 没有**
+
+```python
+# v2
+def forward(self, x):
+    return self.dropout(self.down_proj(self.act_fn(self.gate_proj(x)) * self.up_proj(x)))
+# v3：return self.down_proj(self.act_fn(self.gate_proj(x)) * self.up_proj(x))  —— 无 dropout
+```
+
+v2 在 FFN 输出后包了一层 `self.resid_dropout`（默认 `dropout=0.0`，不开时是恒等），v3 直接去掉了这层。默认配置下两版行为一致（dropout=0），仅当显式开 dropout 时有别。属工程细节，不影响 SwiGLU 本身。
+
+</details>
+
 ## 练习
 
 1. Attention 和 FeedForward 在「是否混合不同 token」上有什么本质区别？
 2. `gate_proj`、`up_proj`、`down_proj` 的输入输出维度各是什么？为什么必须有 `down_proj`？
 3. `SiLU(gate_proj(x)) * up_proj(x)` 为什么叫门控？这里的 gate 在选什么？
 4. SwiGLU 的 `intermediate_size` 为什么常取 `8/3·H` 而不是 `4H`？
+5.（源码细节）默认 `hidden_size=512` 时 `intermediate_size` 实际是多少？为什么不是 `8/3·512=1365`？
 
 <details>
 <summary>参考答案</summary>
@@ -81,4 +109,5 @@ self.act_fn(self.gate_proj(x)) * self.up_proj(x)
 2. `gate_proj`/`up_proj`：`H→I`；`down_proj`：`I→H`。必须有 `down_proj` 把中间维度压回 `hidden_size`，否则无法加残差、接下一层和 `lm_head`。
 3. `gate_proj` 分支经 SiLU 后与 `up_proj` 的候选特征逐元素相乘，相当于对每个中间维度放大/压低，所以叫门控；这里的 gate 选的是「哪些特征维度通过」，不是选 token 或专家。
 4. SwiGLU 有 gate、up 两条升维分支，用 `4H` 会使参数量过大；取 `8/3·H` 让总参数量与传统单分支 `4H` FFN 接近。
+5. 实际是 1408。`8/3·512=1365.33` 取 int 得 1365，再向上对齐到 64 的倍数：`64×⌈1365/64⌉=64×22=1408`，让中间维度贴合硬件粒度。
 </details>
