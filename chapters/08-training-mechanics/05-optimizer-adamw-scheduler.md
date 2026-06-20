@@ -76,12 +76,45 @@ scheduler.step()
 - **「scheduler 直接改参数」**——它只更新 optimizer 的 lr，不改模型参数。
 - **「weight decay 是普通 loss 的一部分」**——AdamW 里它是 decoupled 的参数大小约束。
 
+<details>
+<summary>源码细节：get_lr 的 cosine 端点、param_groups 遍历赋值</summary>
+
+正文给了 cosine 曲线的「约 lr×1.0 → lr×0.1」，这里把端点精确算一遍，并补赋值那行的形态（贴 `trainer_utils.py` 的 `get_lr` 真实片段+函数名锚点，无行号，以片段为准）。
+
+**1. `get_lr` 的 cosine 三个端点**
+
+```python
+def get_lr(current_step, total_steps, lr):
+    return lr * (0.1 + 0.45 * (1 + math.cos(math.pi * current_step / total_steps)))
+```
+
+把系数 `0.1 + 0.45*(1 + cos(π·t/T))` 在三个位置算出来：
+
+- `t=0`（开训）：`cos(0)=1` → `0.1 + 0.45*(1+1) = 0.1 + 0.9 = 1.0` → lr×1.0
+- `t=T/2`（中点）：`cos(π/2)=0` → `0.1 + 0.45*(1+0) = 0.55` → lr×0.55
+- `t=T`（训完）：`cos(π)=−1` → `0.1 + 0.45*(1−1) = 0.1` → lr×0.1
+
+所以这是从 `lr` 平滑降到 `0.1·lr` 的 cosine 衰减，**不归零**（保留 10% 底，末段仍有温和更新）。`0.45` 和 `0.1` 这两个常数就是为了把系数夹在 `[0.1, 1.0]`：振幅 `0.45×2=0.9`、底 `0.1`，加起来峰值正好 1.0。
+
+**2. `param_group['lr'] = lr` 为什么遍历**
+
+```python
+lr = get_lr(epoch * iters + step, args.epochs * iters, args.learning_rate)
+for param_group in optimizer.param_groups:
+    param_group['lr'] = lr
+```
+
+optimizer 的学习率不是一个全局标量，而是存在每个 `param_group` 的 `'lr'` 键里——一个 optimizer 可以有多个参数组（不同组用不同 lr/weight_decay）。MiniMind 这里只有一组，但仍按通用写法遍历 `param_groups` 逐组写入。`get_lr` 的入参 `epoch * iters + step` 是「全局 step」（跨 epoch 累计），`args.epochs * iters` 是总 step 数，所以 cosine 在整个训练过程铺开，而不是每个 epoch 重来。手动写法每个 step 都重算并覆盖；`CosineAnnealingLR` 对象版则是 `scheduler.step()` 内部维护一个计数器自动推进，两者效果同形。
+
+</details>
+
 ## 练习
 
 1. AdamW 的一阶、二阶动量各解决什么问题？
 2. 各对齐阶段（SFT/DPO/PPO）的 lr 为什么比 Pretrain 小很多？
 3. Pretrain/SFT/DPO 与 PPO/GRPO/SPO 在 lr 调度写法上有何不同？为什么 `scheduler.step` 在 `optimizer.step` 之后？
 4. scheduler 和 optimizer 的区别是什么？
+5.（源码细节）`get_lr` 的 cosine 系数在 `t=0`、`t=T` 各是多少？lr 会衰减到 0 吗？
 
 <details>
 <summary>参考答案</summary>
@@ -90,4 +123,5 @@ scheduler.step()
 2. 对齐阶段不希望大步破坏预训练/SFT 已学到的能力，所以用很小的 lr 温和更新。
 3. Pretrain/SFT/DPO 用 `get_lr` 手动写入 `param_groups`；PPO/GRPO/SPO 用 `CosineAnnealingLR`+`scheduler.step()`。`scheduler.step` 在后，是先用当前 lr 完成本次更新、再准备下次 lr。
 4. optimizer 据梯度真正更新参数；scheduler 只更新 optimizer 用的 lr，不改模型参数。
+5. `t=0`：`0.1+0.45*(1+1)=1.0`（lr×1.0）；`t=T`：`0.1+0.45*(1−1)=0.1`（lr×0.1）。不衰减到 0，保留 10% 底、末段仍温和更新。
 </details>
