@@ -2,7 +2,7 @@
 
 [01-update-skeleton](01-update-skeleton.md) 讲了标量 loss 怎么改参数。但 loss 里用到的「目标 token 概率」是怎么从 logits 取出来的？这一节补上游：`logits → log_softmax → gather → 目标 token log-prob`。这条链同时出现在 Pretrain 的 cross_entropy、[DPO](../06-dpo/01-preference-optimization.md) 的 chosen/rejected log-prob、[PPO](../07-ppo-grpo/02-ppo.md) 的 actor/old/ref log-prob、[GRPO/SPO](../07-ppo-grpo/03-grpo.md) 的 per-token log-prob——是所有训练目标的共同上游。
 
-源码：`model/model_minimind.py`（cross_entropy）、`trainer/train_dpo.py` `logits_to_log_probs`（L24–30）、`train_grpo.py` `get_per_token_logps`。
+源码：`model/model_minimind.py`（cross_entropy）、`trainer/train_dpo.py` `logits_to_log_probs`、`train_grpo.py` `get_per_token_logps`。
 
 ## logits 不是概率
 
@@ -12,7 +12,7 @@
 
 ## gather：从一整排里取目标那一个
 
-`log_softmax` 后形状还是 `[B, T, V]`——每个位置保留全词表的 log-prob。但训练只要目标 token 那一个。`logits_to_log_probs`（L24）：
+`log_softmax` 后形状还是 `[B, T, V]`——每个位置保留全词表的 log-prob。但训练只要目标 token 那一个。`logits_to_log_probs`：
 
 ```python
 log_probs = F.log_softmax(logits, dim=2)                                  # [B, T, V]

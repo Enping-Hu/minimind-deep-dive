@@ -2,7 +2,7 @@
 
 [04-full-training-math-chain](04-full-training-math-chain.md) 把链收到了 `scalar loss → backward → param.grad → optimizer.step`。但 `optimizer.step` 具体怎么根据梯度改参数？这一节讲最小直觉，不展开 AdamW 的完整论文公式，目标是看懂训练脚本里的 `AdamW(...)` / `get_lr(...)` / `scheduler.step()`。
 
-源码：各 `train_*.py` 的优化器构造、`trainer/trainer_utils.py` `get_lr`（L40–41）。
+源码：各 `train_*.py` 的优化器构造、`trainer/trainer_utils.py` `get_lr`。
 
 一句话框架：**梯度给方向，AdamW 用历史梯度统计让更新更稳，learning rate 控制每步迈多大，weight decay 抑制权重过大，scheduler 决定 lr 随训练怎么变。**
 

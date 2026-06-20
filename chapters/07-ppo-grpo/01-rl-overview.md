@@ -2,7 +2,7 @@
 
 [DPO](../06-dpo/01-preference-optimization.md) 用现成的 chosen/rejected 偏好对离线训练。PPO / GRPO / SPO 不一样：训练时**只给 prompt，让当前 policy 自己生成回答，再用 reward 打分，把 reward 转成训练信号更新 policy**。最大的区别不是某个公式，而是训练闭环从「离线偏好监督」变成了「在线生成 + 奖励调整」。这一节建立共同骨架，三个算法的细节在后面四节。
 
-源码：`dataset/lm_dataset.py` `RLAIFDataset`（L181–215）、`trainer/train_ppo.py` / `train_grpo.py` / `train_spo.py`。
+源码：`dataset/lm_dataset.py` `RLAIFDataset`、`trainer/train_ppo.py` / `train_grpo.py` / `train_spo.py`。
 
 ![PPO / GRPO / SPO 训练总览](../../images/rlhf-ppo-grpo-spo-overview.svg)
 

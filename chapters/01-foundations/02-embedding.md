@@ -6,13 +6,13 @@ tokenizer 把文本变成 token id 序列，但模型内部计算的是连续向
 
 ## embed_tokens：一张可学习的查找表
 
-`MiniMindModel.__init__`（L570）里：
+`MiniMindModel.__init__`里：
 
 ```python
 self.embed_tokens = nn.Embedding(config.vocab_size, config.hidden_size)
 ```
 
-`nn.Embedding` 本质是一个形状 `[vocab_size, hidden_size]` 的可学习矩阵，第 `i` 行就是 id 为 `i` 的 token 的向量。前向时按 id 查表（L595）：
+`nn.Embedding` 本质是一个形状 `[vocab_size, hidden_size]` 的可学习矩阵，第 `i` 行就是 id 为 `i` 的 token 的向量。前向时按 id 查表：
 
 ```python
 hidden_states = self.dropout(self.embed_tokens(input_ids))
@@ -22,7 +22,7 @@ hidden_states = self.dropout(self.embed_tokens(input_ids))
 
 ## lm_head：从向量回到词表
 
-模型最后要预测下一个 token，得把 `hidden_size` 维向量映射回 `vocab_size` 维的分数（logits）。`MiniMindForCausalLM.__init__`（L637）：
+模型最后要预测下一个 token，得把 `hidden_size` 维向量映射回 `vocab_size` 维的分数（logits）。`MiniMindForCausalLM.__init__`：
 
 ```python
 self.lm_head = nn.Linear(self.config.hidden_size, self.config.vocab_size, bias=False)
@@ -32,7 +32,7 @@ self.lm_head = nn.Linear(self.config.hidden_size, self.config.vocab_size, bias=F
 
 ## 权重共享（tie embeddings）
 
-注意 embedding 是 `[vocab_size, hidden_size]`，lm_head 的权重是 `[vocab_size, hidden_size]`（`nn.Linear` 权重形状为 `[out, in]`）——两者形状完全一样。MiniMind 直接让它们共用一份（L639）：
+注意 embedding 是 `[vocab_size, hidden_size]`，lm_head 的权重是 `[vocab_size, hidden_size]`（`nn.Linear` 权重形状为 `[out, in]`）——两者形状完全一样。MiniMind 直接让它们共用一份：
 
 ```python
 # 权重绑定：嵌入层和 LM 头共享权重

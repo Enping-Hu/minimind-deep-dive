@@ -2,7 +2,7 @@
 
 第 3–7 章里，Pretrain、SFT、DPO、PPO、GRPO、SPO 各有各的 loss。但它们最后都落到**同一件事**：用 loss 产生梯度，再让 optimizer 根据梯度更新参数。这一章（第 8 章）把这条「从 logits 到参数更新」的链拆开、统一。本节先讲最底层的更新骨架——它是所有训练脚本的地基。
 
-源码：`trainer/train_pretrain.py`（L32–46）、`model/model_minimind.py` `MiniMindForCausalLM.forward`。
+源码：`trainer/train_pretrain.py`、`model/model_minimind.py` `MiniMindForCausalLM.forward`。
 
 ## 一个标量 loss 怎么改动上千万参数
 
