@@ -28,7 +28,7 @@ v2 有独立的 `train_reason.py` 训练「思考」能力，tokenizer 只有简
 | RL 数据 | `rlaif-mini.jsonl` | `rlaif.jsonl` |
 | eval 推理精度 | fp32 | `model.half()` fp16 |
 
-再强调一次（[01-overview](01-overview-five-changes.md) 的口径）：`hidden_size 512→768` 是**默认值差异，不是 v3 才有的能力**。两版都能配任意 `hidden_size`，本书 1–8 章行号以 v2 默认 512 为准。其余都是默认超参的调整，不是机制变化——比如 PPO lr 调大、clip_epsilon 放宽，对应的是 [03 节](03-ppo-rewrite.md) 重写后的 PPO2 需要不同的超参区间。
+再强调一次（[01-overview](01-overview-five-changes.md) 的口径）：`hidden_size 512→768` 是**默认值差异，不是 v3 才有的能力**。两版都能配任意 `hidden_size`，本书 1–8 章默认值以 v2 默认 512 为准。其余都是默认超参的调整，不是机制变化——比如 PPO lr 调大、clip_epsilon 放宽，对应的是 [03 节](03-ppo-rewrite.md) 重写后的 PPO2 需要不同的超参区间。
 
 ## F. 移除 / 新增清单（`trainer/`）
 

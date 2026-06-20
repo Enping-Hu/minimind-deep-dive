@@ -2,10 +2,10 @@
 
 源码精读式的 MiniMind 学习笔记。面向想从每一行代码弄清楚一个最小可训练 LLM 怎么搭、怎么训练、怎么对齐的人。
 
-这套笔记不复制 MiniMind 的源码，而是带你对照源码读：每一节都标出对应的源码文件与符号位置，行号以 MiniMind2 主线为准。建议把它和源码并排打开。
+这套笔记不复制 MiniMind 的源码，而是带你对照源码读：每一节都标出对应的源码文件与符号位置（函数/类名），均以 MiniMind2 主线为准。建议把它和源码并排打开。
 
 - 原项目（源码）：[MiniMind](https://github.com/jingyaogong/minimind)
-- 笔记中的行号与符号引用对应 MiniMind2 主线（仓库内称 `minimind-master`）；涉及版本差异处会标注 MiniMind-3，集中在第 9 章。
+- 笔记中的符号引用（函数/类名）对应 MiniMind2 主线（仓库内称 `minimind-master`）；涉及版本差异处会标注 MiniMind-3，集中在第 9 章。
 
 ## 组织方式
 
@@ -23,7 +23,7 @@
 |---|---|---|
 | [00-overview](chapters/00-overview/) | MiniMind 是什么、四层源码地图、环境与快速开始 | ✅ v1 |
 | [01-foundations](chapters/01-foundations/) | Tokenizer、Embedding、数据格式（从源码读起） | ✅ v1 |
-| [02-model](chapters/02-model/) | Block / RMSNorm / Attention / RoPE / GQA / SwiGLU / MoE | ✅ v1 |
+| [02-model](chapters/02-model/) | Block / RMSNorm / Attention / RoPE / GQA / SwiGLU / MoE（+归一化演进延伸） | ✅ v1 |
 | [03-pretrain](chapters/03-pretrain/) | 数据与标签、前向到 loss、Pretrain 主循环 | ✅ v1 |
 | [04-inference](chapters/04-inference/) | KV cache 与 generate、推理服务、权重格式 | ✅ v1 |
 | [05-sft](chapters/05-sft/) | SFT：为什么只监督 assistant 回复 | ✅ v1 |
@@ -38,9 +38,9 @@
 
 ## 版本
 
-这是 **v1**：忠于 MiniMind 主线源码做一遍完整、准确的精读，行号与默认值都对照 MiniMind2（默认 `hidden_size=512`，即 MiniMind2-Small 约 26M）核对。有源码 / 实操支撑的写深，没有的诚实标注边界、点到为止（见 appendix）。
+这是 **v1**：忠于 MiniMind 主线源码做一遍完整、准确的精读，符号位置与默认值都对照 MiniMind2（默认 `hidden_size=512`，即 MiniMind2-Small 约 26M）核对。有源码 / 实操支撑的写深，没有的诚实标注边界、点到为止（见 appendix）。
 
-后续加厚方向（本版未收）：GRPO 变体家族（Dr.GRPO / DAPO / GSPO 等）、Flash Attention 升级为独立章、归一化技术综述、Tokenizer BPE 训练细节、面试题库，以及把基石/架构/算法分 Part 重组。
+后续加厚方向（本版未收）：GRPO 变体家族（Dr.GRPO / DAPO / GSPO 等）、Flash Attention 升级为独立章、Tokenizer BPE 训练细节、面试题库，以及把基石/架构/算法分 Part 重组。
 
 ## 配图
 

@@ -11,22 +11,23 @@
 | 00-overview/01-what-is-minimind | §1(事实部分), §2 | model/ dataset/ trainer/ eval_llm.py | project-source-mainline-map.svg |
 | 00-overview/02-quickstart | §41–48(提炼) | requirements.txt, eval_llm.py | — |
 | 01-foundations/01-tokenizer | §12.4, mm3 README §Ⅰ | trainer/train_tokenizer.py, model/tokenizer*.json | — |
-| 01-foundations/02-embedding | §11.6 | model/model_minimind.py (MiniMindModel L556–620, lm_head L632–639) | — |
+| 01-foundations/02-embedding | §11.6 | model/model_minimind.py (MiniMindModel, lm_head) | — |
 | 01-foundations/03-data-format | §12, mm3 README §Ⅱ–Ⅳ | dataset/lm_dataset.py | — |
-| 02-model/01-block-and-rmsnorm | §21, §22 | model_minimind.py (MiniMindBlock L517–553, RMSNorm L96–121) | minimind-block-flow.svg |
-| 02-model/02-attention | §13, §51 | model_minimind.py (Attention L224–316) | attention-forward-flow.svg |
-| 02-model/03-rope | §14, §59 | model_minimind.py (precompute_freqs_cis L124–178, apply_rotary_pos_emb L181–211) | ⚠️ 无（图待补） |
-| 02-model/04-gqa | §15 | model_minimind.py (repeat_kv L214–221) | gqa-diagram.svg |
-| 02-model/05-swiglu | §23 | model_minimind.py (FeedForward L319–346) | ffn-swiglu-flow.svg |
-| 02-model/06-moe | §24, §62→71.x | model_minimind.py (MoEGate L349–424, MOEFeedForward L427–514) | moe-router-flow.svg, moe-router-aux-loss-source-chain.svg |
-| 03-pretrain/01-data-and-labels | §12, §11.7–11.9 | dataset/lm_dataset.py (PretrainDataset L31–49) | — |
-| 03-pretrain/02-forward-to-loss | §11, §50 | model_minimind.py (MiniMindForCausalLM.forward L641–672) | causal-lm-forward-flow.svg |
+| 02-model/01-block-and-rmsnorm | §21, §22 | model_minimind.py (MiniMindBlock, RMSNorm) | minimind-block-flow.svg |
+| 02-model/02-attention | §13, §51 | model_minimind.py (Attention) | attention-forward-flow.svg |
+| 02-model/03-rope | §14, §59 | model_minimind.py (precompute_freqs_cis, apply_rotary_pos_emb) | ⚠️ 无（图待补） |
+| 02-model/04-gqa | §15 | model_minimind.py (repeat_kv) | gqa-diagram.svg |
+| 02-model/05-swiglu | §23 | model_minimind.py (FeedForward) | ffn-swiglu-flow.svg |
+| 02-model/06-moe | §24, §62→71.x | model_minimind.py (MoEGate, MOEFeedForward) | moe-router-flow.svg, moe-router-aux-loss-source-chain.svg |
+| 02-model/07-normalization-evolution | 延伸 survey（锚点 §22 RMSNorm、§63.2 QK-Norm，余为通识，非单一源） | model_minimind.py (RMSNorm) | — |
+| 03-pretrain/01-data-and-labels | §12, §11.7–11.9 | dataset/lm_dataset.py (PretrainDataset) | — |
+| 03-pretrain/02-forward-to-loss | §11, §50 | model_minimind.py (MiniMindForCausalLM.forward) | causal-lm-forward-flow.svg |
 | 03-pretrain/03-training-loop | §10 | trainer/train_pretrain.py | — |
 | 04-inference/01-kv-cache-and-generate | §25 | model_minimind.py (Attention/Block use_cache) | kv-cache-generate-flow.svg |
 | 04-inference/02-eval-and-service | §36 | eval_llm.py, scripts/web_demo.py, scripts/serve_openai_api.py | inference-service-flow.svg |
 | 04-inference/03-weight-formats | §37 | scripts/convert_model.py | weight-format-conversion-flow.svg |
-| 05-sft/01-assistant-only-supervision | §26, §52 | dataset/lm_dataset.py (SFTDataset.generate_labels L74–90), trainer/train_full_sft.py | sft-label-mask-flow.svg, sft-generate-labels-flow.svg |
-| 06-dpo/01-preference-optimization | §27 | trainer/train_dpo.py, lm_dataset.py (DPODataset L108–178) | dpo-preference-flow.svg |
+| 05-sft/01-assistant-only-supervision | §26, §52 | dataset/lm_dataset.py (SFTDataset.generate_labels), trainer/train_full_sft.py | sft-label-mask-flow.svg, sft-generate-labels-flow.svg |
+| 06-dpo/01-preference-optimization | §27 | trainer/train_dpo.py, lm_dataset.py (DPODataset) | dpo-preference-flow.svg |
 | 06-dpo/02-dpo-loss-and-math | §53, §58 | trainer/train_dpo.py (dpo_loss) | dpo-loss-source-chain.svg |
 | 07-ppo-grpo/01-rl-overview | §28 | trainer/ | rlhf-ppo-grpo-spo-overview.svg |
 | 07-ppo-grpo/02-ppo | §29, §57 | trainer/train_ppo.py | ppo-ratio-clip-flow.svg |
