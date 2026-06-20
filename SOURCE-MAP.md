@@ -34,6 +34,7 @@
 | 07-ppo-grpo/03-grpo | §30 | trainer/train_grpo.py | grpo-group-relative-flow.svg |
 | 07-ppo-grpo/04-spo | §31 | trainer/train_spo.py | spo-adaptive-baseline-flow.svg |
 | 07-ppo-grpo/05-training-signal-and-unified-source | §32, §54 | trainer/ | training-signal-map.svg, rl-train-step-unified-flow.svg |
+| 07-ppo-grpo/06-grpo-variants | 延伸 survey（锚点 §30 GRPO、§63.4 CISPO，余为外部 RL 文献，非单一源） | trainer/train_grpo.py（GRPO/CISPO 为锚） | — |
 | 08-training-mechanics/01-update-skeleton | §62→62.1–62.20 | trainer/*.py, trainer_utils.py | loss-backward-step-flow.svg |
 | 08-training-mechanics/02-logits-to-logprob | §62→63.1–63.19 | model_minimind.py, trainer/*.py | logits-logprob-gather-flow.svg |
 | 08-training-mechanics/03-token-to-sequence-objective | §62→64.1–64.19 | trainer/train_dpo/ppo/grpo.py | mask-sum-mean-aggregation-flow.svg |

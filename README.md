@@ -28,7 +28,7 @@
 | [04-inference](chapters/04-inference/) | KV cache 与 generate、推理服务、权重格式 | ✅ v1 |
 | [05-sft](chapters/05-sft/) | SFT：为什么只监督 assistant 回复 | ✅ v1 |
 | [06-dpo](chapters/06-dpo/) | DPO：偏好优化与 −logsigmoid 目标 | ✅ v1 |
-| [07-ppo-grpo](chapters/07-ppo-grpo/) | RL 总览、PPO、GRPO、SPO、训练信号总表 | ✅ v1 |
+| [07-ppo-grpo](chapters/07-ppo-grpo/) | RL 总览、PPO、GRPO、SPO、训练信号总表（+GRPO 变体家族延伸） | ✅ v1 |
 | [08-training-mechanics](chapters/08-training-mechanics/) | 从 logits 到参数更新的完整训练机制 | ✅ v1 |
 | [09-minimind2-vs-3](chapters/09-minimind2-vs-3/) | MiniMind2 → MiniMind-3 / Qwen3-style 逐条对照 | ✅ v1 |
 | [10-experiments](chapters/10-experiments/) | 固定 prompt 实验设计、服务器训练记录、SFT vs RL 评测结论 | ✅ v1 |
@@ -40,7 +40,7 @@
 
 这是 **v1**：忠于 MiniMind 主线源码做一遍完整、准确的精读，符号位置与默认值都对照 MiniMind2（默认 `hidden_size=512`，即 MiniMind2-Small 约 26M）核对。有源码 / 实操支撑的写深，没有的诚实标注边界、点到为止（见 appendix）。
 
-后续加厚方向（本版未收）：GRPO 变体家族（Dr.GRPO / DAPO / GSPO 等）、Flash Attention 升级为独立章、Tokenizer BPE 训练细节、面试题库，以及把基石/架构/算法分 Part 重组。
+后续加厚方向（本版未收）：Flash Attention 升级为独立章、Tokenizer BPE 训练细节、面试题库，以及把基石/架构/算法分 Part 重组。
 
 ## 配图
 

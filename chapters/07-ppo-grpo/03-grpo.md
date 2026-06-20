@@ -66,6 +66,8 @@ policy_loss = ((per_token_loss * completion_mask).sum(dim=1) / completion_mask.s
 
 一句话：**PPO 用 critic 学 baseline，GRPO 用同一 prompt 的多条回答现场算 baseline。** GRPO 不是免费——省掉 critic 训练，成本转移到多样本生成和 reward 评估。
 
+> GRPO 之后衍生出一批变体（Dr.GRPO、DAPO、GSPO 等），各自针对它留下的某个问题，CISPO 也是其中一员。把它们放在一起对照，见本章延伸节 [06-grpo-variants](06-grpo-variants.md)。
+
 <details>
 <summary>源码细节：组结构、completion_mask 与梯度承载写法</summary>
 
