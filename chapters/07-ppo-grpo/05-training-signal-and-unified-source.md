@@ -77,6 +77,8 @@ batch prompts
 
 其中 `get_per_token_logps`（`logits_to_keep` + shift 取 completion 区）和 `completion_mask`（EOS argmax 三步）是三个脚本**逐字复用**的同一段代码——它们的张量级写法在 [GRPO 折叠块](03-grpo.md) 里拆过，SPO 只是把 `num_return_sequences` 从多条改成 1 条（[SPO 折叠块](04-spo.md)）。这一节是抽象总表，具体张量实现回到各算法章看。
 
+这条「主链」统一的是 RL 训练循环这一层（prompt→生成→打分→更新）。再往下一层——`loss` 怎么变成每个参数的梯度、optimizer 怎么更新——是所有训练阶段共通的底层机制，单独放在 [第 8 章](../08-training-mechanics/01-update-skeleton.md)。本节收口 RL 流程，第 8 章收口训练数学，两者不重叠。
+
 ![RL 训练步统一流程](../../images/rl-train-step-unified-flow.svg)
 
 ## 练习

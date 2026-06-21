@@ -70,6 +70,8 @@ batch prompts
 
 `RLAIFDataset` 提供的是 prompt 而非标准答案：`create_chat_prompt` 用 `add_generation_prompt=True` 把对话截到「轮到 assistant 回答」处（`<|im_start|>assistant\n`），返回 `{'prompt', 'answer'}`，但训练主循环用 `prompt` 让模型**在线生成**，不拿 `answer` 做 teacher forcing。
 
+这里的「在线生成」就是 [04-inference](../04-inference/01-kv-cache-and-generate.md) 那套 `model.generate`：同样的自回归 + KV cache，只是换当前 policy 现场采样、采完立刻拿去打分。推理章学的生成机制，到 RL 这里成了训练循环里的一环。
+
 ## 为什么 RL 仍需要 reference model
 
 只追 reward 很危险：模型会钻 reward model 的空子，生成格式讨喜但内容未必可靠的回答（reward hacking）。所以训练加 KL 约束，惩罚 policy 偏离冻结的 `ref_model` 太远。和 [DPO 的 ref](../06-dpo/01-preference-optimization.md) 一脉相承：DPO 里 ref 是偏好差的参照，RL 里 ref 是行为漂移的参照。第 [10 章](../10-experiments/03-eval-conclusions-sft-vs-rl.md) 有真实证据：RL 后输出更长更结构化，但事实/代码正确性没提升，还出现 reward-hacking 式新错。

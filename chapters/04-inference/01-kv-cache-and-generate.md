@@ -87,6 +87,8 @@ class MiniMindForCausalLM(PreTrainedModel, GenerationMixin):
 
 `generate` 的外层循环来自 HuggingFace `GenerationMixin`：它反复调用模型 `forward`、对最后位置的 logits 采样（`do_sample` / `top_p` / `temperature`）、维护 cache、拼下一个 token。MiniMind 只需提供 `forward` 接收/返回 `past_key_values`、`use_cache`，并用 `CausalLMOutputWithPast` 封装输出。`logits_to_keep`（[02-forward-to-loss](../03-pretrain/02-forward-to-loss.md) 提过）在生成时只算最后位置的 logits，省输出层开销。
 
+这套 `generate` 不只服务推理。[第 7 章](../07-ppo-grpo/01-rl-overview.md) 的在线 RL（PPO/GRPO/SPO）训练时同样靠它：用当前 policy 对 prompt 采样出回答，再交给 reward 打分。RL 的「在线生成」不是新机制，就是这里的自回归 + KV cache——推理章是它的前置。
+
 ## 代价：cache 随长度增长
 
 KV cache 省了重复计算，但每层都要存 `K/V: [batch, total_seq_len, n_kv_heads, head_dim]`，生成越长 cache 越大，是长上下文推理的显存大户。这正好接上 [GQA](../02-model/04-gqa.md)：`n_kv_heads` 越少，KV cache 越小——所以 GQA 不只是训练结构优化，更是推理显存优化。
