@@ -90,7 +90,7 @@ def forward(self, x):
 # v3：return self.down_proj(self.act_fn(self.gate_proj(x)) * self.up_proj(x))  —— 无 dropout
 ```
 
-v2 在 FFN 输出后包了一层 `self.resid_dropout`（默认 `dropout=0.0`，不开时是恒等），v3 直接去掉了这层。默认配置下两版行为一致（dropout=0），仅当显式开 dropout 时有别。属工程细节，不影响 SwiGLU 本身。
+v2 在 FFN 输出后包了一层 `self.dropout`（默认 `dropout=0.0`，不开时是恒等），v3 直接去掉了这层。默认配置下两版行为一致（dropout=0），仅当显式开 dropout 时有别。属工程细节，不影响 SwiGLU 本身。
 
 </details>
 

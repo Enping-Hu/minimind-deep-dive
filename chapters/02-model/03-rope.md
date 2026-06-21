@@ -50,7 +50,7 @@ k_embed = (k * cos) + (rotate_half(k) * sin)
 不同维度对用不同的旋转频率：
 
 $$
-\theta_i = \text{rope\_base}^{-2i/\dim},\quad i = 0,1,\dots,\dim/2
+\theta_i = \text{rope\_base}^{-2i/\dim},\quad i = 0,1,\dots,\dim/2-1
 $$
 
 `dim` 是单个 head 的维度（默认 `512/8 = 64`）。靠前的维度对频率高、对短距离敏感；靠后的频率低、变化平缓、表达长距离。再把位置索引和频率做外积，得到「每个位置在每个频率下的旋转角」，最后转成 cos/sin 表，形状 `[max_position_embeddings, dim]`：

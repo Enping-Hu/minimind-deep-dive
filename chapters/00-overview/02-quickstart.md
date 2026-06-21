@@ -48,7 +48,7 @@ python -u trainer/train_pretrain.py 2>&1 | tee logs/pretrain.log
 python -u trainer/train_full_sft.py 2>&1 | tee logs/full_sft.log
 ```
 
-训练脚本默认每 100 步把权重覆盖保存到 `./out/`。LoRA、蒸馏、DPO/PPO/GRPO 等阶段在对应章节展开。
+训练脚本默认每 1000 步把权重覆盖保存到 `./out/`。LoRA、蒸馏、DPO/PPO/GRPO 等阶段在对应章节展开。
 
 **4. 测自己的权重**。确认 `*.pth` 在 `./out/` 下，`--weight` 指定权重名前缀：
 

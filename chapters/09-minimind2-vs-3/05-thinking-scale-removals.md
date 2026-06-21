@@ -38,7 +38,7 @@ v2 有独立的 `train_reason.py` 训练「思考」能力，tokenizer 只有简
 - **新增**：`train_agent.py` + `rollout_engine.py`（Agent RL，多轮 rollout + 延迟 reward）；`dataset/lm_dataset.py` 增加 `AgentRLDataset`。
 - **两版都有**：pretrain / full_sft / dpo / ppo / grpo / lora / distillation / tokenizer。
 
-SPO 在 v3 被移除，呼应 [第 7 章](../07-ppo-grpo/04-spo.md) 提到的「SPO 偏工程尝试、理论标准性不如经典 PPO」。Agent RL 是 v3 的新方向（多轮工具调用 / 延迟奖励），属于进阶内容，本书 [附录](../appendix/02-advanced-pointers.md) 点到为止。
+SPO 在 v3 被移除，呼应 [第 7 章](../07-ppo-grpo/04-spo.md) 提到的「SPO 偏工程尝试、理论标准性不如经典 PPO」。Agent RL 是 v3 的新方向（多轮工具调用 / 延迟奖励），属于进阶内容，本书 [附录](../appendix/01-advanced-pointers.md) 点到为止。
 
 ## 至此第 9 章收束
 

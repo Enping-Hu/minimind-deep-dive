@@ -17,15 +17,15 @@
 
 每条都落到源码，对应到前面讲过的 MiniMind2 章节，方便对照看「同一个东西在两版怎么变」。
 
-## 防误记：这三项不是差异
+## 防误记：别把这些当成 v3 的新增
 
-最容易写错的是把「两版本来就一样的东西」当成 v3 的新特性。下面三项**两版完全一致**：
+最容易写错的是把「v2 本来就有的东西」当成 v3 的新特性。下面几项要认清归属：
 
 - **`rope_theta` 都是 1e6**。v2、v3 的 `MiniMindConfig` 都默认 `rope_theta=1e6`。RoPE 的基底没变。
 - **`tie_word_embeddings` 两版都绑定** embedding 与 lm_head 权重。差别只在实现方式：v2 在 `MiniMindForCausalLM.__init__` 里硬编码 `self.model.embed_tokens.weight = self.lm_head.weight`，v3 走 config flag（`if self.config.tie_word_embeddings:`）——但结果都是绑定（[02-model/embedding](../01-foundations/02-embedding.md) 讲过 weight tying）。
-- **MoE 的 router top-k 机制一致**：都是 `gate → softmax → topk → norm_topk_prob` 选 top-k 专家、训练时算 aux_loss。v3 改的只是「有没有 shared expert 那条支路」，不是 router 本身（见 [02-architecture-diffs](02-architecture-diffs.md)）。
+- **MoE 的 router 选择写法 v2 就有**：`gate → softmax → topk → norm_topk_prob` 选 top-k 专家、训练时算 aux_loss，这套在 v2 已经是这样，不是 v3 新增的。v3 在此之上的改动（去掉 shared expert、默认 top-k 从 2 降到 1、aux_loss 从序列级换成 batch 级）见 [02-architecture-diffs](02-architecture-diffs.md)。
 
-写 v2/v3 对照时，先排除这三项，避免「v3 才有 RoPE / v3 才绑定权重」这类错误。
+写 v2/v3 对照时，先认清这几项的真实归属，避免「v3 才有 RoPE / v3 才绑定权重 / v3 才有 MoE router」这类错误。
 
 ## 一个口径澄清：512 vs 768
 

@@ -36,9 +36,9 @@ self.experts = nn.ModuleList([FeedForward(config, intermediate_size=config.moe_i
 # 没有 self.shared_experts
 ```
 
-含义：v3 MoE 更贴近 Qwen3-MoE（同样相对 DeepSeek-MoE 去掉了 shared expert）。注意 **router top-k 选择和 aux_loss 机制两版一致**（[防误记](01-overview-five-changes.md)），差别只在「有没有那条所有 token 都过的全局共享支路」。
+含义：v3 MoE 更贴近 Qwen3-MoE（同样相对 DeepSeek-MoE 去掉了 shared expert）。router 的**选择写法**（gate→softmax→topk→norm）两版同形，但除了 shared expert，还有两处实打实的差异：默认 `num_experts_per_tok` 从 v2 的 2 降到 v3 的 1（top-2 → top-1）；aux_loss 从 v2 的序列级（`seq_aux=True`、系数 `aux_loss_alpha=0.01`）改成 v3 的 batch 级（`(load * scores.mean(0)).sum() * num_experts`、系数 `router_aux_loss_coef=5e-4`），公式和粒度都变了。
 
-> 顺带一提，v3 还把几个 config 名改了：`n_routed_experts → num_experts`、`aux_loss_alpha → router_aux_loss_coef`。机制不变，只是命名贴近 HuggingFace 习惯。
+> 顺带一提，v3 还改了几个 config 名：`n_routed_experts → num_experts` 是纯改名；`aux_loss_alpha → router_aux_loss_coef` 不只是改名——如上所述，aux_loss 的算法本身也从序列级换成了 batch 级。命名整体更贴近 HuggingFace 习惯。
 
 ## A3. head_dim 解耦
 

@@ -14,6 +14,12 @@ input_ids → embed_tokens → MiniMindBlock × N → 最终 RMSNorm → hidden_
 
 每个 block 输出的 `hidden_states` 是下一个 block 的输入，形状始终是 `[batch, seq_len, hidden_size]`，逐层细化同一组 token 表示。最后还有一个 `self.norm` 做收尾归一化。
 
+这条链路画成图就是 MiniMind 的整体结构（官方图）：
+
+![MiniMind Dense 模型整体结构（引自 MiniMind 官方）](../../images/LLM-structure.png)
+
+左边主干是 tokenizer → embedding → `MiniMindBlock × N` → RMSNorm → linear → softmax；右边把一个 block 内部拆开，就是 GQA 和 FFN。本章后续各节就是逐个拆解图里的这些子模块。
+
 ## 一个 block 的结构：Pre-Norm + 两次残差
 
 `MiniMindBlock.forward` 的核心就六行：

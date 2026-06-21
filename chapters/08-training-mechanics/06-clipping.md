@@ -40,9 +40,9 @@ policy_loss = -torch.min(surr1, surr2).mean()
 
 它裁剪的是新旧 policy 概率比，目的是「即使 advantage 很高，也别让 policy 一步把这条回答概率推太猛」。**它裁的是 policy 变化比例，不是梯度。**
 
-为什么不能等 gradient clipping 再处理?两者管不同层:PPO clip 管「训练目标本身别鼓励 policy 离 old 太远」(在定义优化什么时就变保守),gradient clipping 管「已算出的梯度别让更新太大」。只用梯度裁剪,policy objective 仍会持续鼓励把概率比推远——梯度裁剪只能缩小每步,改不了目标的偏好方向。所以 **PPO clip 是目标函数设计的一部分,不是普通数值技巧**。反过来也不能替代:reward/advantage 偏大、KL/value loss 波动、critic 梯度不稳都可能让梯度变大,PPO clip 只约束 ratio,管不了这些,所以仍需 gradient clipping。两者**互补**。
+为什么不能等 gradient clipping 再处理？两者管不同层：PPO clip 管「训练目标本身别鼓励 policy 离 old 太远」（在定义优化什么时就变保守），gradient clipping 管「已算出的梯度别让更新太大」。只用梯度裁剪，policy objective 仍会持续鼓励把概率比推远——梯度裁剪只能缩小每步，改不了目标的偏好方向。所以 **PPO clip 是目标函数设计的一部分，不是普通数值技巧**。反过来也不能替代：reward/advantage 偏大、KL/value loss 波动、critic 梯度不稳都可能让梯度变大，PPO clip 只约束 ratio，管不了这些，所以仍需 gradient clipping。两者**互补**。
 
-`grad_clip`(梯度范数上限)和 `clip_epsilon`(ratio 偏离 1 的范围)是**两个不同超参**,数值上都是小数,但单位含义完全不同,不能放一起比。
+`grad_clip`（梯度范数上限）和 `clip_epsilon`（ratio 偏离 1 的范围）是**两个不同超参**，数值上都是小数，但单位含义完全不同，不能放一起比。
 
 ## advantage clamp：保护训练信号
 

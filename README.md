@@ -72,7 +72,7 @@
 
 - 源码：MiniMind / MiniMind-3，作者 [jingyaogong](https://github.com/jingyaogong/minimind)。
 - 数据格式与样本：引自 MiniMind-3 README；训练数据集见 [minimind_dataset](https://huggingface.co/datasets/jingyaogong/minimind_dataset)（ModelScope / HuggingFace）。
-- 配图：正文流程图（SVG）为源码精读时绘制，训练曲线截图来自 SwanLab，均存于 [`images/`](images/)。
+- 配图：正文流程图（SVG）为源码精读时绘制；模型整体结构图（`LLM-structure*.png`）引自 MiniMind 官方仓库；训练曲线截图来自 SwanLab。均存于 [`images/`](images/)。
 - 本仓库是个人学习笔记的重构整理，不隶属于原项目。
 
 ## 许可
