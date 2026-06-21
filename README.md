@@ -26,11 +26,6 @@
 - **真实实验证据（第 10 章）** — 不是「应该更好」，而是真实服务器训练曲线 + 固定 prompt 评测，含 RL 的 reward-hacking（训练 reward 升，事实 / 代码正确性没升）。
 - **统一训练数学链（第 8 章）** — 一条 `logits → token log-prob → 序列 loss → backward → optimizer.step` 贯穿 Pretrain / SFT / DPO / PPO / GRPO，把六种训练的更新骨架统一起来。
 
-<div align="center">
-<img src="images/swanlab/MiniMind-Full-SFT-Epoch-2-BatchSize-64-LearningRate-1e-05.png" width="640" alt="真实 SFT 训练曲线（SwanLab）">
-<br><sub>第 10 章的证据之一：服务器 SFT 训练曲线（SwanLab）</sub>
-</div>
-
 ## 学习路径
 
 按 **结构 → 训练 → 机制 → 版本 → 实验** 推进。每章是一个目录，下分 `NN-子主题.md`；章末有思考题，参考答案折叠在下方。
@@ -62,11 +57,10 @@
 
 - **可运行对照实验**（计划中）— CPU 可跑的小实验（如 RoPE 多频、Pre/Post-Norm），把第 10 章的证据扩展到读者可复现。
 - **第 10 章实验补充**（进行中）— 补充更多服务器训练曲线与评测。
-- **RoPE 配图**（待补）— 第 2 章 RoPE 的旋转示意图。
 
 ## 范围与边界
 
-本书是 **v1**：忠于 MiniMind2 主线（默认 `hidden_size=512`，MiniMind2-Small 约 26M）做一遍完整、准确的精读。有源码 / 实操支撑的写深，没有的诚实标边界、点到为止（见 appendix）。
+本书以 MiniMind2 主线为准（默认 `hidden_size=512`，约 26M 参数），逐节对照源码。有源码 / 实操支撑处写深，其余诚实标注边界、点到为止（见 appendix）。
 
 ## 来源与致谢
 
