@@ -54,7 +54,7 @@
     <text x="132" y="168" class="section">梯度裁剪：限制“更新前的梯度整体大小”</text>
 
     <rect x="88" y="206" width="138" height="64" rx="14" fill="#ffffff" stroke="#c8d9ea"/>
-    <text x="108" y="233" class="label">loss.backward()</text>
+    <text x="108" y="233" class="label" font-size="14.2">loss.backward()</text>
     <text x="108" y="254" class="small">产生 param.grad</text>
 
     <rect x="282" y="206" width="164" height="64" rx="14" fill="#ffffff" stroke="#c8d9ea"/>

@@ -121,7 +121,7 @@
   <path d="M235 808 L235 878" class="arrow"/>
 
   <rect x="96" y="878" width="278" height="54" class="box"/>
-  <text x="235" y="911" text-anchor="middle" class="code">loss = -logsigmoid(beta * logits)</text>
+  <text x="235" y="911" text-anchor="middle" class="code" font-size="13.2">loss = -logsigmoid(beta * logits)</text>
 
   <rect x="468" y="878" width="884" height="54" class="box"/>
   <text x="910" y="911" text-anchor="middle" class="small">一句话抓手：DPO 不直接算 CE，而是比较“policy 对 chosen 相对 rejected 的偏好”是否比冻结 reference 更强。</text>

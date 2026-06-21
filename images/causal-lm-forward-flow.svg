@@ -60,7 +60,7 @@
   <rect x="432" y="182" width="330" height="148" class="blue"/>
   <text x="597" y="220" text-anchor="middle" class="label">MiniMindModel.forward</text>
   <text x="597" y="252" text-anchor="middle" class="small">embedding -> N 层 block -> final norm</text>
-  <text x="597" y="282" text-anchor="middle" class="code">hidden_states, past_key_values, aux_loss</text>
+  <text x="597" y="282" text-anchor="middle" class="code" font-size="14">hidden_states, past_key_values, aux_loss</text>
   <text x="597" y="306" text-anchor="middle" class="hint">这里只输出特征，还不是词概率</text>
 
   <path d="M762 256 L854 256" class="arrow"/>
@@ -92,18 +92,13 @@
 
   <path d="M1081 582 L1081 640" class="arrow"/>
 
-  <rect x="118" y="438" width="540" height="268" class="box"/>
-  <text x="388" y="476" text-anchor="middle" class="label">推理分支还会做两件事</text>
+  <rect x="118" y="438" width="720" height="268" class="box"/>
+  <text x="478" y="476" text-anchor="middle" class="label">推理分支的几个要点</text>
   <text x="150" y="526" class="small">1. `past_key_values` 原样带出，供 `generate()` 增量解码继续复用缓存。</text>
   <text x="150" y="568" class="small">2. `logits_to_keep` 可以只保留最后若干个位置的 logits，减少不必要的显存与计算。</text>
   <text x="150" y="610" class="small">3. 默认 `logits_to_keep = 0` 时，`slice(0, None)` 等价于保留全序列 logits。</text>
   <text x="150" y="652" class="small">4. `output.aux_loss = aux_loss` 把上游 MoE router 的辅助损失也一起交给训练脚本。</text>
 
-  <rect x="494" y="742" width="430" height="56" class="box"/>
-  <text x="709" y="777" text-anchor="middle" class="code">CausalLMOutputWithPast(loss, logits, past_key_values, hidden_states) + aux_loss</text>
-
-  <path d="M1081 750 C1081 786, 928 770, 924 770" class="arrow"/>
-
-  <rect x="90" y="140" width="420" height="52" class="box"/>
-  <text x="300" y="173" text-anchor="middle" class="small">核心理解：基础模型负责“抽特征”，LM head 负责“映射到词表”，loss 负责“按 next-token 目标训练”。</text>
+  <rect x="150" y="756" width="1100" height="56" class="box"/>
+  <text x="700" y="791" text-anchor="middle" class="code">CausalLMOutputWithPast(loss, logits, past_key_values, hidden_states) + aux_loss</text>
 </svg>

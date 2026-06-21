@@ -58,7 +58,7 @@
   <rect x="946" y="180" width="330" height="154" class="model"/>
   <text x="1111" y="220" text-anchor="middle" class="label">模型输出层</text>
   <text x="1111" y="252" text-anchor="middle" class="mono">MiniMindForCausalLM.forward</text>
-  <text x="1111" y="282" text-anchor="middle" class="small">hidden_states -> logits -> shift -> CE loss</text>
+  <text x="1111" y="282" text-anchor="middle" class="small" font-size="13.6">hidden_states -> logits -> shift -> CE loss</text>
   <text x="1111" y="310" text-anchor="middle" class="small">next-token prediction 在这里真正对齐</text>
 
   <path d="M1276 257 L1378 257" class="arrow"/>
@@ -89,7 +89,7 @@
 
   <rect x="270" y="760" width="1100" height="138" class="update"/>
   <text x="820" y="800" text-anchor="middle" class="label">统一更新视角</text>
-  <text x="820" y="834" text-anchor="middle" class="small">不管是 SFT、DPO 还是 PPO/GRPO/SPO，最终都要把训练信号写成可求导目标，再通过 `loss.backward()` 和 `optimizer.step()` 更新同一个 CausalLM 参数。</text>
+  <text x="820" y="834" text-anchor="middle" class="small" font-size="14.2">不管是 SFT、DPO 还是 PPO/GRPO/SPO，最终都要把训练信号写成可求导目标，再通过 `loss.backward()` 和 `optimizer.step()` 更新同一个 CausalLM 参数。</text>
   <text x="820" y="866" text-anchor="middle" class="small">所以项目真正的主线不是“算法名堆砌”，而是“训练信号怎样一层层落到参数更新”。</text>
 
   <rect x="96" y="938" width="1444" height="84" class="summary"/>

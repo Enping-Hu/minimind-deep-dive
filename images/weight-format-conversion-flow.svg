@@ -60,13 +60,13 @@
   <rect x="475" y="155" width="330" height="138" class="box" fill="#ffffff"/>
   <text x="505" y="194" class="dark">路线 A：直接原生推理</text>
   <text x="505" y="224" class="code">eval_llm.py --load_from model</text>
-  <text x="505" y="253" class="muted">需要 hidden_size / layers / use_moe 对上</text>
+  <text x="505" y="253" class="muted" font-size="14.8">需要 hidden_size / layers / use_moe 对上</text>
 
   <rect x="475" y="350" width="330" height="155" class="box" fill="#ffffff"/>
   <text x="505" y="389" class="dark">路线 B：convert_model.py</text>
   <text x="505" y="419" class="code">torch -> Transformers</text>
-  <text x="505" y="447" class="muted">save_pretrained + tokenizer.save_pretrained</text>
-  <text x="505" y="475" class="muted">可选 MiniMind 自定义结构或 Llama-compatible</text>
+  <text x="505" y="447" class="muted" font-size="12.8">save_pretrained + tokenizer.save_pretrained</text>
+  <text x="505" y="475" class="muted" font-size="13.5">可选 MiniMind 自定义结构或 Llama-compatible</text>
 
   <rect x="890" y="126" width="315" height="118" class="box" fill="url(#run)"/>
   <text x="918" y="164" class="label">eval_llm 实验</text>
@@ -99,6 +99,6 @@
 
   <rect x="70" y="548" width="735" height="112" rx="24" fill="#ffffff" opacity="0.94" filter="url(#shadow)"/>
   <text x="100" y="586" class="dark">学习抓手</text>
-  <text x="100" y="615" class="muted">先会判断当前手里是什么格式，再选入口：`.pth` 优先 eval_llm 原生路线；Transformers 目录优先 eval_llm/WebUI/API/vLLM。</text>
+  <text x="100" y="615" class="muted" font-size="11.5">先会判断当前手里是什么格式，再选入口：`.pth` 优先 eval_llm 原生路线；Transformers 目录优先 eval_llm/WebUI/API/vLLM。</text>
   <text x="100" y="645" class="muted">不要一上来背部署命令。格式不对时，命令看起来对也会加载失败。</text>
 </svg>

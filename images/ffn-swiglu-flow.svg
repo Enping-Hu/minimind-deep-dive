@@ -87,7 +87,7 @@
   <path d="M1280 422 L1360 422" class="arrow"/>
   <rect x="1360" y="376" width="70" height="92" class="box"/>
   <text x="1395" y="413" text-anchor="middle" class="label">输出</text>
-  <text x="1395" y="442" text-anchor="middle" class="code">[B,S,H]</text>
+  <text x="1395" y="442" text-anchor="middle" class="code" font-size="12.7">[B,S,H]</text>
 
   <line x1="105" y1="635" x2="1395" y2="635" class="divider"/>
 
@@ -98,6 +98,6 @@
 
   <rect x="1015" y="180" width="360" height="118" class="box"/>
   <text x="1195" y="216" text-anchor="middle" class="label">源码对应</text>
-  <text x="1195" y="249" text-anchor="middle" class="code">down_proj(act(gate_proj(x)) * up_proj(x))</text>
+  <text x="1195" y="249" text-anchor="middle" class="code" font-size="13.3">down_proj(act(gate_proj(x)) * up_proj(x))</text>
   <text x="1195" y="278" text-anchor="middle" class="hint">这一行就是 SwiGLU 的主体</text>
 </svg>

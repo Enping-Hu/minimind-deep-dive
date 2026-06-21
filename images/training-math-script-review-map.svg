@@ -121,8 +121,8 @@
   <path d="M1040 415 L1082 415" class="arrow"/>
 
   <g filter="url(#shadow)">
-    <rect x="276" y="560" width="768" height="64" rx="20" fill="#ffffff" stroke="#cbd8e1"/>
+    <rect x="276" y="560" width="1020" height="64" rx="20" fill="#ffffff" stroke="#cbd8e1"/>
     <text x="308" y="588" class="cardTitle">最终口述主线</text>
-    <text x="458" y="588" class="code">logits -> log-prob -> mask -> scalar loss -> grad -> AdamW step -> stability controls -> hyperparameter reading</text>
+    <text x="458" y="588" class="code" font-size="11.4">logits -> log-prob -> mask -> scalar loss -> grad -> AdamW step -> stability controls -> hyperparameter reading</text>
   </g>
 </svg>

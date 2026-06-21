@@ -74,7 +74,7 @@
 
   <rect x="1190" y="220" width="245" height="132" class="loss"/>
   <text x="1312" y="256" text-anchor="middle" class="label">DPO loss</text>
-  <text x="1312" y="289" text-anchor="middle" class="code">pi_logratios - ref_logratios</text>
+  <text x="1312" y="289" text-anchor="middle" class="code" font-size="13.2">pi_logratios - ref_logratios</text>
   <text x="1312" y="320" text-anchor="middle" class="hint">鼓励 chosen 相对 rejected 更高</text>
 
   <rect x="170" y="500" width="340" height="130" class="box"/>

@@ -51,7 +51,7 @@
     <text x="86" y="167" class="badge">1</text>
     <text x="74" y="196" class="card-title">token 级分数</text>
     <text x="74" y="224" class="code">[B, T] / [B, R]</text>
-    <text x="74" y="246" class="small">每个 token 一个 log-prob 或 loss</text>
+    <text x="74" y="246" class="small" font-size="11.1">每个 token 一个 log-prob 或 loss</text>
   </g>
 
   <g filter="url(#shadow)">
@@ -89,7 +89,7 @@
     <rect x="76" y="326" width="310" height="126" rx="20" fill="#ffffff" opacity="0.94" stroke="#d8dee4"/>
     <text x="100" y="360" class="card-title">DPO</text>
     <text x="100" y="390" class="code">(log_probs * mask).sum / mask.sum</text>
-    <text x="100" y="416" class="card-text">得到 chosen/rejected 的平均 token log-prob，</text>
+    <text x="100" y="416" class="card-text" font-size="12.4">得到 chosen/rejected 的平均 token log-prob，</text>
     <text x="100" y="438" class="card-text">避免长回答天然更吃亏。</text>
   </g>
 
