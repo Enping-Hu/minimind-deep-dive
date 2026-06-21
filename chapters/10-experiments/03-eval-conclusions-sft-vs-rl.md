@@ -27,9 +27,7 @@
 
 ## 为什么 RL 没让它变对：reward hacking
 
-结论（与 README 预期一致）：**RL 把输出推向更长、更结构化（迎合 reward model 偏好），但牺牲正确性、甚至出现 reward-hacking 式新错。**
-
-README 原话：「RL 类后训练……通常能提升 reward score，但会牺牲部分通用能力和知识；这类 reward hacking / capability trade-off 在所有模型上都很难避免，更多是程度上的差异。」
+结论：**RL 把输出推向更长、更结构化（迎合 reward model 偏好，这部分正是 reward hacking），但事实 / 代码正确性没提升，甚至新增了 full_sft 里没有的自信错误。**
 
 把它和前面的机制接起来：[07-ppo-grpo/01](../07-ppo-grpo/01-rl-overview.md) 讲过 RL 只追 reward 会钻 reward model 的空子——reward model 偏好长而结构化的回答，policy 就往这个方向漂，于是输出更长、分节更多，但事实/代码没人给正确性打分，自然不会变对。叠加 0.1B 量级小模型的奖励稀疏限制，RL 不会让它在事实/代码上变对。**这是机制内在，不是训练参数调错。**
 
