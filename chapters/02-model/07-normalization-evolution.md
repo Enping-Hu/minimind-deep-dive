@@ -45,7 +45,7 @@ RMSNorm 在 LayerNorm 基础上**去掉减均值**，只用 root mean square 控
 
 这是归一化从「block 主干」延伸到「注意力子模块内部」的一步。**MiniMind-3 / Qwen3 加的正是这个**——详见 [第 9 章的架构差异](../09-minimind2-vs-3/02-architecture-diffs.md)。于是 MiniMind 自己就横跨了演进谱系的两端：v2 = Pre-Norm + RMSNorm，v3 再叠加 QK-Norm。
 
-## 更深、更前沿（点到为止）
+## 更前沿的变体：DeepNorm 与多处加 norm（点到为止）
 
 谱系还在延伸，但已超出本书主线，知道方向即可：
 
