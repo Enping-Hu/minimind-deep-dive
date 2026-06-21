@@ -14,7 +14,7 @@
 
 ---
 
-这套笔记不复制 MiniMind 的源码，而是带你**对照源码读**：每节标出对应的源码文件与符号（函数 / 类名），并排打开 [MiniMind](https://github.com/jingyaogong/minimind) 一起看。符号引用以 MiniMind2 主线（`minimind-master`）为准，版本差异集中在第 9 章。
+这套笔记不复制 MiniMind 的源码，而是带你**对照源码读**：每节标出对应的源码文件与符号（函数 / 类名），并排打开 [MiniMind](https://github.com/jingyaogong/minimind) 一起看。符号引用以 MiniMind2 主线为准，版本差异集中在第 9 章。
 
 面向想从源码层面真正搞懂一个 LLM 全流程的人。不需要精通，但先了解交叉熵、反向传播、self-attention、causal mask、RoPE、RMSNorm、PPO clip 会读得更顺。
 
@@ -23,7 +23,7 @@
 除了带你逐行读懂源码，这份笔记还做了三件事：
 
 - **版本演进对照（第 9 章）** — MiniMind2 与 MiniMind-3 / Qwen3-style 逐条源码 diff：QK-Norm、移除 shared expert、PPO 重写（5→4 模型 + token-level GAE）、GRPO 默认 CISPO。
-- **真实实验证据（第 10 章）** — 不是「应该更好」，而是真实服务器训练曲线 + 固定 prompt 评测，含 RL 的 reward-hacking（训练 reward 升，事实 / 代码正确性没升）。
+- **真实实验证据（第 10 章）** — 不是「应该更好」，而是真实服务器训练曲线 + 固定 prompt 评测，包括一个反直觉的观察：RL 训练 reward 在升，但评测里的事实 / 代码正确性并没有同步提升。
 - **统一训练数学链（第 8 章）** — 一条 `logits → token log-prob → 序列 loss → backward → optimizer.step` 贯穿 Pretrain / SFT / DPO / PPO / GRPO，把六种训练的更新骨架统一起来。
 
 ## 学习路径
