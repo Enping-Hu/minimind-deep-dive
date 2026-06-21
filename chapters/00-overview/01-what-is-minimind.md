@@ -2,7 +2,7 @@
 
 MiniMind 是一个从零训练的极小语言模型项目。它不调用 `transformers` / `trl` / `peft` 的高层封装去"十行代码跑通训练"，而是把 tokenizer 训练、预训练、监督微调、LoRA、DPO、强化学习（PPO/GRPO）、蒸馏的每一步都用可读的源码写出来。模型本身也小：默认 dense 配置 `hidden_size=512`、`num_hidden_layers=8`，即项目所说的 MiniMind2-Small，约 26M 参数；更大的 Base 是 `768/16`（约 104M），MoE 配置约 145M（参数量见 `eval_llm.py` 的 `--hidden_size` 说明，结构默认值见 `model/model_minimind.py` 的 `MiniMindConfig`）。小到可以在单张消费级显卡上几小时跑完一轮预训练。
 
-对学习者来说，这两个特点正是价值所在：流程是完整的，代码是看得穿的。这套笔记的全部前提，就是这份源码足够小，可以逐行读懂。
+对学习者来说这两点很关键：流程完整、代码也读得透。这套笔记的全部前提，就是这份源码足够小，可以逐行读懂。
 
 ## 能跑出什么
 

@@ -14,7 +14,7 @@ MiniMind 多数入口用 `optim.AdamW(model.parameters(), lr=args.learning_rate)
 
 - **一阶动量**：梯度方向的滑动平均。mini-batch 梯度有噪声，「当前说往右、最近很多步也往右，就更有信心往右」，方向更稳。
 - **二阶动量**：梯度平方的滑动平均。记录每个参数梯度幅度，让不同参数按自己的尺度调步长——不同参数不一定适合同样大小的更新，所以 AdamW 比 SGD 更自适应。
-- **decoupled weight decay**：把权重衰减从梯度更新里解耦，单独约束参数大小，别让模型靠特别大的权重硬记训练数据。这就是 AdamW 里的「W」。
+- **decoupled weight decay**：普通 Adam 把权重衰减混进梯度里（等价于加一项 L2 正则），AdamW 把它从梯度更新里**解耦**出来、直接乘到参数上，单独约束参数大小，别让模型靠特别大的权重硬记训练数据。这就是 AdamW 里的「W」。
 
 记忆：**AdamW = Adam 的自适应梯度更新 + 更合理的 weight decay。** 即使有自适应机制，lr 仍控制全局步长（AdamW 定方向和相对尺度，lr 定整体迈多大）。本项目建 `AdamW` 时没显式传 `weight_decay`，用的是 PyTorch 默认值。
 

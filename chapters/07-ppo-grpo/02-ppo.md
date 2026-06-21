@@ -30,7 +30,7 @@ critic 估「这个 prompt 正常能拿几分」，实际 reward 减去它就是
 
 ## ratio：新旧 policy 的概率比
 
-PPO 不只看当前 actor 输出了什么，还看它相比更新前改了多少。`old_logp` 是旧 policy 对同一条 response 的对数概率，`actor_logp` 是当前 policy 的：
+PPO 不只看当前 actor 输出了什么，还看它相比更新前改了多少。`old_logp` 是旧 policy 对同一条 response 的 log-prob，`actor_logp` 是当前 policy 的：
 
 ```python
 ratio = torch.exp(actor_logp - old_logp)

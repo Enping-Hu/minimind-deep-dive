@@ -72,7 +72,7 @@ logits [B,T,V] → 目标 token log-prob [B,T] → mask 聚合 [B] → mean scal
 - **「mask 只为处理 padding」**——还可筛 prompt、response 范围、EOS 后内容，看训练目标。
 - **「sum/mean 随便选」**——sum 是整段序列 log-prob，mean 是长度归一化后的平均分数/loss，对应不同目标和尺度。
 - **「PPO response 越长越吃亏所以该平均」**——本项目 PPO 用 sum 形成整段 response log-prob（序列概率取 log 即 token log-prob 之和）；是否长度归一化是算法设计选择，按源码讲。
-- **「收成 scalar 之前怎么聚合都无所谓」**——恰恰相反，聚合方式直接改训练信号：除不除长度决定长回答吃不吃亏、筛不筛 EOS 之后决定哪些 token 算进目标、sum 还是 mean 改变 loss 的尺度。聚合是有语义后果的设计选择，不是收尾的形式步骤。
+- **「收成 scalar 之前怎么聚合都无所谓」**——恰恰相反，聚合方式直接改训练信号：除不除长度决定长回答吃不吃亏、筛不筛 EOS 之后决定哪些 token 算进目标、sum 还是 mean 改变 loss 的尺度。聚合方式直接决定训练信号长什么样，不是顺手收个尾。
 
 <details>
 <summary>源码细节：mask*scores 的逐元素广播、keepdim 又 squeeze 的来回</summary>

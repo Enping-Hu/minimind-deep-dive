@@ -68,7 +68,7 @@ loss = -F.logsigmoid(beta * logits)
 
 一句话：**policy 相对 ref 越偏向 chosen，loss 越小；越偏向 rejected，loss 越大。** 相比「直接判断 chosen 分数是否更大」这种硬判定，`−logsigmoid` 可导、平滑，适合做梯度优化。
 
-`beta`（默认 0.1）是偏好差的缩放系数：越大，`logits` 的变化越强地影响 loss、更新越激进；越小越温和。它和 DPO 论文里的 KL 约束强度相关，这里先当「更新有多激进」的旋钮即可。
+`beta`（默认 0.1）是偏好差的缩放系数：越大，`logits` 的变化越强地影响 loss、更新越激进；越小越温和。它对应 DPO 论文里的 KL 约束强度，本书不展开，把它当「更新有多激进」的旋钮即可。
 
 总 loss 仍统一加 MoE 辅助损失：`loss = dpo_loss_val + outputs.aux_loss`（dense 时 aux_loss=0，见 [02-model/06-moe](../02-model/06-moe.md)）。
 

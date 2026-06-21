@@ -11,7 +11,7 @@
 
 ## LoRA
 
-[05-sft](../05-sft/01-assistant-only-supervision.md) 提过 `train_lora.py` 和 full SFT 用同一个 `SFTDataset`、标签逻辑一致，区别只在**更新哪些参数**：full SFT 更新全部，LoRA 冻结主干、只训练注入的低秩 adapter。
+[05-sft](../05-sft/01-assistant-only-supervision.md) 提过 `train_lora.py` 和 Full SFT 用同一个 `SFTDataset`、标签逻辑一致，区别只在**更新哪些参数**：Full SFT 更新全部，LoRA 冻结主干、只训练注入的低秩 adapter。
 
 - 源码：`model/model_lora.py` 有 `LoRA` 模块、`apply_lora(model, rank=8)`（给线性层注入低秩旁路）、`save_lora`/`load_lora`（只存/load adapter 权重）。`train_lora.py` 里 `apply_lora` 后只把 `'lora' in name` 的参数交给 optimizer，主干 `requires_grad=False`。
 - 原理：用两个低秩矩阵 `A·B`（rank≪hidden）近似权重增量 `ΔW`，训练参数量降几个数量级，adapter 可单独保存/切换（如 `lora_identity` / `lora_medical`）。

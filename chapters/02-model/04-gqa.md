@@ -71,7 +71,7 @@ GQA 最直接省的是 K/V 侧：
 - `k_proj` / `v_proj` 参数和中间激活更少（128 维 vs 512 维）；
 - 推理时 KV cache 只需缓存 2 个头的 K/V，而不是 8 个。
 
-第三点最关键。长上下文推理时，KV cache 占用随序列长度线性增长，是显存大户（见 [04-inference/01-kv-cache-and-generate](../04-inference/01-kv-cache-and-generate.md)）。KV 头数减到 1/4，这部分占用也降到约 1/4。这就是为什么现代大模型几乎都用 GQA——它主要是**推理部署**的优化，不只是训练效率。
+第三点最关键。长上下文推理时，KV cache 占用随序列长度线性增长，是显存大户（见 [04-inference/01-kv-cache-and-generate](../04-inference/01-kv-cache-and-generate.md)）。KV 头数减到 1/4，这部分占用也降到约 1/4。现代大模型几乎都用 GQA，主要图的是**推理部署**省显存，不只是训练效率。
 
 <details>
 <summary>源码细节：None 索引、expand 的 stride、reshape 何时物化</summary>
