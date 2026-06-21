@@ -71,7 +71,7 @@ policy_loss = ((per_token_loss * completion_mask).sum(dim=1) / completion_mask.s
 <details>
 <summary>源码细节：组结构、completion_mask 与梯度承载写法</summary>
 
-正文给了机制骨架，这里补 `grpo_train_epoch` 里几个张量级细节（贴真实片段+函数名锚点，无行号，以片段为准）。
+正文给了机制骨架，这里补 `grpo_train_epoch` 里几个张量级细节（贴真实片段）。
 
 **1. 组结构靠「连续排列」成立：reshape + repeat_interleave**
 

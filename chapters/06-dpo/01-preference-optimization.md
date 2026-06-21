@@ -55,7 +55,7 @@ log_probs_per_token = torch.gather(log_probs, 2, labels.unsqueeze(2)).squeeze(-1
 <details>
 <summary>源码细节：chosen/rejected 拼成一个 batch、一次前向</summary>
 
-`log_softmax + gather` 取 token log-prob 的张量机制和 [08-training-mechanics/02](../08-training-mechanics/02-logits-to-logprob.md) 是同一套，这里只补 DPO 特有的「拼 batch」技巧（贴真实片段+函数名锚点，无行号，以片段为准）。
+`log_softmax + gather` 取 token log-prob 的张量机制和 [08-training-mechanics/02](../08-training-mechanics/02-logits-to-logprob.md) 是同一套，这里只补 DPO 特有的「拼 batch」技巧（贴真实片段）。
 
 ```python
 x = torch.cat([x_chosen, x_rejected], dim=0)   # [B,T] + [B,T] → [2B, T]

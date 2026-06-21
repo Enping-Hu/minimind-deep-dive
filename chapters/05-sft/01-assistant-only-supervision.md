@@ -73,7 +73,7 @@ self.eos_id = tokenizer(f'{tokenizer.eos_token}\n', add_special_tokens=False).in
 <details>
 <summary>源码细节：子串匹配、list 而非 tensor、边界保护</summary>
 
-`generate_labels` 的扫描看着像单 token 比对，其实是多 token 子串匹配（贴真实片段+函数名锚点，无行号，以片段为准）。
+`generate_labels` 的扫描看着像单 token 比对，其实是多 token 子串匹配（贴真实片段）。
 
 **1. `bos_id`/`eos_id` 是 token 列表，匹配是「切片 == 列表」**
 

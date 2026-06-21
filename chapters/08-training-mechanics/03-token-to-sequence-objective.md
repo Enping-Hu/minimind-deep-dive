@@ -77,7 +77,7 @@ logits [B,T,V] → 目标 token log-prob [B,T] → mask 聚合 [B] → mean scal
 <details>
 <summary>源码细节：mask*scores 的逐元素广播、keepdim 又 squeeze 的来回</summary>
 
-聚合的 token log-prob/gather 机制是 [02-logits-to-logprob](02-logits-to-logprob.md) 的同款，这里只补聚合这几行里容易看花的形状细节（贴真实片段+函数名锚点，无行号，以片段为准）。
+聚合的 token log-prob/gather 机制是 [02-logits-to-logprob](02-logits-to-logprob.md) 的同款，这里只补聚合这几行里容易看花的形状细节（贴真实片段）。
 
 **1. `scores * mask` 是逐元素乘，形状必须一致**
 

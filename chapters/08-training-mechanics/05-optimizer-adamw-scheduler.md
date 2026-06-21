@@ -79,7 +79,7 @@ scheduler.step()
 <details>
 <summary>源码细节：get_lr 的 cosine 端点、param_groups 遍历赋值</summary>
 
-正文给了 cosine 曲线的「约 lr×1.0 → lr×0.1」，这里把端点精确算一遍，并补赋值那行的形态（贴 `trainer_utils.py` 的 `get_lr` 真实片段+函数名锚点，无行号，以片段为准）。
+正文给了 cosine 曲线的「约 lr×1.0 → lr×0.1」，这里把端点精确算一遍，并补赋值那行的形态（贴 `trainer_utils.py` 的 `get_lr` 真实片段）。
 
 **1. `get_lr` 的 cosine 三个端点**
 

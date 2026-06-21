@@ -109,7 +109,7 @@ if self.flash and (seq_len > 1) and (past_key_value is None) and ...:
 <details>
 <summary>源码细节：mask 的切片与广播、softmax 升精度</summary>
 
-正文走通了 9 步的形状链，这里补 mask 构造的两个张量细节（贴真实片段+函数名锚点，无行号，以片段为准）。
+正文走通了 9 步的形状链，这里补 mask 构造的两个张量细节（贴真实片段）。
 
 **1. causal mask 为什么是 `scores[:, :, :, -seq_len:]`**
 

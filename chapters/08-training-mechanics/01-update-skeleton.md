@@ -82,7 +82,7 @@ loss = loss / args.accumulation_steps
 <details>
 <summary>源码细节：scaler / unscale_ / clip / step 的调用顺序为什么是这个</summary>
 
-正文讲了每个配角的作用，这里补它们**顺序不能换**的原因（贴 `train_pretrain.py` 的 `train_epoch` 真实片段+函数名锚点，无行号，以片段为准）。
+正文讲了每个配角的作用，这里补它们**顺序不能换**的原因（贴 `train_pretrain.py` 的 `train_epoch` 真实片段）。
 
 ```python
 scaler.scale(loss).backward()                      # ① loss 放大后再 backward

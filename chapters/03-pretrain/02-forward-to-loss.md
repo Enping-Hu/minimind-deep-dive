@@ -79,7 +79,7 @@ dense 模型没有 MoE 层，`aux_loss` 由 `MiniMindModel` 里 `sum([...], new_
 <details>
 <summary>源码细节：contiguous、view 摊平、logits_to_keep 切片</summary>
 
-正文走通了形状链，这里补三个张量操作的细节（贴真实片段+函数名锚点，无行号，以片段为准）。
+正文走通了形状链，这里补三个张量操作的细节（贴真实片段）。
 
 **1. `.contiguous()` 为什么必要**
 

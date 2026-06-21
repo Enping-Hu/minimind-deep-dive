@@ -92,7 +92,7 @@ aux_loss 从 MoE 层一路冒泡到训练脚本：
 <details>
 <summary>源码细节：训练分发、moe_infer 的 argsort 分组</summary>
 
-MoE 的难点全在「怎么把 token 分发给各自的专家、再收回来」。两条路径分别看（贴真实片段+函数名锚点，无行号，以片段为准）。
+MoE 的难点全在「怎么把 token 分发给各自的专家、再收回来」。两条路径分别看（贴真实片段）。
 
 **1. 训练路径：repeat_interleave 复制 + 按专家 ID 掩码分发**
 

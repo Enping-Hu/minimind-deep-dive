@@ -76,7 +76,7 @@ GQA 最直接省的是 K/V 侧：
 <details>
 <summary>源码细节：None 索引、expand 的 stride、reshape 何时物化</summary>
 
-正文说 `repeat_kv` 用 `expand` 不占内存，这里把「不占内存」的边界讲精确——`expand` 确实不占，但紧跟的 `reshape` 会物化（贴真实片段+函数名锚点，无行号，以片段为准）。
+正文说 `repeat_kv` 用 `expand` 不占内存，这里把「不占内存」的边界讲精确——`expand` 确实不占，但紧跟的 `reshape` 会物化（贴真实片段）。
 
 ```python
 return (x[:, :, :, None, :]                                  # [B,T,kv,d] → [B,T,kv,1,d]

@@ -72,7 +72,7 @@ PPO 的总损失还包括 critic 的 value_loss（回归 reward）和对 ref_mod
 <details>
 <summary>源码细节：rollout 到 advantage 的张量链</summary>
 
-上面是机制骨架。下面补几个读 `ppo_train_epoch` 时容易卡住的张量级细节，都贴真实片段（函数名锚点，无行号——源码会更新，以片段为准）。
+上面是机制骨架。下面补几个读 `ppo_train_epoch` 时容易卡住的张量级细节，都贴真实片段。
 
 **1. CriticModel：复用基座 + value_head，不是 lm_head**
 

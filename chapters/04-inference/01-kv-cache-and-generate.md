@@ -53,7 +53,7 @@ RoPE 按 token 的绝对位置旋转（见 [02-model/03-rope](../02-model/03-rop
 <details>
 <summary>源码细节：缓存的是「已旋转」的 K、start_pos 取哪一维</summary>
 
-两个时序/形状上的点（贴真实片段+函数名锚点，无行号，以片段为准）。
+两个时序/形状上的点（贴真实片段）。
 
 **1. cat 在 RoPE 之后——缓存的 K 是已经旋转过的**
 
