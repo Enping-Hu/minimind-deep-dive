@@ -31,7 +31,7 @@
 | 训练 | [07-ppo-grpo](chapters/07-ppo-grpo/) | RL 总览、PPO、GRPO、SPO、训练信号总表（+GRPO 变体家族延伸） | ✅ v1 |
 | 机制 | [08-training-mechanics](chapters/08-training-mechanics/) | 从 logits 到参数更新的完整训练机制 | ✅ v1 |
 | 版本 | [09-minimind2-vs-3](chapters/09-minimind2-vs-3/) | MiniMind2 → MiniMind-3 / Qwen3-style 逐条对照 | ✅ v1 |
-| 实验 | [10-experiments](chapters/10-experiments/) | 固定 prompt 实验设计、服务器训练记录、SFT vs RL 评测结论 | ✅ v1 |
+| 实验 | [10-experiments](chapters/10-experiments/) | 固定 prompt 实验设计、服务器训练记录、SFT vs RL 评测结论 | ✅ v1（实验持续补充） |
 | 进阶 | [appendix](chapters/appendix/) | 进阶方向（Flash Attention / LoRA / 蒸馏 / Agent RL）点到为止 | ✅ v1 |
 
 每章是一个目录，下面按 `NN-子主题.md` 编号；章内用 `##` 分小节。每章末尾有思考题，参考答案折叠在题目下方。
@@ -44,7 +44,16 @@
 
 **进阶层**：超出 MiniMind 代码的广度内容统一归为「进阶」——目前是 appendix，加两节延伸 survey（[归一化演进](chapters/02-model/07-normalization-evolution.md)、[GRPO 变体家族](chapters/07-ppo-grpo/06-grpo-variants.md)），它们都锚回 MiniMind 的真实选择，按上述原则收录。
 
-计划中：可运行对照实验（服务第 10 章的真实证据）。Tokenizer BPE 训练细节、进一步 Part 重组视需要再定。
+## 路线图
+
+本仓库随自学进度持续更新。主线（源码精读）已完成，以下按「收录原则」规划，标注进度：
+
+- **可运行对照实验**（计划中）：新建 `experiments/` 目录，放 CPU 可跑的小实验——如 RoPE 多频证「为什么要 d/2 组频率」、Pre/Post-Norm 证「为什么要归一化」，把第 10 章的证据从训练曲线扩展到读者可复现。
+- **第 10 章实验补充**（更新中）：MiniMind-3 的服务器训练 / 评测仍在进行，后续补更多训练曲线与评测证据（含 GRPO 8 层 run id 回填）。
+- **RoPE 配图**（待补）：ch02/03 的旋转示意图。
+- **其余视需要**：Tokenizer BPE 训练细节、进一步 Part 重组。
+
+不进主线（仅在进阶 / appendix 挂入口，见收录原则）：Flash Attention 的 V1/V2 深入、面试题库。
 
 ## 配图
 
