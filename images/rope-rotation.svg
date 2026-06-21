@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+  <title id="title">RoPE 旋转与相对位置</title>
+  <desc id="desc">RoPE 把 Q/K 的二维分量按位置旋转，旋转不改长度；点积里位置项只剩相对位置差 (m-n)theta。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7fbff"/>
+      <stop offset="100%" stop-color="#fff9f2"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#eef4ff"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#475569" flood-opacity="0.14"/>
+    </filter>
+    <marker id="v1" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,8 L9,4 z" fill="#2563eb"/>
+    </marker>
+    <marker id="v2" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,8 L9,4 z" fill="#ea580c"/>
+    </marker>
+    <style>
+      .title { font: 800 29px 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 16px 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif; fill: #475569; }
+      .h { font: 700 19px 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif; fill: #1f2d3d; }
+      .t { font: 500 15px 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif; fill: #475569; }
+      .code { font: 700 15px 'SFMono-Regular','Menlo','Consolas',monospace; fill: #334155; }
+      .axis { stroke: #cbd5e1; stroke-width: 2; }
+      .vec1 { stroke: #2563eb; stroke-width: 3.5; fill: none; marker-end: url(#v1); }
+      .vec2 { stroke: #ea580c; stroke-width: 3.5; fill: none; marker-end: url(#v2); }
+      .card { fill: url(#card); stroke: #d4dee9; stroke-width: 2; filter: url(#shadow); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="600" fill="url(#bg)"/>
+
+  <text x="48" y="54" class="title">RoPE：按位置旋转，点积里只剩相对位置 (m−n)θ</text>
+  <text x="48" y="84" class="subtitle">旋转只改方向、不改长度——所以注意力分数依赖的是位置差，不是绝对位置。</text>
+
+  <rect x="48" y="118" width="468" height="442" rx="20" class="card"/>
+  <line x1="150" y1="436" x2="476" y2="436" class="axis"/>
+  <line x1="232" y1="528" x2="232" y2="206" class="axis"/>
+  <line x1="232" y1="436" x2="399" y2="369" class="vec1"/>
+  <line x1="232" y1="436" x2="327" y2="283" class="vec2"/>
+  <path d="M289 413 A60 60 0 0 0 265 386" stroke="#7c3aed" stroke-width="2.5" fill="none"/>
+  <text x="296" y="410" class="code" fill="#7c3aed">(m−n)θ</text>
+  <text x="318" y="356" class="t" fill="#2563eb">q：位置 m，转 mθ</text>
+  <text x="250" y="268" class="t" fill="#ea580c">k：位置 n，转 nθ</text>
+  <text x="150" y="506" class="t">同一向量，位置不同 → 转的角度不同</text>
+
+  <rect x="560" y="150" width="592" height="112" rx="18" class="card"/>
+  <text x="588" y="192" class="h">① 维度两两配对</text>
+  <text x="588" y="226" class="t">相邻两维 (x, y) 当作平面上一个点，一起旋转。</text>
+
+  <rect x="560" y="290" width="592" height="112" rx="18" class="card"/>
+  <text x="588" y="332" class="h">② 按位置旋转</text>
+  <text x="588" y="366" class="code">[cosθ  −sinθ ; sinθ  cosθ]</text>
+  <text x="864" y="366" class="t">θ 随维度递减（高维转得慢）</text>
+
+  <rect x="560" y="430" width="592" height="112" rx="18" class="card"/>
+  <text x="588" y="472" class="h">③ 点积只剩相对位置</text>
+  <text x="588" y="506" class="code">q · k</text>
+  <text x="648" y="506" class="t">的位置依赖 = (m−n)θ，只看位置差。</text>
+</svg>

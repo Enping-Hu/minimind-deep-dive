@@ -15,7 +15,7 @@
 | 01-foundations/03-data-format | §12, mm3 README §Ⅱ–Ⅳ | dataset/lm_dataset.py | — |
 | 02-model/01-block-and-rmsnorm | §21, §22 | model_minimind.py (MiniMindBlock, RMSNorm) | minimind-block-flow.svg |
 | 02-model/02-attention | §13, §51 | model_minimind.py (Attention) | attention-forward-flow.svg |
-| 02-model/03-rope | §14, §59 | model_minimind.py (precompute_freqs_cis, apply_rotary_pos_emb) | ⚠️ 无（图待补） |
+| 02-model/03-rope | §14, §59 | model_minimind.py (precompute_freqs_cis, apply_rotary_pos_emb) | rope-rotation.svg |
 | 02-model/04-gqa | §15 | model_minimind.py (repeat_kv) | gqa-diagram.svg |
 | 02-model/05-swiglu | §23 | model_minimind.py (FeedForward) | ffn-swiglu-flow.svg |
 | 02-model/06-moe | §24, §62→71.x | model_minimind.py (MoEGate, MOEFeedForward) | moe-router-flow.svg, moe-router-aux-loss-source-chain.svg |

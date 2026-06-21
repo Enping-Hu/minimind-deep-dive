@@ -2,7 +2,7 @@
 
 self-attention 本身不带顺序——打乱 token 顺序，`QK^T` 的结果不变。位置信息得额外注入。RoPE（Rotary Position Embedding）的做法不是给 embedding 加一个位置向量，而是**按位置把 Q、K 向量旋转一个角度**。这一节讲清楚它怎么旋转、为什么这样能让注意力感知到「相对位置」。
 
-源码：`model/model_minimind.py`，`precompute_freqs_cis`、`apply_rotary_pos_emb` / `rotate_half`。本节没有配图，用公式说明（见仓库 `chapters/图待补.md`）。
+源码：`model/model_minimind.py`，`precompute_freqs_cis`、`apply_rotary_pos_emb` / `rotate_half`。
 
 ## 为什么作用在 Q/K，不在 embedding，也不在 V
 
@@ -71,6 +71,8 @@ freqs_sin = torch.cat([torch.sin(freqs), torch.sin(freqs)], dim=-1)
 这正是 RoPE 的好处：模型在算注意力时，天然感知到「这两个 token 相隔几步」，而不是「这个 token 在第几位」。相对位置通常比绝对位置更有用——同样的语法关系，在句首和句中应该一样成立。
 
 一个反直觉但关键的点：**源码里你找不到 `m - n` 这样一行**。RoPE 不显式构造相对位置矩阵，而是「先按各自的绝对位置 `m`、`n` 旋转 Q、K，再让点积自己把 `m−n` 算出来」——`m`、`n` 分别作为旋转角进入 Q、K，`m−n` 是两者点积时自然冒出来的副产物。这就是 RoPE 巧妙的地方。
+
+![RoPE 旋转与相对位置](../../images/rope-rotation.svg)
 
 ## 长上下文与 YaRN（点到为止）
 
