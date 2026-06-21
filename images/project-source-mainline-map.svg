@@ -35,7 +35,7 @@
 
   <rect width="1640" height="1120" fill="url(#bg)"/>
   <text x="56" y="64" class="title">MiniMind：五个关键源码入口如何拼成一条项目主线</text>
-  <text x="56" y="96" class="subtitle">这一图不是新知识点，而是把第 50-54 节已经拆开的模块，重新收束成“数据构造 -> 模型前向 -> 训练信号 -> 参数更新”的完整项目故事。</text>
+  <text x="56" y="96" class="subtitle">这一图不是新知识点，而是把前面各章已经拆开的模块，重新收束成“数据构造 -> 模型前向 -> 训练信号 -> 参数更新”的完整项目故事。</text>
 
   <rect x="42" y="128" width="1554" height="936" class="panel"/>
 
@@ -93,6 +93,6 @@
   <text x="820" y="866" text-anchor="middle" class="small">所以项目真正的主线不是“算法名堆砌”，而是“训练信号怎样一层层落到参数更新”。</text>
 
   <rect x="96" y="938" width="1444" height="84" class="summary"/>
-  <text x="818" y="972" text-anchor="middle" class="small">一句话抓手：第 50 节讲“loss 怎么形成”，第 51 节讲“模型内部怎么算”，第 52-54 节讲“训练信号怎么变化”，四者合起来才是完整的 MiniMind 项目级理解。</text>
+  <text x="818" y="972" text-anchor="middle" class="small">一句话抓手：前向讲“loss 怎么形成”，内部计算讲“模型内部怎么算”，各训练阶段讲“训练信号怎么变化”，合起来才是完整的 MiniMind 项目级理解。</text>
   <text x="818" y="1000" text-anchor="middle" class="small">当前已经具备源码级理解证据；尚未具备真实环境与真实 run 证据，所以只能稳讲“机制”，不能冒进讲“效果”。</text>
 </svg>

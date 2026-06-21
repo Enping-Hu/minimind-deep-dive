@@ -127,5 +127,5 @@
   <text x="1233" y="720" text-anchor="middle" class="small">SFT 是结构化选择性监督</text>
 
   <rect x="88" y="824" width="1298" height="64" class="box"/>
-  <text x="737" y="862" text-anchor="middle" class="small">核心记忆：`generate_labels` 解决“哪些位置该学”，第 50 节里的 `shift + cross_entropy` 解决“这些位置怎样按 next-token 方式对齐来学”。</text>
+  <text x="737" y="862" text-anchor="middle" class="small">核心记忆：`generate_labels` 解决“哪些位置该学”，前向里的 `shift + cross_entropy` 解决“这些位置怎样按 next-token 方式对齐来学”。</text>
 </svg>

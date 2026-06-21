@@ -48,7 +48,7 @@
   <path d="M42 122 C212 48, 356 170, 520 112 S862 60, 1218 142" stroke="#ffffff" stroke-width="24" opacity="0.55" fill="none"/>
 
   <text x="48" y="54" class="title">从 logits 到参数更新：训练数学闭环</text>
-  <text x="50" y="82" class="subtitle">第 62-64 节收束：概率提取、mask 聚合、标量 loss、反向传播和 optimizer.step 是同一条链路。</text>
+  <text x="50" y="82" class="subtitle">本图收束：概率提取、mask 聚合、标量 loss、反向传播和 optimizer.step 是同一条链路。</text>
 
   <g filter="url(#shadow)">
     <rect x="50" y="132" width="168" height="118" rx="18" fill="url(#blue)" stroke="#c7d8e8"/>

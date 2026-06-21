@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1320" height="680" viewBox="0 0 1320 680" role="img" aria-labelledby="title desc">
   <title id="title">MiniMind training math and script reading review</title>
-  <desc id="desc">A Chinese-first review map connecting sections 62 to 69 from logits to hyperparameter reading.</desc>
+  <desc id="desc">A Chinese-first review map of the training-math chain from logits to hyperparameter reading.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#f5fbff"/>
@@ -38,13 +38,13 @@
   <circle cx="148" cy="560" r="150" fill="#e3efd2" opacity="0.64"/>
   <path d="M50 126 C226 58, 382 168, 556 118 S904 62, 1268 150" stroke="#ffffff" stroke-width="24" opacity="0.56" fill="none"/>
 
-  <text x="50" y="56" class="title">62-69 训练数学与训练脚本阅读闭环</text>
+  <text x="50" y="56" class="title">训练数学与训练脚本阅读闭环</text>
   <text x="52" y="84" class="subtitle">从 logits 到参数更新，再到 optimizer、稳定性机制和超参数阅读，最后压成一条可复述主线。</text>
 
   <g filter="url(#shadow)">
     <rect x="70" y="136" width="250" height="118" rx="20" fill="url(#card)" stroke="#bdd3e9"/>
     <rect x="94" y="158" width="42" height="24" rx="12" fill="#3578ad"/>
-    <text x="101" y="175" class="badge">62</text>
+    <text x="101" y="175" class="badge">1</text>
     <text x="150" y="176" class="cardTitle">loss 到参数更新</text>
     <text x="94" y="210" class="code">loss -> backward -> grad -> step</text>
     <text x="94" y="234" class="small">先建立所有训练阶段共用骨架</text>
@@ -53,7 +53,7 @@
   <g filter="url(#shadow)">
     <rect x="370" y="136" width="250" height="118" rx="20" fill="url(#card)" stroke="#bdd3e9"/>
     <rect x="394" y="158" width="42" height="24" rx="12" fill="#3578ad"/>
-    <text x="401" y="175" class="badge">63</text>
+    <text x="401" y="175" class="badge">2</text>
     <text x="450" y="176" class="cardTitle">取目标 token 概率</text>
     <text x="394" y="210" class="code">log_softmax + gather</text>
     <text x="394" y="234" class="small">CE / DPO / RL 都要取 log-prob</text>
@@ -62,7 +62,7 @@
   <g filter="url(#shadow)">
     <rect x="670" y="136" width="250" height="118" rx="20" fill="url(#card)" stroke="#bdd3e9"/>
     <rect x="694" y="158" width="42" height="24" rx="12" fill="#3578ad"/>
-    <text x="701" y="175" class="badge">64</text>
+    <text x="701" y="175" class="badge">3</text>
     <text x="750" y="176" class="cardTitle">token 分数聚合</text>
     <text x="694" y="210" class="code">mask -> sum / mean</text>
     <text x="694" y="234" class="small">把 token 级信号变成序列级目标</text>
@@ -71,10 +71,10 @@
   <g filter="url(#shadow)">
     <rect x="970" y="136" width="250" height="118" rx="20" fill="url(#focus)" stroke="#dfc78d"/>
     <rect x="994" y="158" width="42" height="24" rx="12" fill="#9b7627"/>
-    <text x="1001" y="175" class="badge">65</text>
+    <text x="1001" y="175" class="badge">4</text>
     <text x="1050" y="176" class="cardTitle">完整训练数学链</text>
     <text x="994" y="210" class="code">logits -> loss -> optimizer</text>
-    <text x="994" y="234" class="small">把 62-64 压成一条主线</text>
+    <text x="994" y="234" class="small">把前三步压成一条主线</text>
   </g>
 
   <path d="M320 195 L362 195" class="arrow"/>
@@ -84,7 +84,7 @@
   <g filter="url(#shadow)">
     <rect x="190" y="356" width="250" height="118" rx="20" fill="url(#card)" stroke="#bdd3e9"/>
     <rect x="214" y="378" width="42" height="24" rx="12" fill="#3578ad"/>
-    <text x="221" y="395" class="badge">66</text>
+    <text x="221" y="395" class="badge">5</text>
     <text x="270" y="396" class="cardTitle">optimizer 怎么迈步</text>
     <text x="214" y="430" class="code">AdamW + lr + scheduler</text>
     <text x="214" y="454" class="small">解释 optimizer.step 背后的步长</text>
@@ -93,7 +93,7 @@
   <g filter="url(#shadow)">
     <rect x="490" y="356" width="250" height="118" rx="20" fill="url(#card)" stroke="#bdd3e9"/>
     <rect x="514" y="378" width="42" height="24" rx="12" fill="#3578ad"/>
-    <text x="521" y="395" class="badge">67</text>
+    <text x="521" y="395" class="badge">6</text>
     <text x="570" y="396" class="cardTitle">clip 机制区分</text>
     <text x="514" y="430" class="code">grad clip vs PPO clip</text>
     <text x="514" y="454" class="small">先问裁剪对象是谁</text>
@@ -102,7 +102,7 @@
   <g filter="url(#shadow)">
     <rect x="790" y="356" width="250" height="118" rx="20" fill="url(#card)" stroke="#bdd3e9"/>
     <rect x="814" y="378" width="42" height="24" rx="12" fill="#3578ad"/>
-    <text x="821" y="395" class="badge">68</text>
+    <text x="821" y="395" class="badge">7</text>
     <text x="870" y="396" class="cardTitle">稳定性分层地图</text>
     <text x="814" y="430" class="code">lr / clip / KL / advantage</text>
     <text x="814" y="454" class="small">按信号、目标、漂移、梯度、步长分层</text>
@@ -111,7 +111,7 @@
   <g filter="url(#shadow)">
     <rect x="1090" y="356" width="160" height="118" rx="20" fill="url(#focus)" stroke="#dfc78d"/>
     <rect x="1114" y="378" width="42" height="24" rx="12" fill="#9b7627"/>
-    <text x="1121" y="395" class="badge">69</text>
+    <text x="1121" y="395" class="badge">8</text>
     <text x="1114" y="426" class="cardTitle">读超参数</text>
     <text x="1114" y="452" class="small">按训练链路层级读</text>
   </g>
