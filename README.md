@@ -2,9 +2,9 @@
 
 # minimind-deep-dive
 
-**源码精读式的 MiniMind 学习笔记**
+**从 MiniMind 源码读起，延伸到大模型技术体系**
 
-从每一行代码弄清楚：一个最小可训练 LLM 怎么搭、怎么训练、怎么对齐。
+逐行读懂一个最小可训练 LLM 怎么搭、怎么训练、怎么对齐；再从每个具体实现延伸到它所属的技术脉络。
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg)](LICENSE) ![based on MiniMind2 | 3](https://img.shields.io/badge/based%20on-MiniMind2%20%7C%203-2496ED.svg) ![docs 中文](https://img.shields.io/badge/docs-%E4%B8%AD%E6%96%87-orange.svg) ![status updating](https://img.shields.io/badge/status-updating-brightgreen.svg)
 
@@ -15,6 +15,8 @@
 ---
 
 这套笔记不复制 MiniMind 的源码，而是带你**对照源码读**：每节标出对应的源码文件与符号（函数 / 类名），并排打开 [MiniMind](https://github.com/jingyaogong/minimind) 一起看。符号引用以 MiniMind2 主线为准，版本差异集中在第 9 章。
+
+但 MiniMind 是入口，不是终点。读懂一个组件后，笔记会从它出发延伸到所属的技术脉络——从 RMSNorm 讲到归一化的演进，从 CISPO 讲到 GRPO 变体家族——帮你顺着具体实现建立对大模型技术体系的理解，而不是停在「这个项目怎么写」。
 
 面向想从源码层面真正搞懂一个 LLM 全流程的人。不需要精通，但先了解交叉熵、反向传播、self-attention、causal mask、RoPE、RMSNorm、PPO clip 会读得更顺。
 
@@ -60,7 +62,11 @@
 
 ## 范围与边界
 
-本书以 MiniMind2 主线为准（默认 `hidden_size=512`，约 26M 参数），逐节对照源码。有源码 / 实操支撑处写深，其余诚实标注边界、点到为止（见 appendix）。
+本书以 MiniMind2 主线为准（默认 `hidden_size=512`，约 26M 参数），分两条线推进：**主线**逐节对照源码，把 MiniMind 真有的代码和设计选择读透；**延伸**从这些具体实现出发，顺到背后的技术脉络（如归一化演进、GRPO 变体家族）。笔记随作者的学习持续扩充——已写处有源码 / 实操支撑，未尽与超纲处诚实标注边界、点到为止（见 appendix）。
+
+## 参与
+
+如果你发现文章里有任何错误，或者有更好的见解，欢迎提交 Issue 或 PR。
 
 ## 来源与致谢
 
