@@ -8,8 +8,6 @@
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg)](LICENSE) ![based on MiniMind2 | 3](https://img.shields.io/badge/based%20on-MiniMind2%20%7C%203-2496ED.svg) ![docs 中文](https://img.shields.io/badge/docs-%E4%B8%AD%E6%96%87-orange.svg) ![status updating](https://img.shields.io/badge/status-updating-brightgreen.svg)
 
-<img src="images/project-source-mainline-map.svg" width="820" alt="MiniMind 源码主线地图">
-
 [不同之处](#这份笔记的不同) · [学习路径](#学习路径) · [怎么读](#怎么读) · [路线图](#路线图)
 
 </div>
