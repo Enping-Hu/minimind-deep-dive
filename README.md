@@ -14,7 +14,7 @@
 
 ---
 
-这套笔记不复制 MiniMind 的源码，而是带你**对照源码读**：每节标出对应的源码文件与符号（函数 / 类名），并排打开 [MiniMind](https://github.com/jingyaogong/minimind) 一起看。符号引用以 MiniMind2 主线为准，版本差异集中在第 9 章。
+这份笔记带你**逐节对照 MiniMind 源码来读**：每节都指向对应的源码文件和符号（函数 / 类名），讲清那段代码在做什么、为什么这么写，建议并排打开 [MiniMind](https://github.com/jingyaogong/minimind) 一起看。符号引用以 MiniMind2 主线为准，版本差异集中在第 9 章。
 
 但 MiniMind 是入口，不是终点。读懂一个组件后，笔记会从它出发延伸到所属的技术脉络——例如从 RMSNorm 讲到归一化的演进，从 CISPO 讲到 GRPO 变体家族——帮你顺着具体实现建立对大模型技术体系的理解，而不是停在「这个项目怎么写」。
 
