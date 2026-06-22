@@ -128,7 +128,7 @@ batch 里 prompt 长短不一，左填充让所有 prompt 的**右端对齐**，
 
 **4. final_mask 与 labels 错位：只统计 response 区的有效 token**
 
-actor_logp 要的是「response 部分」每个 token 的 log-prob 之和，不含 prompt、不含 pad。先 [shift](../08-training-mechanics/02-logits-to-logprob.md) 取 token log-prob，再用两层 mask 筛：
+actor_logp 要的是「response 部分」每个 token 的 log-prob **之和**——衡量「当前 actor 有多愿意生成这条回答」，所以 prompt 区和 pad 都不能算。代码分四步走，每步贴例子看：
 
 ```python
 labels = gen_out[:, 1:].clone()                              # [B, P+R-1]，错位一位：位置 t 预测 t+1
@@ -139,16 +139,36 @@ final_mask = resp_mask & (~labels.eq(tokenizer.pad_token_id))        # 再去掉
 actor_logp = (logp_tokens * final_mask).sum(dim=1)          # [B]，response log-prob 求和
 ```
 
-拿一条样本走一遍最直观——左填充后 `prompt_length=5`，response 是 `r1 r2` 后面跟了个 pad。先记住 `labels = gen_out[:, 1:]` 把整条**左移一位**（为和 `logits[:, :-1]` 的 next-token 对齐），所以下面都按 labels 的下标看：
+取一条样本：左填充后 prompt 占 5 位、response 是 `r1 r2`（后面补了一个 pad）：
 
 ```text
-labels   : PAD  p1  p2  p3  r1  r2  PAD     (= gen_out[:,1:]，整条左移一位)
-resp_mask:  0    0   0   0   1   1   1      (下标 ≥ prompt_length−1 = 4)
-~pad     :  1    1   1   1   1   1   0      (非 pad)
-final    :  0    0   0   0   1   1   0      (相与 → 只剩 r1 r2)
+下标   :  0    1   2   3   4   5   6   7
+gen_out: PAD  PAD  p1  p2  p3  r1  r2  PAD     prompt_length = 5（前 5 位是 prompt 区）
 ```
 
-阈值写 `prompt_length - 1` 而不是 `prompt_length`，就是因为这一位左移：response 起点从 `gen_out` 里的 `prompt_length` 跟着前移到 labels 里的 `prompt_length - 1`，不是随手减一。`final_mask` 再 `& ~labels.eq(pad)` 去掉 response 里的 pad（例中末位）。最后 `(logp_tokens * final_mask).sum` 把留下的 token log-prob 相加 = 这条 response 的总 log-prob；用 `.sum` 而非 mean，对应 [08-training-mechanics/03](../08-training-mechanics/03-token-to-sequence-objective.md)：PPO 要整条 response 的序列 log-prob。
+**① labels 左移一位.** 语言模型是「位置 t 的 logits 预测 t+1 的 token」，于是把 `logits` 去掉最后一位（`logits[:, :-1]`，它没有下一个 token 要预测）、`gen_out` 去掉第一位当预测目标（`labels = gen_out[:, 1:]`），两者一一对上（这步就是 [shift](../08-training-mechanics/02-logits-to-logprob.md)）：
+
+```text
+下标   :  0    1   2   3   4   5   6
+labels : PAD  p1  p2  p3  r1  r2  PAD          （= gen_out 的第 1..7 位）
+```
+
+注意 `r1` 在 `gen_out` 里是第 **5** 位，左移后在 `labels` 里变成第 **4** 位——这就是后面阈值要用 `prompt_length - 1` 的原因。
+
+**② 每个位置取真实 next-token 的 log-prob.** `log_softmax` 把每个位置对整个词表的分数变成 log 概率，`gather` 再按 `labels` 里的真实 token id 取出对应那一个，得到 `logp_tokens`（`[B, P+R-1]`）：即「这一步预测对真实的下一个 token 给了多少 log 概率」。
+
+**③ resp_mask：只留 response 区.** response 在 `labels` 里从第 `prompt_length - 1 = 4` 位开始，所以 `arange(seq_len) >= 4`。
+
+**④ final_mask：再去掉 pad.** 短回答末尾会有 pad（例中 `labels` 第 6 位），`& ~labels.eq(pad)` 把它也剔掉：
+
+```text
+labels   : PAD  p1  p2  p3  r1  r2  PAD
+resp_mask:  0    0   0   0   1   1   1        下标 ≥ 4，留住 response 区
+~pad     :  1    1   1   1   1   1   0        非 pad 位
+final    :  0    0   0   0   1   1   0        相与 → 只剩 r1、r2
+```
+
+最后 `(logp_tokens * final_mask).sum(dim=1)` 把 `final_mask` 为 1 的位置（这里就 `r1`、`r2`）的 log-prob 加起来，就是这条 response 的总 log-prob。用 `.sum` 而非 mean，对应 [08-training-mechanics/03](../08-training-mechanics/03-token-to-sequence-objective.md)：PPO 要整条 response 的序列 log-prob。
 
 **5. kl_ref 是简化约束，不是严格 KL**
 
