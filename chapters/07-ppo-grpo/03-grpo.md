@@ -47,7 +47,7 @@ policy_loss = ((per_token_loss * completion_mask).sum(dim=1) / completion_mask.s
 
 几个点：
 
-- `advantages.unsqueeze(1)` 把**回答级** advantage 广播到该回答的每个 token——同一条 response 的所有有效 token 共享一个 advantage。
+- `advantages.unsqueeze(1)` 把**回答级** advantage 广播到该回答的每个 token——同一条 response 的所有有效 token 共享一个 advantage。（对照 PPO：PPO 先把 token log-prob 求和成回答级标量再乘 advantage，GRPO 保留 token 级、广播同一 advantage 再对 token 取平均；这套 sum-vs-mean、按谁等权的取舍见 [08-training-mechanics/03](../08-training-mechanics/03-token-to-sequence-objective.md)。）
 - `completion_mask` 只统计 EOS 之前的有效 token（延续 SFT/DPO 只监督有效区域的思想）。
 - `args.beta * per_token_kl` 是 ref 约束，平衡「追 reward」和「别偏离原模型」。
 - `torch.exp(per_token_logps - per_token_logps.detach())`：前向值≈1（同一个量相减），但梯度仍流经当前 `per_token_logps`。**别把它误读成 PPO 的新旧 policy ratio**——GRPO 没有 old_actor，这只是「让当前 token log-prob 的梯度承载 advantage 信号」的工程写法。
