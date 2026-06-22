@@ -139,7 +139,16 @@ final_mask = resp_mask & (~labels.eq(tokenizer.pad_token_id))        # 再去掉
 actor_logp = (logp_tokens * final_mask).sum(dim=1)          # [B]，response log-prob 求和
 ```
 
-`resp_mask` 的阈值是 `prompt_length - 1` 而不是 `prompt_length`——因为 labels 已经错位一位（`gen_out[:, 1:]`），下标整体左移了 1，response 的起点也跟着前移一位。`final_mask` 再 `& ~labels.eq(pad)` 去掉 response 里的 pad token。这里 `.sum`（而非 mean）对应 [08-training-mechanics/03](../08-training-mechanics/03-token-to-sequence-objective.md) 讲的：PPO 要的是整条 response 的序列 log-prob，是 token log-prob 之和。
+拿一条样本走一遍最直观——左填充后 `prompt_length=5`，response 是 `r1 r2` 后面跟了个 pad。先记住 `labels = gen_out[:, 1:]` 把整条**左移一位**（为和 `logits[:, :-1]` 的 next-token 对齐），所以下面都按 labels 的下标看：
+
+```text
+labels   : PAD  p1  p2  p3  r1  r2  PAD     (= gen_out[:,1:]，整条左移一位)
+resp_mask:  0    0   0   0   1   1   1      (下标 ≥ prompt_length−1 = 4)
+~pad     :  1    1   1   1   1   1   0      (非 pad)
+final    :  0    0   0   0   1   1   0      (相与 → 只剩 r1 r2)
+```
+
+阈值写 `prompt_length - 1` 而不是 `prompt_length`，就是因为这一位左移：response 起点从 `gen_out` 里的 `prompt_length` 跟着前移到 labels 里的 `prompt_length - 1`，不是随手减一。`final_mask` 再 `& ~labels.eq(pad)` 去掉 response 里的 pad（例中末位）。最后 `(logp_tokens * final_mask).sum` 把留下的 token log-prob 相加 = 这条 response 的总 log-prob；用 `.sum` 而非 mean，对应 [08-training-mechanics/03](../08-training-mechanics/03-token-to-sequence-objective.md)：PPO 要整条 response 的序列 log-prob。
 
 **5. kl_ref 是简化约束，不是严格 KL**
 
