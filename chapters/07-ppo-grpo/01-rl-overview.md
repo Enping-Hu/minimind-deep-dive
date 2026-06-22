@@ -74,7 +74,7 @@ batch prompts
 
 ## 为什么 RL 仍需要 reference model
 
-只追 reward 很危险：模型会钻 reward model 的空子，生成格式讨喜但内容未必可靠的回答（reward hacking）。所以训练加 KL 约束，惩罚 policy 偏离冻结的 `ref_model` 太远。和 [DPO 的 ref](../06-dpo/01-preference-optimization.md) 一脉相承：DPO 里 ref 是偏好差的参照，RL 里 ref 是行为漂移的参照。第 [10 章](../10-experiments/03-eval-conclusions-sft-vs-rl.md) 有真实证据：RL 后输出更长更结构化，但事实/代码正确性没提升，还新增了原本没有的自信错误。
+只追 reward 很危险：模型会钻 reward model 的空子，生成格式讨喜但内容未必可靠的回答（reward hacking）。所以训练加 **KL 约束**——KL 散度衡量两个概率分布差多远，这里用它量当前 policy 相对冻结的 `ref_model` 漂了多少：漂太远就罚，把 policy 拴在原模型附近。和 [DPO 的 ref](../06-dpo/01-preference-optimization.md) 一脉相承：DPO 里 ref 是偏好差的参照，RL 里 ref 是行为漂移的参照。第 [10 章](../10-experiments/03-eval-conclusions-sft-vs-rl.md) 有真实证据：RL 后输出更长更结构化，但事实/代码正确性没提升，还新增了原本没有的自信错误。
 
 ## 练习
 

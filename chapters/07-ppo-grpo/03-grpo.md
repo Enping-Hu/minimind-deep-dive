@@ -52,6 +52,8 @@ policy_loss = ((per_token_loss * completion_mask).sum(dim=1) / completion_mask.s
 - `args.beta * per_token_kl` 是 ref 约束，平衡「追 reward」和「别偏离原模型」。
 - `torch.exp(per_token_logps - per_token_logps.detach())`：前向值≈1（同一个量相减），但梯度仍流经当前 `per_token_logps`。**别把它误读成 PPO 的新旧 policy ratio**——GRPO 没有 old_actor，这只是「让当前 token log-prob 的梯度承载 advantage 信号」的工程写法。
 
+那 `per_token_kl = exp(kl_div) − kl_div − 1`（`kl_div = ref_logp − policy_logp`）是怎么回事？这是 KL 的 **k3 估计**（出自 Schulman《Approximating KL Divergence》）。直接拿 `policy_logp − ref_logp` 也能无偏估计 KL，但单个 token 上可能为负、方差大；k3 在保持**无偏**（期望仍等于 KL）的同时**恒 ≥ 0**（因为 `eˣ − x − 1 ≥ 0`，policy 与 ref 一致时正好为 0）、方差更小，拿来当逐 token 的漂移惩罚更稳。v2 的 PPO 用的就是那个朴素均值 `(actor_logp − ref_logp).mean()`（见 [02-ppo 折叠 §5](02-ppo.md)），v3 统一改用 k3（见 [第 9 章](../09-minimind2-vs-3/03-ppo-rewrite.md)）。
+
 ## GRPO vs PPO
 
 | 维度 | PPO | GRPO |
