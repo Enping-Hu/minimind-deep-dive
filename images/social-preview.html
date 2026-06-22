@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<style>
+  :root{
+    --bg0:#0b1220; --bg1:#101d33;
+    --ink:#e9eff8; --soft:#c6d3e6; --muted:#8a9bb3; --dim:#56688400;
+    --dimc:#566884;
+    --cyan:#5ec8d8; --amber:#f0a85c; --green:#8fcf9a; --line:#21314c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1280px;height:640px;overflow:hidden}
+  body{
+    font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+    color:var(--ink);position:relative;
+    background:
+      radial-gradient(820px 460px at 86% -12%, rgba(94,200,216,.12), transparent 62%),
+      radial-gradient(680px 480px at 112% 116%, rgba(240,168,92,.11), transparent 60%),
+      linear-gradient(135deg,var(--bg0) 0%, var(--bg1) 100%);
+  }
+  body::before{ /* 点阵纹理 */
+    content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.05) 1.2px, transparent 1.3px);
+    background-size:26px 26px;
+    -webkit-mask:linear-gradient(180deg,transparent,#000 26%,#000 74%,transparent);
+    opacity:.55;
+  }
+  .mark{ /* 大水印 </> */
+    position:absolute;right:34px;top:51%;transform:translateY(-50%);
+    font-family:'Menlo','Monaco',monospace;font-weight:700;font-size:300px;line-height:1;
+    color:rgba(255,255,255,.028);letter-spacing:-8px;pointer-events:none;
+  }
+  .wrap{position:relative;height:100%;padding:62px 72px;display:flex;flex-direction:column}
+  .topbar{position:absolute;top:0;left:72px;width:208px;height:6px;border-radius:0 0 6px 6px;
+    background:linear-gradient(90deg,var(--cyan),var(--amber))}
+  .comment{font-family:'Menlo','Monaco',monospace;font-size:21px;color:var(--green);
+    opacity:.9;letter-spacing:.2px;margin-top:6px}
+  .title{font-family:'Menlo','Monaco',monospace;font-weight:700;font-size:86px;
+    letter-spacing:-1.5px;line-height:1;margin-top:16px}
+  .title .dim{color:var(--dimc)}
+  .title .accent{color:var(--cyan)}
+  .tag{font-size:33px;font-weight:500;color:var(--soft);margin-top:24px;letter-spacing:.5px}
+  .tag b{color:var(--amber);font-weight:700}
+  .moats{display:flex;gap:22px;margin-top:48px}
+  .moat{flex:1;background:rgba(255,255,255,.035);border:1px solid var(--line);
+    border-radius:16px;padding:22px 26px;position:relative;overflow:hidden}
+  .moat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px}
+  .moat.c1::before{background:var(--cyan)}
+  .moat.c2::before{background:var(--amber)}
+  .moat.c3::before{background:var(--green)}
+  .moat .h{font-size:26px;font-weight:700;color:var(--ink);letter-spacing:.3px}
+  .moat .s{font-family:'Menlo','Monaco',monospace;font-size:18px;color:var(--muted);
+    margin-top:11px;letter-spacing:.2px}
+  .parts{margin-top:auto;display:flex;align-items:center;justify-content:center;gap:13px;font-size:22px;font-weight:600}
+  .parts span{color:#a6b6cd}
+  .parts i{color:#3a4a66;font-style:normal}
+</style>
+</head>
+<body>
+  <div class="mark">&lt;/&gt;</div>
+  <div class="wrap">
+    <div class="comment"># 对照源码，逐行读懂一个最小 LLM</div>
+    <div class="title">minimind<span class="dim">-</span><span class="accent">deep-dive</span></div>
+    <div class="tag">从 MiniMind 源码读起，<b>延伸到大模型技术体系</b></div>
+    <div class="moats">
+      <div class="moat c1"><div class="h">版本演进对照</div><div class="s">MiniMind2 → MiniMind-3</div></div>
+      <div class="moat c2"><div class="h">真实实验证据</div><div class="s">服务器训练曲线 + 评测</div></div>
+      <div class="moat c3"><div class="h">统一训练数学链</div><div class="s">logits → loss → 参数更新</div></div>
+    </div>
+    <div class="parts">
+      <span>结构</span><i>·</i><span>训练</span><i>·</i><span>机制</span><i>·</i><span>版本</span><i>·</i><span>实验</span><i>·</i><span>进阶</span>
+    </div>
+  </div>
+</body>
+</html>
