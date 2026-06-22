@@ -1,10 +1,6 @@
 <div align="center">
 
-# minimind-deep-dive
-
-**从 MiniMind 源码读起，延伸到大模型技术体系**
-
-逐行读懂一个最小可训练 LLM 怎么搭、怎么训练、怎么对齐；再从每个具体实现延伸到它所属的技术脉络。
+<img src="images/social-preview.png" alt="minimind-deep-dive — 从 MiniMind 源码读起，延伸到大模型技术体系" width="840">
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg)](LICENSE) ![based on MiniMind2 | 3](https://img.shields.io/badge/based%20on-MiniMind2%20%7C%203-2496ED.svg) ![docs 中文](https://img.shields.io/badge/docs-%E4%B8%AD%E6%96%87-orange.svg) ![status updating](https://img.shields.io/badge/status-updating-brightgreen.svg)
 
