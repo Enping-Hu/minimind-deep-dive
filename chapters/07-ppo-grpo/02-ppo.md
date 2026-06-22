@@ -54,14 +54,24 @@ policy_loss = -torch.min(surr1, surr2).mean()
 
 `clip_epsilon`（v2 默认 0.1）把 ratio 截在 `[0.9, 1.1]`。**clip 不改更新方向，只限更新幅度。**
 
-`min(surr1, surr2)` 是关键保险丝：取更保守（更小）的那个目标。态度是「如果不 clip 时本来能拿更大收益，但收益来自改得太猛，那我宁可只认 clip 后更保守的收益」。一旦更新想冲出去，目标函数就不再奖励它。
+`min(surr1, surr2)` 是关键保险丝。它不是再加一道夹子，而是把裁剪做成**单向**的：一个方向踩刹车，另一个方向永远放行。那为什么不能直接拿 clamp 后的 surr2 当目标？
 
-分两种情况看：
+**只用 surr2 会卡死。** `clamp(ratio, 1−ε, 1+ε)` 一旦 ratio 出界，输出就是常数，对 ratio 的梯度变成 0——而且**出界两边都是 0**。可出界有两种，一种该停、一种不该停（以 advantage > 0、想推高概率为例）：
 
-- **advantage > 0**（该强化）：ratio 略大于 1 是好事；但若远超 `1+ε`，说明强化过猛，clip+min 截住。
-- **advantage < 0**（该削弱）：若 ratio 还很大，等于把不该强化的回答反而推高了，更危险，同样被 clip+min 限制。
+- ratio 朝**对的方向**冲过头（ratio 远大于 1）：梯度 0 是对的，本来就不想再推高；
+- ratio 跑到**错的方向**（ratio 反而小于 1，好回答的概率被压低了）：这时**正需要梯度把它拉回来**，但 surr2 在这里梯度也是 0 → 卡死，爬不回去。
 
-不管正负优势，目标一致：**允许朝对的方向改，但不允许一步改过头。** 末尾负号同前——想最大化 surrogate objective，写成 loss 加负号。
+**`min` 恰好在「错方向」那侧选中没被夹的 surr1，保住梯度。** 因为 `min` 永远挑两者中更小（对我们更不利）的那个：朝对方向冲过头时，夹住的 surr2 更小 → 选 surr2 → 梯度 0，封住贪心；跑到错方向时，没夹的 surr1 更小 → 选 surr1 → 梯度还在，把 ratio 拉回信任区。一个「挑更不利的」动作，自动让裁剪只发生在该封的那一侧。
+
+| ratio（advantage > 0） | 只用 surr2 | min(surr1, surr2) |
+|---|---|---|
+| 错方向（ratio < 1−ε） | 梯度 0，卡死 ✗ | 选 surr1，梯度活，拉回 ✓ |
+| 区间内 | 梯度活 | 梯度活 |
+| 对方向冲过头（ratio > 1+ε） | 梯度 0 | 选 surr2，梯度 0 |
+
+唯一的差别就在第一行：只用 surr2 把该留的梯度也杀了，min 靠选中 surr1 留住它。advantage < 0 完全对称（错方向变成 ratio > 1+ε，同样靠 min 选 surr1 拉回）。
+
+记住分工：**clip 管「单步幅度上限」，min 管「只封朝有利方向冲过头那侧、放行往回修正」**，合起来才是「允许朝对的方向改，但不许一步改过头，改错了还能回来」。末尾负号同前：想最大化 surrogate objective，写成 loss 加负号。
 
 ![PPO ratio/clip 流程](../../images/ppo-ratio-clip-flow.svg)
 
@@ -155,7 +165,7 @@ kl_ref = (actor_logp - ref_logp).mean()   # scalar
 
 1. PPO 的五个模型各是什么角色？哪些训练、哪些冻结？
 2. `ratio = exp(actor_logp - old_logp)` 为什么等于新旧 policy 的概率比？ratio 和 advantage 各表达什么？
-3. 只用 `ratio * advantages` 会有什么问题？clip 和 `min(surr1, surr2)` 共同在防什么？
+3. 只用 `ratio * advantages` 会有什么问题？为什么用 `min(surr1, surr2)` 而不是直接拿 clamp 后的 surr2 当目标？
 4. advantage 算式里的 `values.detach()` 为什么要 detach？
 5.（源码细节）critic 输出逐位置 value，为什么 advantage 只取「最后一个非 pad 位置」的 value？prompt 为什么要 left padding？
 
@@ -164,7 +174,7 @@ kl_ref = (actor_logp - ref_logp).mean()   # scalar
 
 1. actor（训练的 policy）、old_actor（旧快照，量更新幅度，不反传）、critic（估 baseline，训练）、ref（冻结，KL 防漂移）、reward（冻结，打分）。
 2. `log(π_θ) − log(π_old) = log(π_θ/π_old)`，取 exp 得概率比；ratio 表达这一步改了多少（幅度/方向），advantage 表达这条回答该不该强化。
-3. 只用 surr1 会让更新可能一步冲太远、训练不稳；clip 把 ratio 限在 `1±ε`、min 取更保守的目标，共同防单步更新过大。
+3. 只用 surr1，单步可能冲太远、训练不稳。若只用 clamp 后的 surr2，ratio 一旦出界梯度两边都为 0，跑到错方向（好回答概率反被压低）时也卡死、回不来。min 永远取更小（更不利）的目标，让裁剪只在「朝有利方向冲过头」那侧把梯度归零，在「错方向」那侧选中没夹的 surr1 保住梯度、把 ratio 拉回信任区。
 4. advantage 只把 critic value 当基准，不应让 advantage 的梯度流回 critic（critic 由自己的 value_loss 训练），所以 detach。
 5. 最后一个非 pad token 的隐藏状态浓缩了整条序列上下文，用它的 value 当「这条回答的预期得分」最合理（v2 整条只取一个，粒度粗，v3 改 token-level GAE）；left padding 让 batch 内所有 prompt 右端对齐，generate 从同一列续写、`prompt_length` 全 batch 统一，response 区间才能用一个阈值切。
 </details>
