@@ -49,6 +49,8 @@
 | 实验 | [10 · experiments](chapters/10-experiments/) | 固定 prompt 设计、服务器训练记录、SFT vs RL 评测 | ✅ 持续补充 |
 | 进阶 | [appendix](chapters/appendix/) | Flash Attention / LoRA / 蒸馏 / Agent RL 点到为止 | ✅ |
 
+> ✅ 表示主线已成稿；延伸小节与源码细节也会**随学习继续补**——有 MiniMind 锚点的就近放进对应章（如归一化演进、GRPO 变体），它完全没涉及的话题收进 appendix。第 10 章的实验也在持续补。
+
 ## 怎么读
 
 - **对照源码**：每节标出对应的源码文件与符号（函数 / 类名），并排打开源码一起读。
