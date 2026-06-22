@@ -75,7 +75,7 @@ policy_loss = -torch.min(surr1, surr2).mean()
 
 ## 完整 loss
 
-PPO 的总损失还包括 critic 的 value_loss（回归 reward）和对 ref_model 的 KL 惩罚（防漂移）：`policy_loss + value_loss + KL`。`ppo_train_epoch` 把生成、打分、算优势、算三部分 loss、更新串起来。`old_actor_model` 按 `update_old_actor_freq` 周期同步成当前 actor，提供下一轮的 `old_logp`。
+PPO 的总损失还包括 critic 的 value_loss（回归 reward）和对 ref_model 的 KL 惩罚（防漂移）：`policy_loss + value_loss + KL`。critic 自己靠 `value_loss = F.mse_loss(values, rewards)` 训练：让 value 去回归 reward；回归得越好，value 越接近「这个 prompt 大致能拿几分」，正好当 advantage 的 baseline（前面 advantage 一节减掉的就是它）。`ppo_train_epoch` 把生成、打分、算优势、算三部分 loss、更新串起来。`old_actor_model` 按 `update_old_actor_freq` 周期同步成当前 actor，提供下一轮的 `old_logp`。
 
 <details>
 <summary>源码细节：rollout 到 advantage 的张量链</summary>
@@ -158,6 +158,7 @@ kl_ref = (actor_logp - ref_logp).mean()   # scalar
 - **「ratio 越大越好」**——不对，ratio 太大说明更新过猛，正是 PPO 要限制的。
 - **「clip 改变更新方向」**——不，clip 只限幅度，方向由 advantage 决定。
 - **「必须先推完 policy gradient 数学」**——不必，先把 ratio/clip/min 三者和代码对齐即可。
+- **「critic 学准了（value≈reward），advantage 就归零、没法学了」**——不会。critic 估的是「这个 prompt 平均拿几分」的**期望**，advantage 是「这条回答比平均好/坏多少」，信号活在偏差里；真要处处归零，也只是收敛停更、不是错误更新。不过 v2 这套确实偏弱：它的 critic 吃整条 `gen_out`、`value_loss = mse(value, reward)` 直接拟合本条的分（不是只看 prompt 的状态值），逼近完美时 advantage 会塌（实际靠 critic 小、在线滞后、reward 有噪声才没塌）。**这也是 v3 把 PPO 重写成 token-level GAE、以及 GRPO 改用组内均值当 baseline 的原因之一**（见 [第 9 章](../09-minimind2-vs-3/03-ppo-rewrite.md)、[03-grpo](03-grpo.md)）。
 
 ## 练习
 
