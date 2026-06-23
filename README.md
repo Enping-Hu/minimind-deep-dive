@@ -23,7 +23,7 @@
 除了带你逐行读懂源码，这份笔记还做了三件事：
 
 - **版本演进对照（第 9 章）** — MiniMind2 与 MiniMind-3 / Qwen3-style 逐条源码 diff：QK-Norm、移除 shared expert、PPO 重写（5→4 模型 + token-level GAE）、GRPO 默认 CISPO。
-- **真实实验证据（第 10 章）** — 不是「应该更好」，而是真实服务器训练曲线 + 固定 prompt 评测，包括一个反直觉的观察：RL 训练 reward 在升，但评测里的事实 / 代码正确性并没有同步提升。
+- **真实实验证据（第 10 章）** — 不是「应该更好」，而是真实服务器训练曲线 + 固定 prompt 评测，包括一个反直觉的观察：RL 训练里 reward 不必然上升，而且即便上升，评测里的事实 / 代码正确性也没有同步提升。
 - **统一训练数学链（第 8 章）** — 一条 `logits → token log-prob → 序列 loss → backward → optimizer.step` 贯穿 Pretrain / SFT / DPO / PPO / GRPO，把六种训练的更新骨架统一起来。
 
 ## 学习路径

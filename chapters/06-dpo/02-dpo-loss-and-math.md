@@ -78,7 +78,7 @@ loss = -F.logsigmoid(beta * logits)
 
 训练时容易盯着 `dpo_loss` 下降，但它不能像 pretrain/SFT 的 loss 那样读。SFT 的 loss 是预测下一个 token 的交叉熵，降了就是预测更准；`dpo_loss` 不是——由上面的推导，它只关心 `logits =（policy 的 chosen−rejected 差）−（ref 的 chosen−rejected 差）` 这个**差值**。
 
-差值变大有两条路：抬高 chosen，或压低 rejected。优化器常走后一条（对数函数的梯度性质让「降」比「升」更省力），极端时 chosen 概率自己也在降，只要 rejected 降得更快，`dpo_loss` 照样往下走。所以：loss 降不一定是模型变好（可能只是在压 rejected，即上面误区里的那种概率位移），loss 平不一定是没学，低 loss 甚至不保证学到了正确的偏好排序。
+差值变大有两条路：抬高 chosen，或压低 rejected。优化器常走后一条（对数函数的梯度性质让「降」比「升」更省力），极端时 chosen 概率自己也在降，只要 rejected 降得更快，`dpo_loss` 照样往下走。所以：loss 降不一定是模型变好（可能只是在压 rejected，即下文常见误区会强调的那种概率位移），loss 平不一定是没学，低 loss 甚至不保证学到了正确的偏好排序。
 
 那该看什么？业界标准是盯 **reward margin**（chosen 比 rejected 的隐式 reward 高多少）和 **reward accuracy**（chosen reward 大于 rejected 的样本比例，应从 0.5 往 1 爬），再配合 KL（离 ref 漂多远）和下游固定 prompt eval。
 
