@@ -1,6 +1,6 @@
 # 服务器训练记录
 
-这一节是 MiniMind-3（768 维、8 层 dense）在服务器上的真实训练记录：环境、数据、命令、loss、训练曲线。所有数字来自实际运行日志和 SwanLab，可复核。
+这一节是 MiniMind-3（768 维、8 层 dense）在服务器上的真实训练记录：环境、数据、命令、loss、训练曲线。所有数字来自实际运行日志与 SwanLab 训练曲线，下方为曲线截图。
 
 ## 环境与数据
 
@@ -18,12 +18,11 @@ pretrain 数据 `pretrain_t2t.jsonl`，7,970,519 条样本，字段 `text`（第
 ```text
 命令：trainer/train_pretrain.py，hidden_size=768、num_hidden_layers=8、batch_size=32、
      accumulation_steps=8、max_seq_len=380、epochs=2、learning_rate=5e-4、dtype=bfloat16
-SwanLab run id：tcvebdyzbdj9xn2d1bs3e
 进度：Epoch [2/2](249079/249079)
 输出：out/pretrain_768.pth（约 132M）；resume checkpoint 约 619M、step=249079
 ```
 
-训练曲线（run `tcvebdyzbdj9xn2d1bs3e`）：loss 从 ~7.3 快速降到 ~2，再缓慢收敛到 ~1.5–1.7；`logits_loss` 同步；`aux_loss=0`（dense，[02-model/06-moe](../02-model/06-moe.md) 讲过 dense 时 aux_loss 恒为 0）。`learning_rate` 和 `epoch_time` 可见两段，对应 resume 续训。
+训练曲线：loss 从 ~7.3 快速降到 ~2，再缓慢收敛到 ~1.5–1.7；`logits_loss` 同步；`aux_loss=0`（dense，[02-model/06-moe](../02-model/06-moe.md) 讲过 dense 时 aux_loss 恒为 0）。`learning_rate` 和 `epoch_time` 可见两段，对应 resume 续训。
 
 ![Pretrain 训练曲线](../../images/swanlab/MiniMind-Pretrain-Epoch-2-BatchSize-32-LearningRate-0.0005.png)
 
@@ -31,12 +30,11 @@ SwanLab run id：tcvebdyzbdj9xn2d1bs3e
 
 ```text
 命令：trainer/train_full_sft.py，Epoch=2、BatchSize=64、LearningRate=1e-5（起训权重 pretrain_768.pth）
-SwanLab run id：5r4qfa5jtw3m8nayn9xie
 最终 loss：~1.25–1.4（末值 ~1.3，从 ~1.75 缓慢下降）；aux_loss=0
 输出：out/full_sft_768.pth
 ```
 
-训练曲线（run `5r4qfa5jtw3m8nayn9xie`）：loss 从 ~1.75 噪声下降到 ~1.25–1.4；`epoch_time` 两段=2 epoch。
+训练曲线：loss 从 ~1.75 噪声下降到 ~1.25–1.4；`epoch_time` 两段=2 epoch。
 
 ![Full SFT 训练曲线](../../images/swanlab/MiniMind-Full-SFT-Epoch-2-BatchSize-64-LearningRate-1e-05.png)
 
@@ -56,7 +54,6 @@ Epoch=1、BatchSize=4、LearningRate=4e-8
 
 ```text
 Epoch=1、BatchSize=2、LearningRate=3e-7
-SwanLab run id：xtcfq7mqy5orjzy32l123
 ```
 
 reward 噪声很大、**无清晰上升趋势**；`kl_ref` 随训练升到 ~0.1–0.25；`approx_kl` / `clipfrac` 很低（更新受控）；`critic_loss` ~0.2–0.5。
