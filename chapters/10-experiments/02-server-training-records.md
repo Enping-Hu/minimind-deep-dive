@@ -50,6 +50,8 @@ Epoch=1、BatchSize=4、LearningRate=4e-8
 
 ![DPO 训练曲线](../../images/swanlab/MiniMind-DPO-Epoch-1-BatchSize-4-LR-4e-08.png)
 
+把默认 4e-8 调到 1e-6（25×）重训一条做对照：`dpo_loss` 不再平噪声，而是从 ~0.65 整体上漂、方差增大到 ~1.5–2.0（~4300 step）。但固定 prompt eval 显示模型仍连贯应答、事实错误和调前没两样——能力未塌。两点合起来印证 [06-dpo/02](../06-dpo/02-dpo-loss-and-math.md) 的那条纪律：`dpo_loss` 是弱指标，loss 上漂说明 lr 偏大、训练不稳，但「不稳」和「能力受损」是两件事，判断 DPO 好坏得回到 eval。
+
 ## PPO
 
 ```text

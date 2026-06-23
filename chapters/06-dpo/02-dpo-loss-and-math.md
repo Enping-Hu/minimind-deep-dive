@@ -74,6 +74,18 @@ loss = -F.logsigmoid(beta * logits)
 
 ![DPO 损失源码链](../../images/dpo-loss-source-chain.svg)
 
+## 怎么读 dpo_loss：它是个弱指标
+
+训练时容易盯着 `dpo_loss` 下降，但它不能像 pretrain/SFT 的 loss 那样读。SFT 的 loss 是预测下一个 token 的交叉熵，降了就是预测更准；`dpo_loss` 不是——由上面的推导，它只关心 `logits =（policy 的 chosen−rejected 差）−（ref 的 chosen−rejected 差）` 这个**差值**。
+
+差值变大有两条路：抬高 chosen，或压低 rejected。优化器常走后一条（对数函数的梯度性质让「降」比「升」更省力），极端时 chosen 概率自己也在降，只要 rejected 降得更快，`dpo_loss` 照样往下走。所以：loss 降不一定是模型变好（可能只是在压 rejected，即上面误区里的那种概率位移），loss 平不一定是没学，低 loss 甚至不保证学到了正确的偏好排序。
+
+那该看什么？业界标准是盯 **reward margin**（chosen 比 rejected 的隐式 reward 高多少）和 **reward accuracy**（chosen reward 大于 rejected 的样本比例，应从 0.5 往 1 爬），再配合 KL（离 ref 漂多远）和下游固定 prompt eval。
+
+这里有个 MiniMind 的现实局限：`train_dpo.py` 只 log 了 `dpo_loss`，没记 margin、accuracy、chosen/rejected 分项。也就是说，单看 MiniMind 给的这条曲线，判断不了 DPO 学得好不好——要判断得回到固定 prompt eval（见 [10-experiments/03](../10-experiments/03-eval-conclusions-sft-vs-rl.md)）。想自己补诊断，可在训练循环里记录 chosen/rejected 的 reward 及其差。
+
+还有个常被误读的现象：`dpo_loss` 往上走。健康的 DPO loss 应缓降；上行通常是 lr 偏大、训练不稳的信号——这正是 MiniMind 把 DPO 默认 lr 钉到 `4e-8`、注释写「建议 ≤5e-8 避免遗忘」的原因（见 [08-training-mechanics/05](../08-training-mechanics/05-optimizer-adamw-scheduler.md)）。但训练不稳不等于模型废了：把 lr 调到 1e-6 重训，loss 明显上漂、方差变大，可固定 prompt eval 里模型照样连贯应答、事实错误也和调前没两样——曲线难看和能力受损是两件事。
+
 ## 常见误区
 
 - **「DPO 在最大化 chosen 的概率」**——不准确。它最大化的是 chosen 相对 rejected 的偏好差，而且是**相对 reference** 看的。policy 完全可以让 chosen 概率略降，只要 rejected 降得更多，偏好差仍变大。
@@ -86,6 +98,7 @@ loss = -F.logsigmoid(beta * logits)
 2. `pi_logratios`、`ref_logratios`、`logits` 三者分别表示什么？`logits > 0` 意味着什么？
 3. 为什么 `logits` 大时 `-logsigmoid(beta*logits)` 会小？为什么不用「chosen 分数 > rejected 分数」的硬判定？
 4. 「DPO 就是最大化 chosen 概率」错在哪？
+5. 为什么说 `dpo_loss` 是「弱指标」？健康的 DPO 训练该监控哪些量？MiniMind 的 `train_dpo.py` 在这点上有什么局限？
 
 <details>
 <summary>参考答案</summary>
@@ -94,4 +107,5 @@ loss = -F.logsigmoid(beta * logits)
 2. `pi_logratios` 是 policy 对 chosen 相对 rejected 的偏好差，`ref_logratios` 是 reference 的同款偏好差，`logits = pi − ref` 是 policy 相对 ref 的偏好领先量；`>0` 表示 policy 比 reference 更偏向 chosen。
 3. logits 大 → `sigmoid(β·logits)`→1 → `logsigmoid`→0 → 加负号后 loss→0；硬判定不可导不平滑，无法做梯度优化，`-logsigmoid` 可导平滑。
 4. DPO 最大化的是 chosen 相对 rejected、且相对 reference 的偏好差；只要 rejected 概率降得比 chosen 多，偏好差也增大，并不要求 chosen 绝对概率上升。
+5. 因为 `dpo_loss` 只看 `（policy 的 chosen−rejected 差）−（ref 的同款差）` 这个差值，优化器可靠压低 rejected（而非抬高 chosen）来降 loss，所以 loss 降不一定变好、loss 平不一定没学、低 loss 不保证学到正确偏好排序。健康与否该看 reward margin、reward accuracy（chosen>rejected 比例往 1 爬）、KL 及下游固定 prompt eval。MiniMind 的局限是 `train_dpo.py` 只 log `dpo_loss`，未记 margin/accuracy/chosen-rejected 分项，单看曲线无法判健康，需以 eval 为准。
 </details>
