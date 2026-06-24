@@ -50,7 +50,7 @@
 
   <rect x="560" y="150" width="592" height="112" rx="18" class="card"/>
   <text x="588" y="192" class="h">① 维度两两配对</text>
-  <text x="588" y="226" class="t">相邻两维 (x, y) 当作平面上一个点，一起旋转。</text>
+  <text x="588" y="226" class="t">每两维一组 (x, y) 当作平面上一个点，一起旋转。</text>
 
   <rect x="560" y="290" width="592" height="112" rx="18" class="card"/>
   <text x="588" y="332" class="h">② 按位置旋转</text>
