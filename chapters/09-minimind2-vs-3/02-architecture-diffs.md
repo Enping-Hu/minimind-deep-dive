@@ -65,6 +65,6 @@ self.experts = nn.ModuleList([FeedForward(config, intermediate_size=config.moe_i
 <summary>参考答案</summary>
 
 1. 加在 Attention 里对每个 head 的 Q、K 各做一个 `RMSNorm(head_dim)`，作用对象是每个 head 的 head_dim 维向量，稳定 `QK^T` 打分、防 logits 爆炸/熵塌缩；在 view 成多头之后、apply_rotary_pos_emb 之前。
-2. 差在 shared expert——v2 有「所有 token 都过的共享专家」支路，v3 去掉只留 routed experts；router top-k 和 aux_loss 机制两版一致。
+2. 不止一处变。shared expert：v2 有「所有 token 都过的共享专家」支路，v3 去掉只留 routed experts。router top-k 和 aux_loss 也都动了——默认 top-k 从 2 降到 1，aux_loss 从序列级（`aux_loss_alpha=0.01`）换成 batch 级（`router_aux_loss_coef=5e-4`），公式和粒度都不同。两版真正同形的只有 router 选择写法那一串 `gate→softmax→topk→norm`。
 3. v2 是 `hidden_size // num_attention_heads`（不可单独设），v3 可通过 `head_dim` kwarg 独立配置；默认不传时两版算出来一样。
 </details>
