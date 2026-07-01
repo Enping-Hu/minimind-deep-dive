@@ -76,6 +76,44 @@ Epoch=1、BatchSize=4、LearningRate=3e-7、loss_type=cispo（8 层 768）
 
 ![GRPO 训练曲线](../../images/swanlab/MiniMind-GRPO-Epoch-1-BS-4-LR-3e-07.png)
 
+## MoE 训练记录（`use_moe=1`，4 expert / top-1）
+
+Dense 主线跑通后，对 MoE 变体做一次全链路复现。架构：8 层 768、4 专家 / top-1、无共享专家（总参约 198M，激活参约 64M；详见 [02-model/06-moe](../02-model/06-moe.md)）。配置与 Dense 同参（`hidden_size`、`num_hidden_layers`、`epochs`、`batch_size`、`learning_rate` 一致），只翻 `use_moe`。
+
+### MoE Pretrain
+
+```text
+命令：trainer/train_pretrain.py，use_moe=1，hidden_size=768、num_hidden_layers=8、batch_size=32、
+     accumulation_steps=8、max_seq_len=380、epochs=2、learning_rate=5e-4、dtype=bfloat16
+输出：out/pretrain_768_moe.pth
+```
+
+训练曲线：loss 从 7.4009 降到末值 1.8436（最低 1.3581）；logits_loss 同步；**aux_loss 全程非零（0.00396–0.00460）**——这正是负载均衡辅助损失在工作的证据，与 Dense 的 aux_loss=0 形成对照。
+
+![MoE Pretrain 训练曲线](../../images/swanlab/MiniMind-Pretrain-Epoch-2-BatchSize-32-LearningRate-0.0005-moe.png)
+
+### MoE Full SFT
+
+```text
+命令：trainer/train_full_sft.py，use_moe=1，Epoch=2、BatchSize=64、LearningRate=1e-5
+     起训权重 pretrain_768_moe.pth
+输出：out/full_sft_768_moe.pth
+```
+
+训练曲线：loss 从 1.8691 噪声下降到末值 1.2457（最低 1.1403）；aux_loss 仍在 0.004 附近，路由持续工作。
+
+![MoE Full SFT 训练曲线](../../images/swanlab/MiniMind-Full-SFT-Epoch-2-BatchSize-64-LearningRate-1e-05-moe.png)
+
+### MoE DPO / PPO / GRPO
+
+（待训练完成后补入曲线与数值。）
+
+### 小结：MoE 训练曲线也是过程证据
+
+- MoE pretrain + full_sft 已跑通，`aux_loss` 始终非零（~0.004），**4 expert / top-1 路由真正在工作**。
+- pretrain / SFT 的 loss 末值与 Dense 量级相近（1.84 vs 1.46 pretrain；1.25 vs 1.25 SFT），但**步数轴不同，不能据此下能力结论**——要谈效果，需做固定 prompt eval（方法同 Dense 主线）。
+- 这是后续实验必须记住的纪律：对 MoE 模型，**训练 loss 和 aux_loss 只证明「训练在跑」，不能证明「MoE 更好」**，能力差异需要严格对照的 eval。
+
 ## 小结：训练曲线只是过程证据
 
 - pretrain / SFT 的 loss 正常收敛；DPO 因步数少 + 极小 lr 几乎没动；PPO / GRPO 的 reward 都是平噪声、无明显上升。
