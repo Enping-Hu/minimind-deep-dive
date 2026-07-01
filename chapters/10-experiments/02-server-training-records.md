@@ -104,13 +104,47 @@ Dense 主线跑通后，对 MoE 变体做一次全链路复现。架构：8 层 
 
 ![MoE Full SFT 训练曲线](../../images/swanlab/MiniMind-Full-SFT-Epoch-2-BatchSize-64-LearningRate-1e-05-moe.png)
 
-### MoE DPO / PPO / GRPO
+### MoE DPO
 
-（待训练完成后补入曲线与数值。）
+```text
+命令：trainer/train_dpo.py，use_moe=1，Epoch=1、BatchSize=4、LearningRate=4e-8
+     起训权重 full_sft_768_moe.pth
+输出：out/dpo_768_moe.pth
+```
+
+训练曲线：`dpo_loss` 末值 0.62（区间 0.35–1.13），记录点很少（~42）、lr 极小（4e-8 起、衰减到 4e-9）；aux_loss 仍在 0.004 附近。和 Dense DPO 一样，步数少加极小 lr，loss 变化大部分是噪声，判断好坏得回到 eval（[06-dpo/02](../06-dpo/02-dpo-loss-and-math.md) 的弱指标纪律）。
+
+![MoE DPO 训练曲线](../../images/swanlab/MiniMind-DPO-Epoch-1-BatchSize-4-LR-4e-08-moe.png)
+
+### MoE PPO
+
+```text
+命令：trainer/train_ppo.py，use_moe=1，Epoch=1、BatchSize=2、LearningRate=3e-7
+     起训权重 full_sft_768_moe.pth
+输出：out/ppo_actor_768_moe.pth
+```
+
+训练曲线（约 9750 step）：reward 末值 −0.21（区间 −4.20~2.21）、噪声大无明显上升；`kl_ref` 升到末值 0.02（峰 0.84）；`approx_kl` / `clipfrac` 很低（更新受控）；`critic_loss` 末值 0.02（偶有尖峰，最高 ~1.2）；`avg_response_len` 末值 ~308。约 10k step，reward 未见明显改善，与 Dense PPO 一致。
+
+![MoE PPO 训练曲线](../../images/swanlab/MiniMind-PPO-Epoch-1-BS-2-LR-3e-07-moe.png)
+
+### MoE GRPO
+
+```text
+命令：trainer/train_grpo.py，use_moe=1，Epoch=1、BatchSize=4、LearningRate=3e-7、loss_type=cispo
+     起训权重 full_sft_768_moe.pth
+输出：out/grpo_768_moe.pth
+```
+
+训练曲线（约 4891 step）：reward 末值 0.84（区间 −2.93~2.43）、噪声大无明显单调上升；`kl_ref` 从 ~0 缓慢下漂到末值 −0.04（最低 −0.25）；`advantages_std` ~1、`advantages_mean ≈ 0`（组内归一，[03-grpo](../07-ppo-grpo/03-grpo.md)）；`avg_response_len` 末值 ~349（区间 42–740）。
+
+和 Dense GRPO 对照：reward 0.84 vs 0.70、`avg_response_len` 349 vs 240，两条都是平噪声、无上升——MoE 末值略高但仍在同量级噪声内，**不构成「MoE 更好」的结论**，能力差异要看 eval。
+
+![MoE GRPO 训练曲线](../../images/swanlab/MiniMind-GRPO-Epoch-1-BS-4-LR-3e-07-moe.png)
 
 ### 小结：MoE 训练曲线也是过程证据
 
-- MoE pretrain + full_sft 已跑通，`aux_loss` 始终非零（~0.004），**4 expert / top-1 路由真正在工作**。
+- MoE 五阶段全跑通（pretrain → full_sft → DPO / PPO / GRPO），`aux_loss` 始终非零（~0.004），**4 expert / top-1 路由真正在工作**。
 - pretrain / SFT 的 loss 末值与 Dense 量级相近（1.84 vs 1.46 pretrain；1.25 vs 1.25 SFT），但**步数轴不同，不能据此下能力结论**——要谈效果，需做固定 prompt eval（方法同 Dense 主线）。
 - 这是后续实验必须记住的纪律：对 MoE 模型，**训练 loss 和 aux_loss 只证明「训练在跑」，不能证明「MoE 更好」**，能力差异需要严格对照的 eval。
 
