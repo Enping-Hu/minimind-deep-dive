@@ -29,3 +29,4 @@ settings.json
 # Maintenance scaffolding (local-only; indexes the private source notes, no reader value)
 SOURCE-MAP.md
 chapters/图待补.md
+plan/
