@@ -16,6 +16,7 @@
 | 篇目 | 从哪切入 | 讲什么 |
 |---|---|---|
 | [02 · 归一化的演进](02-normalization-evolution.md) | v2 的 RMSNorm、v3 的 QK-Norm | BatchNorm→LayerNorm→RMSNorm→QK-Norm，每步解决什么 |
+| [09 · 位置编码的演进](09-positional-encoding-evolution.md) | v2/v3 都用的 RoPE | 绝对→相对→RoPE/ALiBi，为什么最后是 RoPE |
 
 ## 对齐与 RL
 
@@ -39,4 +40,4 @@
 
 ---
 
-> 深入篇随学习持续补充。规划中的方向：位置编码谱系、FlashAttention 深入、PEFT 全家族、MoE 演进、DeepSeek 谱系等。
+> 深入篇随学习持续补充。规划中的方向：FlashAttention 深入、PEFT 全家族、MoE 演进、DeepSeek 谱系等。
