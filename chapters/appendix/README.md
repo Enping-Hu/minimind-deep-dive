@@ -22,6 +22,7 @@
 | 篇目 | 从哪切入 | 讲什么 |
 |---|---|---|
 | [05 · GRPO 变体家族](05-grpo-variants.md) | v2 的 GRPO、v3 的 CISPO | Dr.GRPO / DAPO / GSPO 各自改了什么 |
+| [08 · DPO 变体家族](08-dpo-variants.md) | v2 的原始 DPO（`train_dpo.py`） | SimPO/IPO/KTO/DPOP… 各自在补 DPO 的哪个洞 |
 
 ## 推理与部署
 
@@ -38,4 +39,4 @@
 
 ---
 
-> 深入篇随学习持续补充。规划中的方向：DPO 变体家族、位置编码谱系、FlashAttention 深入、PEFT 全家族、MoE 演进、DeepSeek 谱系等。
+> 深入篇随学习持续补充。规划中的方向：位置编码谱系、FlashAttention 深入、PEFT 全家族、MoE 演进、DeepSeek 谱系等。
