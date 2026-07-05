@@ -43,7 +43,7 @@ policy_loss = ((per_token_loss * completion_mask).sum(dim=1) / completion_mask.s
 
 一句话记忆（本项目源码的直觉，非数学定理）：**DPO 偏比较→平均；PPO 算整段 response 概率→求和；GRPO/SPO 算 token-level loss→先长度平均再 batch 平均。**
 
-再深一层看**梯度按谁等权**（advantage 在一条回答内是常数时最清楚）：**sum 让每个 token 等权**——一条回答的总梯度正比于它的长度，长回答「说话更响」；**mean 让每条回答等权**——梯度被长度归一，长短各算一票。GRPO 这种「同一 prompt 的一组回答互比」的设定偏好 mean，正是图长短不一时比较公平。不过「要不要除长度」本身有争议：[ch07/06](../07-ppo-grpo/06-grpo-variants.md) 的 Dr.GRPO 就去掉了这个 `/L`，认为按回答长度归一会引入另一种长度偏置——这是个设计权衡，没有唯一正解。
+再深一层看**梯度按谁等权**（advantage 在一条回答内是常数时最清楚）：**sum 让每个 token 等权**——一条回答的总梯度正比于它的长度，长回答「说话更响」；**mean 让每条回答等权**——梯度被长度归一，长短各算一票。GRPO 这种「同一 prompt 的一组回答互比」的设定偏好 mean，正是图长短不一时比较公平。不过「要不要除长度」本身有争议：[附录/GRPO 变体](../appendix/05-grpo-variants.md) 的 Dr.GRPO 就去掉了这个 `/L`，认为按回答长度归一会引入另一种长度偏置——这是个设计权衡，没有唯一正解。
 
 ![mask / sum / mean 聚合链路](../../images/mask-sum-mean-aggregation-flow.svg)
 

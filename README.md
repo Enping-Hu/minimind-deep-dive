@@ -43,9 +43,9 @@
 | 机制 | [08 · training-mechanics](chapters/08-training-mechanics/) | 从 logits 到参数更新的完整训练机制 | ✅ |
 | 版本 | [09 · minimind2-vs-3](chapters/09-minimind2-vs-3/) | MiniMind2 → MiniMind-3 / Qwen3-style 逐条对照 | ✅ |
 | 实验 | [10 · experiments](chapters/10-experiments/) | 固定 prompt 设计、服务器训练记录、SFT vs RL 评测 | ✅ 持续补充 |
-| 进阶 | [appendix](chapters/appendix/) | Flash Attention / LoRA / 蒸馏 / Agent RL 点到为止 | ✅ |
+| 进阶 | [appendix](chapters/appendix/) | 深入延伸篇：归一化演进 / RoPE 长度外推 / KV cache 压缩 / GRPO 变体，+ Flash·LoRA·蒸馏·Agent RL 入口 | ✅ 持续补充 |
 
-> ✅ 表示主线已成稿；延伸小节与源码细节也会**随学习继续补**——有 MiniMind 锚点的就近放进对应章（如归一化演进、GRPO 变体），它完全没涉及的话题收进 appendix。第 10 章的实验也在持续补。
+> ✅ 表示主线已成稿；深入延伸篇（归一化演进、RoPE 长度外推、KV cache 压缩、GRPO 变体等）统一收进 [appendix](chapters/appendix/)，正文相关处给跳转链接——主线只读源码，想深入就顺链接进附录。这些延伸篇也会**随学习继续补**。第 10 章的实验同样持续补充。
 
 ## 怎么读
 
@@ -62,7 +62,7 @@
 
 ## 范围与边界
 
-本书以 MiniMind2 主线为准（默认 `hidden_size=512`，约 26M 参数），分两条线推进：**主线**逐节对照源码，把 MiniMind 真有的代码和设计选择读透；**延伸**从这些具体实现出发，顺到背后的技术脉络（如归一化演进、GRPO 变体家族）。这份笔记还在随学习继续补充：讲到的地方尽量讲透、给出源码或实测依据；一时讲不深、或超出本书范围的，会直接说清楚、点到为止，相关线索放在 appendix。
+本书以 MiniMind2 主线为准（默认 `hidden_size=512`，约 26M 参数），分两条线推进：**主线**逐节对照源码，把 MiniMind 真有的代码和设计选择读透；**延伸**从这些具体实现出发，顺到背后的技术脉络（如归一化演进、RoPE 长度外推、GRPO 变体家族），这些深入篇统一收进 appendix、正文相关处给跳转。这份笔记还在随学习继续补充：讲到的地方尽量讲透、给出源码或实测依据；一时讲不深、或超出本书范围的，会直接说清楚、点到为止。
 
 ## 参与
 

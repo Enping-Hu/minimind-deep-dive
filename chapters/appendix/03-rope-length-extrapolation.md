@@ -1,6 +1,6 @@
 # 延伸：RoPE 长度外推——从 MiniMind 那个默认关闭的开关说起
 
-[03-rope](03-rope.md) 讲了 MiniMind 的 RoPE 怎么按位置旋转 Q/K，末尾「长上下文与 YaRN」一节点到为止：源码 `precompute_freqs_cis` 里有个 `rope_scaling`，默认关。这一节把那个开关打开——它背后是一整条**长度外推**的技术脉络：PI、NTK-aware、NTK-by-parts、Dynamic NTK、YaRN，每一步都在解决前一步的什么问题。
+[03-rope](../02-model/03-rope.md) 讲了 MiniMind 的 RoPE 怎么按位置旋转 Q/K，末尾「长上下文与 YaRN」一节点到为止：源码 `precompute_freqs_cis` 里有个 `rope_scaling`，默认关。这一节把那个开关打开——它背后是一整条**长度外推**的技术脉络：PI、NTK-aware、NTK-by-parts、Dynamic NTK、YaRN，每一步都在解决前一步的什么问题。
 
 本节是**延伸 survey**，但它不空谈：MiniMind v2 的 `precompute_freqs_cis` 里**真的实现了 YaRN**（`inference_rope_scaling=True` 就启用），所以谱系的终点能逐行落回源码。读它能回答一个上长上下文时绕不开的问题：**训练只见过 2K，推理想上 32K，RoPE 为什么会崩、又该怎么救？**
 
@@ -8,7 +8,7 @@
 
 ## 为什么直接外推会崩
 
-RoPE 给不同维度对绑定不同频率：靠前的维度对频率高、转得快，靠后的低、转得慢（[03-rope](03-rope.md) 讲过 `θ_i = rope_base^(-2i/dim)`）。训练时只见过 `0~L` 这段位置，模型学到的是这段内的旋转规律。
+RoPE 给不同维度对绑定不同频率：靠前的维度对频率高、转得快，靠后的低、转得慢（[03-rope](../02-model/03-rope.md) 讲过 `θ_i = rope_base^(-2i/dim)`）。训练时只见过 `0~L` 这段位置，模型学到的是这段内的旋转规律。
 
 推理时把位置直接扩到远大于 `L`，高频维度会在很短距离内快速绕圈，Q 和 K 的点积出现训练时没见过的剧烈波动，attention 分数异常、长上下文性能突然掉下去。所以长度外推的难点不是「模型看不懂更长的文本」，而是**位置系统在更长区间里失真了**。
 

@@ -1,6 +1,6 @@
 # 延伸：KV cache 压缩——从 MiniMind 的 GQA 往两头看
 
-[04-gqa](04-gqa.md) 讲了 MiniMind 为什么用 GQA、`repeat_kv` 怎么把 KV 头广播成 Q 头，[04-inference/01](../04-inference/01-kv-cache-and-generate.md) 讲了 KV cache 为什么能省重复计算。这一节把这两件事接起来，放进一条更大的脉络：从 MHA 到 MQA、GQA 再到 MLA，注意力结构这些年怎么围绕 KV cache 一步步改，每一步在解决前一步的什么问题。
+[04-gqa](../02-model/04-gqa.md) 讲了 MiniMind 为什么用 GQA、`repeat_kv` 怎么把 KV 头广播成 Q 头，[04-inference/01](../04-inference/01-kv-cache-and-generate.md) 讲了 KV cache 为什么能省重复计算。这一节把这两件事接起来，放进一条更大的脉络：从 MHA 到 MQA、GQA 再到 MLA，注意力结构这些年怎么围绕 KV cache 一步步改，每一步在解决前一步的什么问题。
 
 本节是**延伸 survey**。它的锚点很硬：MiniMind v2 就是这条线上 GQA 那一档的活标本——`num_attention_heads=8`、`num_key_value_heads=2`、`n_rep=4`（`model_minimind.py:20–22`），源码里能精确看到「共享多少」这个旋钮拧到了哪。读它能回答一个部署时绕不开的问题：**上下文越来越长时，为什么先爆的常常不是模型参数，而是 KV cache？该怎么把它压下去？**
 
