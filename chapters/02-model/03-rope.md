@@ -76,7 +76,7 @@ freqs_sin = torch.cat([torch.sin(freqs), torch.sin(freqs)], dim=-1)
 
 ## 长上下文与 YaRN（点到为止）
 
-RoPE 把不同维度绑定到不同频率，序列远超训练长度时，高频部分变化过快、位置模式会失真。长上下文方法（如 YaRN）就从这里入手：对原始频率做缩放/插值，让旋转在更长上下文下更稳。源码 `precompute_freqs_cis` 里 `rope_scaling`（`factor` / `beta_fast` / `beta_slow` / `type: "yarn"`）就是这条路径，默认关闭。细节超出本书范围，知道「长上下文改的是 RoPE 频率、不是 attention 主体」即可。
+RoPE 把不同维度绑定到不同频率，序列远超训练长度时，高频部分变化过快、位置模式会失真。长上下文方法（如 YaRN）就从这里入手：对原始频率做缩放/插值，让旋转在更长上下文下更稳。源码 `precompute_freqs_cis` 里 `rope_scaling`（`factor` / `beta_fast` / `beta_slow` / `type: "yarn"`）就是这条路径，默认关闭。主线读到这里，知道「长上下文改的是 RoPE 频率、不是 attention 主体」即可；想看完整谱系（PI→NTK→YaRN）怎么一步步来、又如何逐行对应这段源码，见延伸篇 [08-rope-length-extrapolation](08-rope-length-extrapolation.md)。
 
 <details>
 <summary>源码细节：cat 复制半维、unsqueeze 广播到 head</summary>
