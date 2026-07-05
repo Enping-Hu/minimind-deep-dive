@@ -31,6 +31,7 @@
 |---|---|---|
 | [06 · 模型量化](06-quantization.md) | 26M 模型想塞进端侧 | 位宽/粒度/阶段三旋钮，PTQ 难点在激活离群值（有损） |
 | [07 · 投机解码](07-speculative-decoding.md) | MiniMind 逐 token 生成的基线 | 先猜后验、为何 lossless、接受率与加速上限（无损） |
+| [10 · FlashAttention](10-flash-attention.md) | v2 Attention 的 Flash / 标准两条路径 | IO-aware 分块 + online softmax，同结果更少显存往返 |
 
 ## 进阶入口（点到为止）
 
@@ -40,4 +41,4 @@
 
 ---
 
-> 深入篇随学习持续补充。规划中的方向：FlashAttention 深入、PEFT 全家族、MoE 演进、DeepSeek 谱系等。
+> 深入篇随学习持续补充。规划中的方向：PEFT 全家族、MoE 演进、DeepSeek 谱系等。
