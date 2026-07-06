@@ -33,6 +33,12 @@
 | [07 · 投机解码](07-speculative-decoding.md) | MiniMind 逐 token 生成的基线 | 先猜后验、为何 lossless、接受率与加速上限（无损） |
 | [10 · FlashAttention](10-flash-attention.md) | v2 Attention 的 Flash / 标准两条路径 | IO-aware 分块 + online softmax，同结果更少显存往返 |
 
+## 训练方法
+
+| 篇目 | 从哪切入 | 讲什么 |
+|---|---|---|
+| [11 · PEFT 全家族](11-peft-family.md) | v2 的 LoRA（`model_lora.py`） | soft prompt 线（Prompt/Prefix/P-Tuning）+ Adapter + LoRA 变体，各自省什么改什么 |
+
 ## 进阶入口（点到为止）
 
 | 篇目 | 内容 |
@@ -41,4 +47,4 @@
 
 ---
 
-> 深入篇随学习持续补充。规划中的方向：PEFT 全家族、MoE 演进、DeepSeek 谱系等。
+> 深入篇随学习持续补充。规划中的方向：MoE 演进、DeepSeek 谱系等。
