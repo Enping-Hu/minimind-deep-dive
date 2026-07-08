@@ -40,6 +40,7 @@
 | 篇目 | 从哪切入 | 讲什么 |
 |---|---|---|
 | [11 · PEFT 全家族](11-peft-family.md) | v2 的 LoRA（`model_lora.py`） | soft prompt 线（Prompt/Prefix/P-Tuning）+ Adapter + LoRA 变体，各自省什么改什么 |
+| [16 · 知识蒸馏](16-knowledge-distillation.md) | v2 的 `train_distillation.py` | 软标签 KL + 温度；白盒/黑盒/R1 蒸馏；压缩三条线里的一条 |
 
 ## 模型家族
 
