@@ -10,6 +10,7 @@
 |---|---|---|
 | [03 · RoPE 长度外推](03-rope-length-extrapolation.md) | v2 那个默认关闭的 `rope_scaling` 开关 | PI→NTK→YaRN 谱系，逐行对应 `precompute_freqs_cis` |
 | [04 · KV cache 压缩](04-kv-cache-compression.md) | v2 的 GQA（8 头 Q / 2 组 KV） | MHA→MQA→GQA→MLA，怎么围绕 KV cache 一步步改 |
+| [17 · Attention 变体家族](17-attention-variants.md) | 标准 attention 的平方复杂度 | DCA/S2/Gated/NSA/DSA，改连接·改信息流·动态稀疏 |
 
 ## 模型结构
 
