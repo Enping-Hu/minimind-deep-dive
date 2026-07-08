@@ -40,6 +40,12 @@
 |---|---|---|
 | [11 · PEFT 全家族](11-peft-family.md) | v2 的 LoRA（`model_lora.py`） | soft prompt 线（Prompt/Prefix/P-Tuning）+ Adapter + LoRA 变体，各自省什么改什么 |
 
+## 模型家族
+
+| 篇目 | 从哪切入 | 讲什么 |
+|---|---|---|
+| [13 · DeepSeek 谱系](13-deepseek-lineage.md) | MiniMind 借来的那些设计 | V1→V3.2 时间线，每个设计出自哪一代、MiniMind 用没用 |
+
 ## 进阶入口（点到为止）
 
 | 篇目 | 内容 |
@@ -48,4 +54,4 @@
 
 ---
 
-> 深入篇随学习持续补充。规划中的方向：DeepSeek 谱系等。
+> 深入篇随学习持续补充。
