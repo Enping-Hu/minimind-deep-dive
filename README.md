@@ -12,7 +12,7 @@
 
 这份笔记带你**逐节对照 MiniMind 源码来读**：每节都指向对应的源码文件和符号（函数 / 类名），讲清那段代码在做什么、为什么这么写，建议并排打开 [MiniMind](https://github.com/jingyaogong/minimind) 一起看。符号引用以 MiniMind2 主线为准，版本差异集中在第 9 章。
 
-但 MiniMind 是入口，不是终点。读懂一个组件后，笔记会从它出发延伸到所属的技术脉络——例如从 RMSNorm 讲到归一化的演进，从 CISPO 讲到 GRPO 变体家族——帮你顺着具体实现建立对大模型技术体系的理解，而不是停在「这个项目怎么写」。
+但 MiniMind 是入口，不是终点。读懂一个组件后，笔记会从它出发延伸到所属的技术脉络——例如从 RMSNorm 讲到归一化的演进，从 CISPO 讲到 GRPO 变体家族——帮你顺着具体实现建立对大模型技术体系的理解，而不是停在「这个项目怎么写」。附录的深入卷更进一步，也覆盖 MiniMind 完全没涉及、但进阶绕不开的主题（量化、投机解码、RLHF 全景、模型代际史等），让这份笔记从「读懂一个项目」通向「读懂现代大模型」。
 
 面向想从源码层面真正搞懂一个 LLM 全流程的人。不需要精通，但先了解交叉熵、反向传播、self-attention、causal mask、RoPE、RMSNorm、PPO clip 会读得更顺。
 
@@ -43,9 +43,9 @@
 | 机制 | [08 · training-mechanics](chapters/08-training-mechanics/) | 从 logits 到参数更新的完整训练机制 | ✅ |
 | 版本 | [09 · minimind2-vs-3](chapters/09-minimind2-vs-3/) | MiniMind2 → MiniMind-3 / Qwen3-style 逐条对照 | ✅ |
 | 实验 | [10 · experiments](chapters/10-experiments/) | 固定 prompt 设计、服务器训练记录、SFT vs RL 评测 | ✅ 持续补充 |
-| 进阶 | [appendix](chapters/appendix/) | 深入延伸篇：归一化演进 / RoPE 长度外推 / KV cache 压缩 / GRPO 变体，+ Flash·LoRA·蒸馏·Agent RL 入口 | ✅ 持续补充 |
+| 进阶 | [appendix](chapters/appendix/) | 深入延伸卷（17 篇）：长上下文 / 模型结构 / 对齐与 RL / 推理与部署 / 训练方法 / 模型家族六大主题 | ✅ 持续补充 |
 
-> ✅ 表示主线已成稿；深入延伸篇（归一化演进、RoPE 长度外推、KV cache 压缩、GRPO 变体等）统一收进 [appendix](chapters/appendix/)，正文相关处给跳转链接——主线只读源码，想深入就顺链接进附录。这些延伸篇也会**随学习继续补**。第 10 章的实验同样持续补充。
+> ✅ 表示主线已成稿；深入延伸篇统一收进 [appendix](chapters/appendix/)（按主题分卷，见其导航页），正文相关处给跳转链接——主线只读源码，想深入就顺链接进附录。附录既讲 MiniMind 源码里有、只是没展开的（如 RoPE 外推、MoE 演进），也讲 MiniMind 完全没涉及、但进阶绕不开的（如量化、投机解码、RLHF 全景、模型代际史、PagedAttention）。这些延伸篇会**随学习继续补**。第 10 章的实验同样持续补充。
 
 ## 怎么读
 
@@ -62,7 +62,7 @@
 
 ## 范围与边界
 
-本书以 MiniMind2 主线为准（默认 `hidden_size=512`，约 26M 参数），分两条线推进：**主线**逐节对照源码，把 MiniMind 真有的代码和设计选择读透；**延伸**从这些具体实现出发，顺到背后的技术脉络（如归一化演进、RoPE 长度外推、GRPO 变体家族），这些深入篇统一收进 appendix、正文相关处给跳转。这份笔记还在随学习继续补充：讲到的地方尽量讲透、给出源码或实测依据；一时讲不深、或超出本书范围的，会直接说清楚、点到为止。
+本书以 MiniMind2 主线为准（默认 `hidden_size=512`，约 26M 参数），分两条线推进：**主线**逐节对照源码，把 MiniMind 真有的代码和设计选择读透；**延伸**收进 appendix、正文相关处给跳转，既从具体实现顺到背后的技术脉络（如归一化演进、RoPE 长度外推、GRPO 变体家族），也补上 MiniMind 没涉及、但进阶必备的主题（如量化、投机解码、RLHF 全景、模型代际史）。这份笔记还在随学习继续补充：讲到的地方尽量讲透、给出源码或实测依据；一时讲不深的，会直接说清楚、点到为止。
 
 ## 参与
 
