@@ -46,6 +46,7 @@
 | 篇目 | 从哪切入 | 讲什么 |
 |---|---|---|
 | [13 · DeepSeek 谱系](13-deepseek-lineage.md) | MiniMind 借来的那些设计 | V1→V3.2 时间线，每个设计出自哪一代、MiniMind 用没用 |
+| [15 · 开源模型代际史](15-model-lineage.md) | MiniMind 的骨架从哪来 | GPT→LLaMA→Qwen/GLM，架构如何收敛成 MiniMind 这套 |
 
 ## 进阶入口（点到为止）
 
