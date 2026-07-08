@@ -35,6 +35,7 @@
 | [06 · 模型量化](06-quantization.md) | 26M 模型想塞进端侧 | 位宽/粒度/阶段三旋钮，PTQ 难点在激活离群值（有损） |
 | [07 · 投机解码](07-speculative-decoding.md) | MiniMind 逐 token 生成的基线 | 先猜后验、为何 lossless、接受率与加速上限（无损） |
 | [10 · FlashAttention](10-flash-attention.md) | v2 Attention 的 Flash / 标准两条路径 | IO-aware 分块 + online softmax，同结果更少显存往返 |
+| [18 · 显存账本与推理系统](18-memory-and-serving.md) | v2 训练的 bf16/梯度累积/DDP 开关 | 训练/推理显存分块、谁先爆用什么、PagedAttention |
 
 ## 训练方法
 
