@@ -25,6 +25,7 @@
 |---|---|---|
 | [05 · GRPO 变体家族](05-grpo-variants.md) | v2 的 GRPO、v3 的 CISPO | Dr.GRPO / DAPO / GSPO 各自改了什么 |
 | [08 · DPO 变体家族](08-dpo-variants.md) | v2 的原始 DPO（`train_dpo.py`） | SimPO/IPO/KTO/DPOP… 各自在补 DPO 的哪个洞 |
+| [14 · RL 对齐算法全景](14-rl-alignment-landscape.md) | MiniMind 简化掉的那些 RL 零件 | RLHF 三步 / RLAIF / REINFORCE 家族 / VAPO / TTRL 全景地图 |
 
 ## 推理与部署
 
