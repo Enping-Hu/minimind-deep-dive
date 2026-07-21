@@ -106,6 +106,8 @@ if self.flash and (seq_len > 1) and (past_key_value is None) and ...:
 
 它和上面第 6–8 步**数学等价**，只是 PyTorch 2.0+ 提供的融合实现，更快更省显存（`is_causal=True` 内部处理因果掩码）。学原理时盯标准路径就够，不必被它分散。
 
+> Flash 属于「同结果、更省显存往返」的一路。想看它的 IO-aware 分块 + online softmax 怎么做到等价却省显存，见附录延伸篇 [FlashAttention](../appendix/10-flash-attention.md)；序列一长、标准 attention 的平方复杂度扛不住时，业界怎么改连接与稀疏（DCA/S2/Gated/NSA/DSA），见 [Attention 变体家族](../appendix/17-attention-variants.md)。
+
 <details>
 <summary>源码细节：mask 的切片与广播、softmax 升精度</summary>
 

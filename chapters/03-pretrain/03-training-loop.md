@@ -80,6 +80,8 @@ for step, (input_ids, labels) in enumerate(loader, start=start_step + 1):
 
 `loss = loss / accumulation_steps` 让累积 8 个小步的总梯度，量级接近「一个 8 倍大 batch 直接算」的梯度。不除等于人为放大梯度，容易训练不稳。于是参数不是每步更新，而是每 `accumulation_steps` 步更新一次——用小显存模拟大 batch。这条链（backward 累积 → unscale → clip → step → zero_grad）的逐环节解释在 [08-training-mechanics/01-update-skeleton](../08-training-mechanics/01-update-skeleton.md)。
 
+> bf16、梯度累积、DDP 这几个开关，本质都是在还一本「显存账」。想看训练/推理显存各由哪几块组成、谁先爆该用什么招、以及 MiniMind 为什么用不上 ZeRO/offload/PagedAttention，见附录延伸篇 [显存账本与推理系统](../appendix/18-memory-and-serving.md)。
+
 ## 保存
 
 每 `save_interval` 步、且是主进程时：把权重 `.half()` 存成 `out/pretrain_512.pth`，同时用 `lm_checkpoint` 存一份完整续训快照到 `checkpoints/`。保存前先 `raw_model = model.module`（拆 DDP 包装）再 `getattr(raw_model, '_orig_mod', raw_model)`（拆 `torch.compile` 包装），拿到原始模型再 `state_dict()`。

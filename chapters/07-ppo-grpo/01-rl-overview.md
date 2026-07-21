@@ -76,6 +76,8 @@ batch prompts
 
 只追 reward 很危险：模型会钻 reward model 的空子，生成格式讨喜但内容未必可靠的回答（reward hacking）。所以训练加 **KL 约束**——KL 散度衡量两个概率分布差多远，这里用它量当前 policy 相对冻结的 `ref_model` 漂了多少：漂太远就罚，把 policy 拴在原模型附近。和 [DPO 的 ref](../06-dpo/01-preference-optimization.md) 一脉相承：DPO 里 ref 是偏好差的参照，RL 里 ref 是行为漂移的参照。第 [10 章](../10-experiments/03-eval-conclusions-sft-vs-rl.md) 有真实证据：RL 后输出更长更结构化，但事实/代码正确性没提升，还新增了原本没有的自信错误。
 
+> PPO / GRPO / SPO 是 MiniMind 实现的三个。想看它们在整张 RL 对齐版图里的位置——RLHF 三步、RLAIF、REINFORCE 家族，以及 MiniMind 为求精简砍掉的那些零件（独立 reward model、critic、GAE 等），见附录延伸篇 [RL 对齐算法全景](../appendix/14-rl-alignment-landscape.md)。
+
 ## 练习
 
 1. PPO/GRPO/SPO 和 DPO 在训练流程上最大的区别是什么？

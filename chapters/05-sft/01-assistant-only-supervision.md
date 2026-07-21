@@ -114,7 +114,9 @@ for j in range(start, min(end + len(self.eos_id), self.max_length)):
 
 ## 训练循环与 LoRA
 
-`train_full_sft.py` 的循环和 [train_pretrain.py](../03-pretrain/03-training-loop.md) 几乎一样，只是把 `PretrainDataset` 换成 `SFTDataset`——**SFT 的差异在数据监督信号，不在 optimizer/backward/step**。`train_lora.py` 也用同一个 `SFTDataset`，标签逻辑一致，区别只在更新哪些参数（Full SFT 更新全部，LoRA 冻结主干只训 adapter，见[附录](../appendix/01-advanced-pointers.md)）。
+`train_full_sft.py` 的循环和 [train_pretrain.py](../03-pretrain/03-training-loop.md) 几乎一样，只是把 `PretrainDataset` 换成 `SFTDataset`——**SFT 的差异在数据监督信号，不在 optimizer/backward/step**。`train_lora.py` 也用同一个 `SFTDataset`，标签逻辑一致，区别只在更新哪些参数（Full SFT 更新全部，LoRA 冻结主干只训 adapter）。
+
+> LoRA 只是参数高效微调的一种。想看它和 soft prompt 线（Prompt/Prefix/P-Tuning）、Adapter、以及各种 LoRA 变体各自省什么、改什么，见附录延伸篇 [PEFT 全家族](../appendix/11-peft-family.md)。
 
 训练用 `add_generation_prompt=False`（数据含 assistant 答案），推理用 `True`（只给到 assistant 开头让模型续写）——两者配套，见 [04-inference/02-eval-and-service](../04-inference/02-eval-and-service.md)。
 

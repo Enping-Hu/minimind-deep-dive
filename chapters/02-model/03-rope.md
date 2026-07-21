@@ -4,6 +4,8 @@ self-attention 本身不带顺序——打乱 token 顺序，`QK^T` 的结果不
 
 源码：`model/model_minimind.py`，`precompute_freqs_cis`、`apply_rotary_pos_emb` / `rotate_half`。
 
+> RoPE 是位置编码演进到目前的落点，不是唯一解。想看它之前为什么从绝对位置、相对位置一路走来，以及 ALiBi 这条旁支各自的取舍，见附录延伸篇 [位置编码的演进](../appendix/09-positional-encoding-evolution.md)。
+
 ## 为什么作用在 Q/K，不在 embedding，也不在 V
 
 注意力分数来自 $\text{scores} = QK^\top/\sqrt{d_k}$。位置信息要影响「关注谁」，就得直接进入这个匹配打分。

@@ -86,6 +86,8 @@ loss = -F.logsigmoid(beta * logits)
 
 还有个常被误读的现象：`dpo_loss` 往上走。健康的 DPO loss 应缓降；上行通常是 lr 偏大、训练不稳的信号——这正是 MiniMind 把 DPO 默认 lr 钉到 `4e-8`、注释写「建议 ≤5e-8 避免遗忘」的原因（见 [08-training-mechanics/05](../08-training-mechanics/05-optimizer-adamw-scheduler.md)）。但训练不稳不等于模型废了：把 lr 调到 1e-6 重训，loss 明显上漂、方差变大，可固定 prompt eval 里模型照样连贯应答、事实错误也和调前没两样——曲线难看和能力受损是两件事。
 
+> 上面这些「概率位移、要不要 ref、长度偏置」正是 DPO 的几个洞。SimPO / IPO / KTO / DPOP 等一批变体各自在补其中一个——去掉 ref、换长度归一、支持非成对反馈。它们各改了什么，见附录延伸篇 [DPO 变体家族](../appendix/08-dpo-variants.md)。
+
 ## 常见误区
 
 - **「DPO 在最大化 chosen 的概率」**——不准确。它最大化的是 chosen 相对 rejected 的偏好差，而且是**相对 reference** 看的。policy 完全可以让 chosen 概率略降，只要 rejected 降得更多，偏好差仍变大。

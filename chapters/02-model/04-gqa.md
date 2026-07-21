@@ -73,6 +73,8 @@ GQA 最直接省的是 K/V 侧：
 
 第三点最关键。长上下文推理时，KV cache 占用随序列长度线性增长，是显存大户（见 [04-inference/01-kv-cache-and-generate](../04-inference/01-kv-cache-and-generate.md)）。KV 头数减到 1/4，这部分占用也降到约 1/4。现代大模型几乎都用 GQA，主要图的是**推理部署**省显存，不只是训练效率。
 
+> GQA 是围绕 KV cache 省显存这条线上的一站。想看 MHA→MQA→GQA→MLA 怎么一步步压缓存（MLA 就是 MiniMind 往下走的那步），见附录延伸篇 [KV cache 压缩](../appendix/04-kv-cache-compression.md)。
+
 <details>
 <summary>源码细节：None 索引、expand 的 stride、reshape 何时物化</summary>
 

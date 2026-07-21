@@ -20,6 +20,8 @@ aux_loss_alpha = 0.01       # 辅助损失权重
 
 默认：4 个路由专家，每个 token 选 2 个；另有 1 个共享专家所有 token 都走。
 
+> 这几个默认值不是拍脑袋来的：top-k 路由、共享专家、辅助负载均衡损失，每个都对应 MoE 演进史上的一个选择（GShard→Switch→Mixtral→DeepSeekMoE）。想看每个配置出自哪一段，见附录延伸篇 [MoE 的演进](../appendix/12-moe-evolution.md)。
+
 ## MoEGate：给每个 token 选专家
 
 `MoEGate.forward`：
