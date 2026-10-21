@@ -23,7 +23,7 @@
 除了带你逐行读懂源码，这份笔记还做了三件事：
 
 - **版本演进对照（第 9 章）** — MiniMind2 与 MiniMind-3 / Qwen3-style 逐条源码 diff：QK-Norm、移除 shared expert、PPO 重写（5→4 模型 + token-level GAE）、GRPO 默认 CISPO。
-- **真实实验证据（第 10 章）** — 不是「应该更好」，而是真实服务器训练曲线 + 固定 prompt 评测，包括一个反直觉的观察：RL 训练里 reward 不必然上升，而且即便上升，评测里的事实 / 代码正确性也没有同步提升。
+- **真实实验证据（第 10 章）** — 不是「应该更好」，而是真实服务器训练曲线 + 固定 prompt 评测，包括一个反直觉的观察：RL 训练里 reward 不必然上升，而且即便上升，评测里的事实 / 代码正确性也没有同步提升。作者公开的曲线和七项客观评测也在同一章，逐个数字读给你看。
 - **统一训练数学链（第 8 章）** — 一条 `logits → token log-prob → 序列 loss → backward → optimizer.step` 贯穿 Pretrain / SFT / DPO / PPO / GRPO，把六种训练的更新骨架统一起来。
 
 ## 学习路径
@@ -42,7 +42,7 @@
 | 训练 | [07 · ppo-grpo](chapters/07-ppo-grpo/) | RL 总览、PPO、GRPO、SPO、训练信号总表（+GRPO 变体家族） | ✅ |
 | 机制 | [08 · training-mechanics](chapters/08-training-mechanics/) | 从 logits 到参数更新的完整训练机制 | ✅ |
 | 版本 | [09 · minimind2-vs-3](chapters/09-minimind2-vs-3/) | MiniMind2 → MiniMind-3 / Qwen3-style 逐条对照 | ✅ |
-| 实验 | [10 · experiments](chapters/10-experiments/) | 固定 prompt 设计、服务器训练记录、SFT vs RL 评测 | ✅ 持续补充 |
+| 实验 | [10 · experiments](chapters/10-experiments/) | 固定 prompt 设计、服务器训练记录、SFT vs RL 评测、作者公开结果读图 | ✅ 持续补充 |
 | 进阶 | [appendix](chapters/appendix/) | 深入延伸卷（17 篇）：长上下文 / 模型结构 / 对齐与 RL / 推理与部署 / 训练方法 / 模型家族六大主题 | ✅ 持续补充 |
 
 > ✅ 表示主线已成稿；深入延伸篇统一收进 [appendix](chapters/appendix/)（按主题分卷，见其导航页），正文相关处给跳转链接——主线只读源码，想深入就顺链接进附录。附录既讲 MiniMind 源码里有、只是没展开的（如 RoPE 外推、MoE 演进），也讲 MiniMind 完全没涉及、但进阶绕不开的（如量化、投机解码、RLHF 全景、模型代际史、PagedAttention）。这些延伸篇会**随学习继续补**。第 10 章的实验同样持续补充。
@@ -72,7 +72,7 @@
 
 - 源码：MiniMind / MiniMind-3，作者 [jingyaogong](https://github.com/jingyaogong/minimind)。
 - 数据格式与样本：引自 MiniMind-3 README；训练数据集见 [minimind_dataset](https://huggingface.co/datasets/jingyaogong/minimind_dataset)（ModelScope / HuggingFace）。
-- 配图：正文流程图（SVG）为源码精读时绘制；模型整体结构图（`LLM-structure*.png`）引自 MiniMind 官方仓库；训练曲线截图来自 SwanLab。均存于 [`images/`](images/)。
+- 配图：正文流程图（SVG）为源码精读时绘制；模型整体结构图（`LLM-structure*.png`）引自 MiniMind 官方仓库；训练曲线截图来自 SwanLab；`images/upstream/` 下的曲线、PPL 与雷达图引自 MiniMind 官方 README。均存于 [`images/`](images/)。
 - 本仓库是个人学习笔记的重构整理，不隶属于原项目。
 
 ## 许可

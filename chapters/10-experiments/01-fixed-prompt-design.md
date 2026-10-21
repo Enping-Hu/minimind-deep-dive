@@ -56,7 +56,7 @@ prompts = ['你有什么特长？', '为什么天空是蓝色的', '请用Python
 2. **行为观察 ≠ 能力证明**：能看出「形式/风格变了」，但「事实更对」需要更系统的评测。
 3. **训练曲线 ≠ 能力**：即便 reward 在训练中上升，也不等于模型能力提升；何况本书实测里 PPO/GRPO 的 reward 多为平噪声、未见明显上升（[02 节](02-server-training-records.md) 的曲线、[03 节](03-eval-conclusions-sft-vs-rl.md) 的评测会具体看到）。
 
-[下一节](02-server-training-records.md) 是这套方法在服务器上的真实训练记录，[第三节](03-eval-conclusions-sft-vs-rl.md) 是 8 层同参 eval 的真实观察。
+[下一节](02-server-training-records.md) 是这套方法在服务器上的真实训练记录，[第三节](03-eval-conclusions-sft-vs-rl.md) 是 8 层同参 eval 的真实观察，[第四节](04-author-published-results.md) 把作者公开的曲线与评测收进来做对照。
 
 ## 练习
 
